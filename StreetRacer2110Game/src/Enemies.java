@@ -2,10 +2,9 @@
 import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-
+// Comentario de RMR
 public class Enemies {
 
     private Image enemiesImage;
