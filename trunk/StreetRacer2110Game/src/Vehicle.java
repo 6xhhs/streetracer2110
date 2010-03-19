@@ -6,9 +6,9 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 
-public class Vehicle{
+public class Vehicle {
 
-    private Image vehicleImage;
+    private Image vehicleImage, damagedVehicleImage;
     private int x;
     private int y;
     private int screenWidth;
@@ -27,6 +27,8 @@ public class Vehicle{
     private int totalDamageReceived;
     private int totalPointsAccumulated;
     private Font font;
+    private boolean drawDamagedVehicleIsActive;
+    private boolean gameOverIsActive;
 
     public Vehicle(int screenWidth, int screenHeight, int carSelectedIndex) {
 
@@ -39,6 +41,7 @@ public class Vehicle{
         if (this.carSelectedIndex == 0) {
             try {
                 vehicleImage = Image.createImage("/S Racer.png");
+                damagedVehicleImage = Image.createImage("/S Racer Damaged.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -50,6 +53,7 @@ public class Vehicle{
         } else if (this.carSelectedIndex == 1) {
             try {
                 vehicleImage = Image.createImage("/M Racer.png");
+                damagedVehicleImage = Image.createImage("/S Racer Damaged.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -61,6 +65,7 @@ public class Vehicle{
         } else {
             try {
                 vehicleImage = Image.createImage("/SM Racer.png");
+                damagedVehicleImage = Image.createImage("/S Racer Damaged.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -80,6 +85,8 @@ public class Vehicle{
             ex.printStackTrace();
         }
 
+        drawDamagedVehicleIsActive = false;
+        gameOverIsActive=false;
         totalPointsAccumulated = 0;
         damageCount = 0;
         totalDamageCount = 0;
@@ -90,8 +97,15 @@ public class Vehicle{
 
     public void dibujar(Graphics g) {
 
-        g.drawImage(vehicleImage, x, y, g.TOP | g.LEFT);
-        g.drawImage(lifeImage, 0, 0, g.TOP | g.LEFT);
+        if (drawDamagedVehicleIsActive) {
+            g.drawImage(damagedVehicleImage, x, y, g.TOP | g.LEFT);
+            drawDamagedVehicleIsActive = false;
+        } else {
+            g.drawImage(vehicleImage, x, y, g.TOP | g.LEFT);
+        }
+        if(!gameOverIsActive){
+            g.drawImage(lifeImage, 0, 0, g.TOP | g.LEFT);
+        }
         g.setFont(font);
         g.drawString("Score: " + totalPointsAccumulated, 250, 2, g.TOP | g.LEFT);
     }
@@ -172,6 +186,7 @@ public class Vehicle{
 
     public void hasCollided(boolean hasCollided) {
         if (hasCollided) {
+            drawDamagedVehicleIsActive=true;
             totalPointsAccumulated += 15;
             damageCount++;
             if (damageCount == totalDamageReceived) {
@@ -185,6 +200,7 @@ public class Vehicle{
                     lifeImage = oneFourthLifeImage;
                 } else if (totalDamageCount == 4) {
                     System.out.println("Game Over!!");
+                    this.gameOverIsActive=true;
                 }
             }
         }
@@ -225,5 +241,13 @@ public class Vehicle{
                 }
             }
         }
+    }
+
+    public boolean returnGameOver(){
+        return this.gameOverIsActive;
+    }
+
+    public void setGameOver(boolean flag){
+        this.gameOverIsActive=false;
     }
 }

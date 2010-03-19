@@ -35,6 +35,7 @@ public class Juego extends GameCanvas {
     private boolean musicIsActive;
     private boolean alternateEnemyCreation = false;
     private Display display;
+    private int carSelectedIndex;
 
     public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive) {
 
@@ -47,6 +48,7 @@ public class Juego extends GameCanvas {
 
         pausedMenuSelectedIndex = 0;
 
+        this.carSelectedIndex=carSelectedIndex;
         this.ANCHO = getWidth();
         this.ALTO = getHeight();
 
@@ -124,8 +126,12 @@ public class Juego extends GameCanvas {
     }
 
     void actualizar() {
+//        if(vehicle.returnGameOver()){
+//            //vehicle.setGameOver(false);
+//            midlet.restartGame(carSelectedIndex, musicIsActive);
+//            return;
+//        }
         pauseOrUnpause();
-
         currentKeyCode = getKeyStates();
         if (isPaused) {
 
@@ -319,5 +325,18 @@ public class Juego extends GameCanvas {
             ((Enemies) enemies.elementAt(i)).dibujar(g);
             ((Enemies) enemies.elementAt(i)).dibujarFireGun(g);
         }
+    }
+
+    public void nullifyObjects(){
+        
+        this.animador.terminar();
+//        this.vehicle=null;
+//        this.pausedOpaque=null;
+//        this.pauseMenu=null;
+//        this.obstacles=null;
+        this.musicPlayer=null;
+//        this.gameLevel=null;
+//        this.enemies=null;
+
     }
 }
