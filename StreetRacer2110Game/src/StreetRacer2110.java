@@ -74,4 +74,19 @@ public class StreetRacer2110 extends MIDlet {
         display.setCurrent(gui);
         gui.start();
     }
+
+    public void restartGame(int carSelectIndex, boolean musicIsActive){
+        int carSelectedIndex = carSelectIndex;
+        boolean activateMusic = musicIsActive;
+        splashScreen=new SplashScreen(2);
+        splashScreen.paint();
+        display.setCurrent(splashScreen);
+        juego.nullifyObjects();
+        juego=null;
+        System.gc();
+        juego = new Juego(this,carSelectedIndex,activateMusic);
+        display.setCurrent(juego);
+        splashScreen=null;
+        System.gc();
+    }
 }
