@@ -23,8 +23,8 @@ public class Background {
         backgroundImage = Image.createImage(archivo);
         changeInX = speed;
 
-        this.ancho=360;
-        this.alto=360;
+        this.ancho = 360;
+        this.alto = 360;
 
         x = 0;
 
@@ -77,5 +77,18 @@ public class Background {
 
     public Image returnImage() {
         return this.backgroundImage;
+    }
+
+    void resetValues() {
+        x = 0;
+
+        if (!this.isSkyBackground) {
+            backgroundImage2 = backgroundImage;
+            x2 = this.ancho;
+        }
+    }
+
+    public int returnXValue(){
+        return this.x;
     }
 }

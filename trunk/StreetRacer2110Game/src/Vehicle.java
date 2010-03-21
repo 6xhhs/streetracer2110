@@ -21,7 +21,7 @@ public class Vehicle {
     private int carSelectedIndex;
     private int changeInX;
     private int changeInY;
-    private Image lifeImage, threeFourthsLifeImage, halfLifeImage, oneFourthLifeImage;
+    private Image lifeImage;
     private int damageCount;
     private int totalDamageCount;
     private int totalDamageReceived;
@@ -29,6 +29,7 @@ public class Vehicle {
     private Font font;
     private boolean drawDamagedVehicleIsActive;
     private boolean gameOverIsActive;
+    private Vector lifeBarImages;
 
     public Vehicle(int screenWidth, int screenHeight, int carSelectedIndex) {
 
@@ -76,17 +77,20 @@ public class Vehicle {
             totalDamageReceived = 2;
         }
 
+        lifeBarImages = new Vector();
+
         try {
-            lifeImage = Image.createImage("/full life.png");
-            threeFourthsLifeImage = Image.createImage("/three fourths life.png");
-            halfLifeImage = Image.createImage("/half life.png");
-            oneFourthLifeImage = Image.createImage("/one fourth life.png");
+            lifeBarImages.addElement(Image.createImage("/full life.png"));
+            lifeBarImages.addElement(Image.createImage("/three fourths life.png"));
+            lifeBarImages.addElement(Image.createImage("/half life.png"));
+            lifeBarImages.addElement(Image.createImage("/one fourth life.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
+        lifeImage=(Image) lifeBarImages.elementAt(0);
         drawDamagedVehicleIsActive = false;
-        gameOverIsActive=false;
+        gameOverIsActive = false;
         totalPointsAccumulated = 0;
         damageCount = 0;
         totalDamageCount = 0;
@@ -103,7 +107,7 @@ public class Vehicle {
         } else {
             g.drawImage(vehicleImage, x, y, g.TOP | g.LEFT);
         }
-        if(!gameOverIsActive){
+        if (!gameOverIsActive) {
             g.drawImage(lifeImage, 0, 0, g.TOP | g.LEFT);
         }
         g.setFont(font);
@@ -186,21 +190,21 @@ public class Vehicle {
 
     public void hasCollided(boolean hasCollided) {
         if (hasCollided) {
-            drawDamagedVehicleIsActive=true;
+            drawDamagedVehicleIsActive = true;
             totalPointsAccumulated += 15;
             damageCount++;
             if (damageCount == totalDamageReceived) {
                 damageCount = 0;
                 totalDamageCount++;
                 if (totalDamageCount == 1) {
-                    lifeImage = threeFourthsLifeImage;
+                    lifeImage = (Image) lifeBarImages.elementAt(1);
                 } else if (totalDamageCount == 2) {
-                    lifeImage = halfLifeImage;
+                    lifeImage = (Image) lifeBarImages.elementAt(2);
                 } else if (totalDamageCount == 3) {
-                    lifeImage = oneFourthLifeImage;
+                    lifeImage = (Image) lifeBarImages.elementAt(3);
                 } else if (totalDamageCount == 4) {
                     System.out.println("Game Over!!");
-                    this.gameOverIsActive=true;
+                    this.gameOverIsActive = true;
                 }
             }
         }
@@ -243,11 +247,24 @@ public class Vehicle {
         }
     }
 
-    public boolean returnGameOver(){
+    public boolean returnGameOver() {
         return this.gameOverIsActive;
     }
 
-    public void setGameOver(boolean flag){
-        this.gameOverIsActive=false;
+    public void setGameOver(boolean flag) {
+        this.gameOverIsActive = false;
+    }
+
+    void resetValues() {
+        this.x = 0;
+        this.y = this.screenHeight - (screenHeight / 4);
+        drawDamagedVehicleIsActive = false;
+        gameOverIsActive = false;
+        totalPointsAccumulated = 0;
+        damageCount = 0;
+        totalDamageCount = 0;
+        bullets.removeAllElements();
+        lifeImage = (Image) lifeBarImages.elementAt(0);
+
     }
 }

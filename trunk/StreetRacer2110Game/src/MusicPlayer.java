@@ -41,6 +41,14 @@ public class MusicPlayer {
                 System.out.println("Media exception error");
             }
         } else if (index == 3) {
+                        try {
+                iS = getClass().getResourceAsStream("linkinParkFaint.mid");
+                musicPlayer = Manager.createPlayer(iS, "audio/midi");
+            } catch (IOException ioe) {
+                System.out.println("IO exception error");
+            } catch (MediaException me) {
+                System.out.println("Media exception error");
+            }
         }
     }
 
