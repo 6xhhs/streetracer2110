@@ -9,6 +9,9 @@ public class StreetRacer2110 extends MIDlet {
     private Juego juego;
     private SplashScreen splashScreen;
     private boolean isStartOfGame = true;
+    private int carSelectedIndex;
+    private boolean musicIsActive;
+    private int currentLevel;
 
     public void startApp() {
 
@@ -52,15 +55,15 @@ public class StreetRacer2110 extends MIDlet {
     public void destroyApp(boolean unconditional) {
 
         display.setCurrent(null);
-
         notifyDestroyed();
     }
 
     public void changeScreenToGame(int carSelectedIndex, boolean musicIsActive) {
+        this.musicIsActive=musicIsActive;
         gui.setItemsToNull();
         gui = null;
         System.gc();
-        juego = new Juego(this, carSelectedIndex, musicIsActive);
+        juego = new Juego(this, carSelectedIndex, this.musicIsActive,1);
         juego.start();
         display.setCurrent(juego);
     }
@@ -75,18 +78,32 @@ public class StreetRacer2110 extends MIDlet {
         gui.start();
     }
 
-    public void restartGame(int carSelectIndex, boolean musicIsActive){
-        int carSelectedIndex = carSelectIndex;
-        boolean activateMusic = musicIsActive;
-        splashScreen=new SplashScreen(2);
+    public void restartGame(){
+
+        splashScreen=new SplashScreen(3);
         splashScreen.paint();
         display.setCurrent(splashScreen);
-        juego.nullifyObjects();
-        juego=null;
-        System.gc();
-        juego = new Juego(this,carSelectedIndex,activateMusic);
+        juego.resetJuegoValues();
         display.setCurrent(juego);
         splashScreen=null;
         System.gc();
+    }
+
+    void loadNextLevel(int carSelectedIndex, int currentLevel) {
+        this.carSelectedIndex=carSelectedIndex;
+        this.currentLevel=currentLevel;
+        splashScreen = new SplashScreen(2+currentLevel);
+        splashScreen.paint();
+        display.setCurrent(splashScreen);
+
+        juego=null;
+        System.gc();
+        juego = new Juego(this,this.carSelectedIndex,this.musicIsActive,this.currentLevel);
+        display.setCurrent(juego);
+        juego.start();
+        splashScreen=null;
+        System.gc();
+
+
     }
 }

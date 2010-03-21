@@ -23,7 +23,7 @@ public class Levels {
             try {
                 foreground = new Background("/highway2.jpg",false,9);
                 midground = new Background("/foregroundBuildings2.png",false,3);
-                sky = new Background("/SkyLevel1.jpg",false,1);
+                sky = new Background("/SkyLevel1.jpg",true,1);
                 clouds = new Background("/clouds2.png",false,1);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -42,7 +42,7 @@ public class Levels {
             try {
                 foreground = new Background("/highway2.jpg",false,9);
                 midground = new Background("/foregroundBuildings2.png",false,3);
-                sky = new Background("/SkyLevel1.jpg",false,1);
+                sky = new Background("/SkyLevel1.jpg",true,1);
                 clouds = new Background("/clouds2.png",false,1);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -63,5 +63,16 @@ public class Levels {
         clouds.moveBackgroundImage();
         midground.moveBackgroundImage();
         foreground.moveBackgroundImage();
+    }
+
+    void resetValues() {
+        foreground.resetValues();
+        midground.resetValues();
+        sky.resetValues();
+        clouds.resetValues();
+    }
+
+    public int returnSkyBackgroundXValue(){
+        return sky.returnXValue();
     }
 }

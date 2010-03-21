@@ -36,8 +36,9 @@ public class Juego extends GameCanvas {
     private boolean alternateEnemyCreation = false;
     private Display display;
     private int carSelectedIndex;
+    private int currentLevel;
 
-    public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive) {
+    public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel) {
 
         super(true);
 
@@ -46,15 +47,17 @@ public class Juego extends GameCanvas {
 
         this.setFullScreenMode(true);
 
+        this.currentLevel = currentLevel;
+
         pausedMenuSelectedIndex = 0;
 
-        this.carSelectedIndex=carSelectedIndex;
+        this.carSelectedIndex = carSelectedIndex;
         this.ANCHO = getWidth();
         this.ALTO = getHeight();
 
         g = this.getGraphics();
 
-        musicPlayer = new MusicPlayer(2);
+        musicPlayer = new MusicPlayer(currentLevel);
         this.musicIsActive = musicIsActive;
 
         vehicle = new Vehicle(this.ANCHO, this.ALTO, carSelectedIndex);
@@ -74,12 +77,32 @@ public class Juego extends GameCanvas {
         }
         isPaused = false;
 
-        this.gameLevel = new Levels(2, ANCHO, ALTO);
+        this.gameLevel = new Levels(currentLevel, ANCHO, ALTO);
 
         pauseMenu = new PauseMenu(this, g);
 
         animador = new Animador(this);      //animador debe ser el ultimo que se crea
         animador.iniciar();
+    }
+
+    public void checkForGameOver() {
+        if (vehicle.returnGameOver()) {
+            vehicle.setGameOver(false);
+            midlet.restartGame();
+        }
+    }
+
+    public void checkForLevelCompleted() {
+        if (gameLevel.returnSkyBackgroundXValue() == -1100) {
+            nullifyObjects();
+
+            //this if is temporary, to avoid getting a nullpointer in Levels
+            if (this.currentLevel < 3) {
+                midlet.loadNextLevel(this.carSelectedIndex, this.currentLevel + 1);
+            } else {
+                midlet.loadNextLevel(this.carSelectedIndex, this.currentLevel);
+            }
+        }
     }
 
     public void pauseOrUnpause() {
@@ -126,11 +149,8 @@ public class Juego extends GameCanvas {
     }
 
     void actualizar() {
-//        if(vehicle.returnGameOver()){
-//            //vehicle.setGameOver(false);
-//            midlet.restartGame(carSelectedIndex, musicIsActive);
-//            return;
-//        }
+        checkForLevelCompleted();
+        checkForGameOver();
         pauseOrUnpause();
         currentKeyCode = getKeyStates();
         if (isPaused) {
@@ -327,16 +347,27 @@ public class Juego extends GameCanvas {
         }
     }
 
-    public void nullifyObjects(){
-        
-        this.animador.terminar();
-//        this.vehicle=null;
-//        this.pausedOpaque=null;
-//        this.pauseMenu=null;
-//        this.obstacles=null;
-        this.musicPlayer=null;
-//        this.gameLevel=null;
-//        this.enemies=null;
+    public void resetJuegoValues() {
+        this.vehicle.resetValues();
+        this.enemies.removeAllElements();
+        this.obstacles.removeAllElements();
+        this.gameLevel.resetValues();
+        if (musicIsActive) {
+            this.musicPlayer.stopMusicPlayer();
+            this.musicPlayer = null;
+            this.musicPlayer = new MusicPlayer(currentLevel);
+            start();
+        }
+    }
 
+    public void nullifyObjects() {
+        this.animador.terminar();
+        if (musicIsActive) {
+            this.musicPlayer.stopMusicPlayer();
+            this.musicPlayer = null;
+        }
+//        this.enemies=null;
+//        this.obstacles=null;
+        System.gc();
     }
 }
