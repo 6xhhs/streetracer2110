@@ -3,13 +3,13 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.GameCanvas;
 
 public class Juego extends GameCanvas {
 
+    public static final int END_OF_LEVEL_X_VALUE = -1100;
     private Levels gameLevel;
     private Vehicle vehicle;
     private final int ANCHO;        //ancho de la pantalla del cell
@@ -27,10 +27,8 @@ public class Juego extends GameCanvas {
     private boolean returnToMenuIsActive = false;
     private boolean exitGameIsActive = false;
     private Vector enemies;
-    private int createEnemyCount;
     private Vector obstacles;
-    private int createObstaclesCount;
-    private static Random generateRandomYCoordinate = new Random();
+    private static Random generateRandomCoordinate = new Random();
     private MusicPlayer musicPlayer;
     private boolean musicIsActive;
     private boolean alternateEnemyCreation = false;
@@ -63,12 +61,10 @@ public class Juego extends GameCanvas {
         vehicle = new Vehicle(this.ANCHO, this.ALTO, carSelectedIndex);
 
         enemies = new Vector();
-        enemies.addElement(new Enemies(ANCHO + 80, (ALTO - generateRandomYCoordinate.nextInt(100) - 50), 0));
-        createEnemyCount = 0;
+        enemies.addElement(new Enemies(ANCHO + 100, (ALTO - generateRandomCoordinate.nextInt(100) - 60), 0));
 
         obstacles = new Vector();
-        obstacles.addElement(new Obstacles((ANCHO + 80), (ALTO - generateRandomYCoordinate.nextInt(100) - 10), 0));
-        createObstaclesCount = 0;
+        obstacles.addElement(new Obstacles((ANCHO + 100), (ALTO - generateRandomCoordinate.nextInt(100) - 15), 0));
 
         try {
             pausedOpaque = Image.createImage("/paused.png");
@@ -82,7 +78,6 @@ public class Juego extends GameCanvas {
         pauseMenu = new PauseMenu(this, g);
 
         animador = new Animador(this);      //animador debe ser el ultimo que se crea
-        animador.iniciar();
     }
 
     public void checkForGameOver() {
@@ -93,7 +88,7 @@ public class Juego extends GameCanvas {
     }
 
     public void checkForLevelCompleted() {
-        if (gameLevel.returnSkyBackgroundXValue() == -1100) {
+        if (gameLevel.returnSkyBackgroundXValue() == END_OF_LEVEL_X_VALUE) {
             nullifyObjects();
 
             //this if is temporary, to avoid getting a nullpointer in Levels
@@ -109,7 +104,6 @@ public class Juego extends GameCanvas {
         currentKeyCode = getKeyStates();
         if ((currentKeyCode & GAME_A_PRESSED) != 0) {
             //Pausar??
-            System.out.println("currentKeyCode: " + currentKeyCode);
             if (keyIsPressed) {
                 isPaused = !isPaused;
             }
@@ -145,7 +139,7 @@ public class Juego extends GameCanvas {
         if (musicIsActive) {
             musicPlayer.startMusicPlayer();
         }
-        System.out.println("entered juego.start, so music should play");
+        animador.iniciar();
     }
 
     void actualizar() {
@@ -216,7 +210,8 @@ public class Juego extends GameCanvas {
 
         vehicle.checkBulletsEnemyCollision(enemies);
 
-        checkCollisions();
+        checkVehicleCollisions();
+        checkObstaclesVehicleCollisions();
 
         gameLevel.actualizar();
         vehicle.actualizarFireGun();
@@ -261,10 +256,8 @@ public class Juego extends GameCanvas {
     }
 
     public void createObstacles() {
-        createObstaclesCount++;
-        if (createObstaclesCount == 120) {
-            obstacles.addElement(new Obstacles(ANCHO + 20, (ALTO - generateRandomYCoordinate.nextInt(100) - 10), 0));
-            createObstaclesCount = 0;
+        if (obstacles.size() < currentLevel) {
+            obstacles.addElement(new Obstacles(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10), 0));
         }
     }
 
@@ -279,16 +272,14 @@ public class Juego extends GameCanvas {
     }
 
     public void createEnemies() {
-        createEnemyCount++;
-        if (createEnemyCount == 80) {
+        if (enemies.size() < currentLevel) {
             if (alternateEnemyCreation) {
-                enemies.addElement(new Enemies(ANCHO + 20, (ALTO - generateRandomYCoordinate.nextInt(100) - 50), 0));
+                enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 0));
             } else {
-                enemies.addElement(new Enemies(ANCHO + 20, (ALTO - generateRandomYCoordinate.nextInt(100) - 50), 1));
+                enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 1));
 
             }
             alternateEnemyCreation = !alternateEnemyCreation;
-            createEnemyCount = 0;
         }
     }
 
@@ -303,16 +294,34 @@ public class Juego extends GameCanvas {
         }
     }
 
-    public void checkCollisions() {
+    public void checkVehicleCollisions() {
         for (int i = this.enemies.size() - 1; i >= 0; i--) {
             if (((Enemies) enemies.elementAt(i)).getEnemyX() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
                     && ((Enemies) enemies.elementAt(i)).getEnemyX() >= vehicle.getVehicleX()
                     && ((Enemies) enemies.elementAt(i)).getEnemyY() + (((Enemies) enemies.elementAt(i)).getEnemyHeight() / 2) < (vehicle.getVehicleY() + vehicle.getVehicleHeight())
                     && ((Enemies) enemies.elementAt(i)).getEnemyY() + (((Enemies) enemies.elementAt(i)).getEnemyHeight() / 2) > vehicle.getVehicleY()) {
 
-                vehicle.hasCollided(true);
+                vehicle.hasCollided(true, true);
                 display.vibrate(200);
                 ((Enemies) this.enemies.elementAt(i)).hasCollided(true);
+            }
+
+
+        }
+    }
+
+    public void checkObstaclesVehicleCollisions() {
+        for (int i = this.obstacles.size() - 1; i >= 0; i--) {
+            if (((Obstacles) obstacles.elementAt(i)).getObstacleX() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
+                    && ((Obstacles) obstacles.elementAt(i)).getObstacleX() >= vehicle.getVehicleX()
+                    && ((Obstacles) obstacles.elementAt(i)).getObstacleY() < (vehicle.getVehicleY()) + vehicle.getVehicleHeight()
+                    && ((Obstacles) obstacles.elementAt(i)).getObstacleY() + ((Obstacles) obstacles.elementAt(i)).getObstacleHeight() + 10 > (vehicle.getVehicleY() + vehicle.getVehicleHeight())) {
+
+                if (!((Obstacles) obstacles.elementAt(i)).obstacleHasCollided()) {
+                    vehicle.hasCollided(true, false);
+                }
+                display.vibrate(200);
+                ((Obstacles) obstacles.elementAt(i)).hasCollided(true);
             }
 
 
@@ -366,8 +375,6 @@ public class Juego extends GameCanvas {
             this.musicPlayer.stopMusicPlayer();
             this.musicPlayer = null;
         }
-//        this.enemies=null;
-//        this.obstacles=null;
         System.gc();
     }
 }

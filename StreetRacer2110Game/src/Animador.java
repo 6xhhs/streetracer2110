@@ -1,5 +1,4 @@
 
-import javax.microedition.lcdui.game.GameCanvas;
 //solicita un GameCanvas que ejecute los metodos actualizar y dibujar constantemente
 public class Animador implements Runnable {
 

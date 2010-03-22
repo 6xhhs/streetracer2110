@@ -5,21 +5,17 @@ import javax.microedition.lcdui.Image;
 
 public class Obstacles {
 
-    private int obstacleWidth=70;
-    private int obstacleHeight=17;
-    private int screenWidth;
-    private int screenHeight;
+    private int obstacleWidth;
+    private int obstacleHeight;
     private Image obstacleImage;
     private boolean obstacleHasCollided;
     private int obstacleX;
     private int obstacleY;
 
 
-    public Obstacles(int screenWidth, int screenHeight, int obstacleSelect) {
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-        this.obstacleX=screenWidth;
-        this.obstacleY=screenHeight;
+    public Obstacles(int obstacleX, int obstacleY, int obstacleSelect) {
+        this.obstacleX=obstacleX;
+        this.obstacleY=obstacleY;
 
         this.obstacleHasCollided=false;
 
@@ -29,12 +25,17 @@ public class Obstacles {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            obstacleWidth = 70;
+            obstacleHeight = 17;
         } else if (obstacleSelect == 1) {
             try {
                 obstacleImage = Image.createImage("/hole.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+
+            obstacleWidth = 70;
+            obstacleHeight = 17;
         }
     }
 
@@ -60,5 +61,15 @@ public class Obstacles {
 
     public int getObstacleWidth(){
         return this.obstacleWidth;
+    }
+
+    public int getObstacleHeight(){
+        return this.obstacleHeight;
+    }
+
+        public void hasCollided(boolean hasCollided) {
+        if (hasCollided) {
+            this.obstacleHasCollided = hasCollided;
+        }
     }
 }

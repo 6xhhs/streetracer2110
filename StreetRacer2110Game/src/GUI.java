@@ -1,20 +1,10 @@
 
-import java.util.*;
-
-import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.game.*;
 
-import javax.microedition.media.*;
-import javax.microedition.media.control.*;
-
-import java.io.*;
-import javax.microedition.io.*;
-import javax.microedition.io.file.*;
-
-class GUI extends GameCanvas {
+public class GUI extends GameCanvas {
 
     private StreetRacer2110 midlet;
-    private Display display;
     private Graphics g;
     private int width = 0;
     private int height = 0;
@@ -104,7 +94,6 @@ class GUI extends GameCanvas {
                     currentlySelectedIndex = 0;
                 }
 
-                //clearScreen();
                 menu.drawActiveMenu(this, g, currentlySelectedIndex); // repaint active menu
             } else if (keyCode == FIRE) {
 
@@ -188,11 +177,6 @@ class GUI extends GameCanvas {
                     if (keyIsPressed) {
                         musicPlayer.stopMusicPlayer();
                         menu.drawLetsGoOnScreen(this, g);
-//                        try {
-//                            Thread.sleep(700);
-//                        } catch (InterruptedException ex) {
-//                            ex.printStackTrace();
-//                        }
                         midlet.changeScreenToGame(carSelectedIndex, musicIsActive);
                     }
                     keyIsPressed = false;
@@ -271,7 +255,6 @@ class GUI extends GameCanvas {
 
     public void continuar() {
         clearScreen();
-        System.out.println("Reanudando menu");
         menu.drawActiveMenu(this, g, currentlySelectedIndex);
     }
 
