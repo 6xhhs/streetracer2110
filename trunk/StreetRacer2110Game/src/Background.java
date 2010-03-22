@@ -2,9 +2,9 @@
 import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.game.Sprite;
 
 public class Background {
+    private static final int LEVEL_X_LIMIT = -1100;
 
     private Image backgroundImage;
     private Image backgroundImage2;
@@ -13,7 +13,6 @@ public class Background {
     private int alto;
     private int ancho;
     private boolean isSkyBackground;
-    private final int SKY_WIDTH = 1460;
     private int changeInX = 0;
 
     public Background(String archivo, boolean isSkyBackground, int speed) throws IOException {
@@ -39,7 +38,7 @@ public class Background {
 
         if (isSkyBackground) {
 
-            if (x <= -1100) {
+            if (x <= LEVEL_X_LIMIT) {
                 changeInX = 0;
             }
             x -= changeInX;

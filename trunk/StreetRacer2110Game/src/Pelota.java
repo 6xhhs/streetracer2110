@@ -1,11 +1,11 @@
 
 import java.io.IOException;
-import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.game.GameCanvas;
 
 public class Pelota{
+    private static final int VEHICLE_BULLET_X_CHANGE = 15;
+    private static final int ENEMY_BULLET_X_CHANGE = 9;
 
     private int x;
     private int y;
@@ -26,9 +26,9 @@ public class Pelota{
 
     public void actualizar() {
         if(vehicleOrEnemy==1)
-            x += 15;
+            x += VEHICLE_BULLET_X_CHANGE;
         else
-            x-=9;
+            x-=ENEMY_BULLET_X_CHANGE;
     }
 
     public void dibujar(Graphics g) {
@@ -45,7 +45,6 @@ public class Pelota{
 
     public void hasCollided(boolean hasCollided){
         if(hasCollided){
-            System.out.println("Bullet hit something!");
             this.hasCollided = hasCollided;
         }
     }

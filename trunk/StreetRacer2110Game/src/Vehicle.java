@@ -4,9 +4,11 @@ import java.util.Vector;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.game.Sprite;
 
 public class Vehicle {
+
+    private static final int MAX_BULLETS = 4;
+    private static final int ROAD_TOP_Y_LIMIT = 260;
 
     private Image vehicleImage, damagedVehicleImage;
     private int x;
@@ -111,7 +113,10 @@ public class Vehicle {
             g.drawImage(lifeImage, 0, 0, g.TOP | g.LEFT);
         }
         g.setFont(font);
-        g.drawString("Score: " + totalPointsAccumulated, 250, 2, g.TOP | g.LEFT);
+        g.setColor(0x000000);
+        g.fillRect(160, 0, 110, 25);
+        g.setColor(0xff6600);
+        g.drawString("Score: " + totalPointsAccumulated, 162, 2, g.TOP | g.LEFT);
     }
 
     public void moveLeft() {
@@ -131,8 +136,8 @@ public class Vehicle {
     }
 
     public void moveUp() {
-        if (y <= 260 - CAR_HEIGHT) {
-            y = 260 - CAR_HEIGHT;
+        if (y <= ROAD_TOP_Y_LIMIT - CAR_HEIGHT) {
+            y = ROAD_TOP_Y_LIMIT - CAR_HEIGHT;
         } else {
             y -= changeInY;
         }
@@ -147,7 +152,7 @@ public class Vehicle {
     }
 
     public void agregarBullet() {
-        if (bullets.size() < 4) {
+        if (bullets.size() < MAX_BULLETS) {
             bullets.addElement(new Pelota(this.bulletX, this.bulletY, 1));
         }
     }
@@ -181,17 +186,18 @@ public class Vehicle {
     public void setBulletY() {
         if (carSelectedIndex == 0) {
             this.bulletY = this.y;
-        } else if (carSelectedIndex == 1) {
-            this.bulletY = this.y + 2;
         } else {
-            this.bulletY = this.y;
+            this.bulletY = this.y+2;
         }
     }
 
-    public void hasCollided(boolean hasCollided) {
+    public void hasCollided(boolean hasCollided, boolean addPoints) {
         if (hasCollided) {
             drawDamagedVehicleIsActive = true;
-            totalPointsAccumulated += 15;
+
+            if(addPoints){
+                totalPointsAccumulated += 15;
+            }
             damageCount++;
             if (damageCount == totalDamageReceived) {
                 damageCount = 0;

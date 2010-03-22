@@ -1,6 +1,5 @@
 
 import java.io.IOException;
-import java.util.*;
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
 

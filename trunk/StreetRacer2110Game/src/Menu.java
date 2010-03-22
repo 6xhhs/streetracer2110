@@ -1,7 +1,5 @@
 
 import java.io.IOException;
-import java.util.*;
-
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.*;
 
@@ -64,9 +62,6 @@ public class Menu {
         // draw left and right menu options
 
         g.setFont(font);
-        //g.setColor(0xffffff); // black
-
-        //g.drawString(leftOption, padding, height - padding, g.LEFT | g.BOTTOM);
         canvas.flushGraphics();
     }
 
@@ -152,9 +147,6 @@ public class Menu {
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
         int fontHeight = font.getHeight();
 
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-
         g.setFont(font);
         g.setColor(0xff6600); // orange
 
@@ -204,18 +196,15 @@ public class Menu {
     public void drawSelectCarMenu(GameCanvas canvas, Graphics g, int i) {
         this.g = g;
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
-        int fontHeight = font.getHeight();
 
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-
 
         g.drawImage(carSelectBackground, 0, 0, g.TOP | g.LEFT);
         canvas.flushGraphics();
 
         g.setColor(0xff6600);
         if (i == 0) {
-            //g.drawString("S Racer", 102,243, g.TOP|g.LEFT);
             g.drawImage(sRacer, 117, 234, g.TOP | g.LEFT);
             g.drawImage(sRacerInfo, 80, 90, g.TOP | g.LEFT);
         } else if (i == 1) {
@@ -246,7 +235,6 @@ public class Menu {
 
 
         g.drawImage(creditsBackground, 0, 0, g.TOP | g.LEFT);
-        //canvas.flushGraphics();
 
         g.setColor(0x000000);   //black
         g.fillRect(0, 330, width, fontHeight + 10);
@@ -256,7 +244,6 @@ public class Menu {
 
         g.drawString("Sound Active?", (width / 2), padding, g.TOP | g.LEFT);
         g.drawString("A: Yes    B: No", padding, height - padding, g.LEFT | g.BOTTOM);
-        //g.drawString("D: Back", width, height - padding, g.RIGHT | g.BOTTOM);
 
         if(i==1)
             g.drawString("Sound On", (width / 2), (height / 2), g.TOP | g.LEFT);
@@ -268,7 +255,6 @@ public class Menu {
 
     public void drawLetsGoOnScreen(GameCanvas canvas, Graphics g) {
         this.g = g;
-        Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_LARGE);
 
         int width = canvas.getWidth();
         int height = canvas.getHeight();

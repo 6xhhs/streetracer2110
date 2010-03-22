@@ -4,8 +4,9 @@ import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-// Comentario de RMR
+
 public class Enemies {
+    public static final int MIN_SPEED = 4;
 
     private Image enemiesImage;
     private Image enemiesCollidedImage;
@@ -19,44 +20,43 @@ public class Enemies {
     private int enemiesSelectedIndex;
     private static Random random = new Random();
     private int changeInX;
-    private int bulletChangeInX;
     private boolean enemyHasCollided = false;
     private int addBulletCount=0;
 
     public Enemies(int xCoordinate, int yCoordinate, int enemiesSelectedIndex) {
 
+
         this.enemiesSelectedIndex = enemiesSelectedIndex;
         this.x = xCoordinate;
         this.y = yCoordinate;
-        bulletChangeInX = 9;
-        changeInX = random.nextInt(5) + 3;
+        changeInX = random.nextInt(5) + MIN_SPEED;
         if (this.enemiesSelectedIndex == 0) {
             try {
-                enemiesImage = Image.createImage("/Motocicleta.png");
+                enemiesImage = Image.createImage("/motorcycle enemy.png");
                 enemiesCollidedImage = Image.createImage("/explosion.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            ENEMY_WIDTH = 83;
-            ENEMY_HEIGHT = 42;
+            ENEMY_WIDTH = 75;
+            ENEMY_HEIGHT = 40;
         } else if (this.enemiesSelectedIndex == 1) {
             try {
-                enemiesImage = Image.createImage("/motorcycle.png");
+                enemiesImage = Image.createImage("/motorcycle enemy.png");
                 enemiesCollidedImage = Image.createImage("/explosion.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            ENEMY_WIDTH = 85;
-            ENEMY_HEIGHT = 45;
+            ENEMY_WIDTH = 75;
+            ENEMY_HEIGHT = 40;
         } else {
             try {
-                enemiesImage = Image.createImage("/Motocicleta.png");
+                enemiesImage = Image.createImage("/motorcycle enemy.png");
                 enemiesCollidedImage = Image.createImage("/explosion.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            ENEMY_WIDTH = 83;
-            ENEMY_HEIGHT = 42;
+            ENEMY_WIDTH = 75;
+            ENEMY_HEIGHT = 40;
         }
 
         bullets = new Vector();
@@ -136,7 +136,6 @@ public class Enemies {
 
     public void hasCollided(boolean hasCollided) {
         if (hasCollided) {
-            System.out.println("Enemy has collided: BOOM!");
             enemiesImage = enemiesCollidedImage;
             this.enemyHasCollided = hasCollided;
         }
@@ -157,7 +156,7 @@ public class Enemies {
                         && ((Pelota) bullets.elementAt(i)).getX() > 0) {
 
                     ((Pelota) bullets.elementAt(i)).hasCollided(true);
-                    vehicle.hasCollided(true);
+                    vehicle.hasCollided(true, false);
                 }
             }
         }

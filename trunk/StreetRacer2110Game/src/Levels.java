@@ -1,11 +1,6 @@
 
 import java.io.IOException;
-import java.io.InputStream;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-import javax.microedition.media.Manager;
-import javax.microedition.media.MediaException;
-import javax.microedition.media.Player;
 
 public class Levels {
 
@@ -31,18 +26,18 @@ public class Levels {
 
         } else if (level == 2) {
             try {
-                foreground = new Background("/highway2.jpg",false,9);
-                midground = new Background("/foregroundBuildings2.png",false,3);
-                sky = new Background("/SkyLevel1.jpg",true,1);
+                foreground = new Background("/foreground level 2.jpg",false,9);
+                midground = new Background("/midground level 2.png",false,3);
+                sky = new Background("/sky level 2.jpg",true,1);
                 clouds = new Background("/clouds2.png",false,1);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         } else if (level == 3) {
             try {
-                foreground = new Background("/highway2.jpg",false,9);
-                midground = new Background("/foregroundBuildings2.png",false,3);
-                sky = new Background("/SkyLevel1.jpg",true,1);
+                foreground = new Background("/foreground level 3.jpg",false,9);
+                midground = new Background("/midground level 3.png",false,3);
+                sky = new Background("/sky level 3.jpg",true,1);
                 clouds = new Background("/clouds2.png",false,1);
             } catch (IOException ex) {
                 ex.printStackTrace();

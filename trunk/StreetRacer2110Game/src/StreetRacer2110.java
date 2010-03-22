@@ -64,12 +64,16 @@ public class StreetRacer2110 extends MIDlet {
         gui = null;
         System.gc();
         juego = new Juego(this, carSelectedIndex, this.musicIsActive,1);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
         juego.start();
         display.setCurrent(juego);
     }
 
     public void changeGameToScreen(boolean musicIsActive) {
-        //juego.setItemsToNull();
         juego = null;
         System.gc();
         gui = new GUI(this);
