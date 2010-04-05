@@ -1,4 +1,4 @@
-package Package;
+
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
