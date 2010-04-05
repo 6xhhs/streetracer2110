@@ -1,5 +1,3 @@
-package Package;
-
 
 import java.io.IOException;
 import java.util.Random;
@@ -37,7 +35,6 @@ public class Juego extends GameCanvas {
     private Display display;
     private int carSelectedIndex;
     private final int currentLevel;
-
     public int highScore;
 
     public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel) {
@@ -95,7 +92,8 @@ public class Juego extends GameCanvas {
     }
 
     public void checkForLevelCompleted() {
-        if (gameLevel.returnSkyBackgroundXValue() == END_OF_LEVEL_X_VALUE) {
+        //if (gameLevel.returnSkyBackgroundXValue() == END_OF_LEVEL_X_VALUE) {
+        if (gameLevel.returnSkyBackgroundXValue() == -50) {
             nullifyObjects();
 
             //this if is temporary, to avoid getting a nullpointer in Levels
@@ -103,7 +101,7 @@ public class Juego extends GameCanvas {
                 highScore += vehicle.returnTotalPointsAccumulated();
                 midlet.loadNextLevel(this.carSelectedIndex, this.currentLevel + 1);
             } else {
-                midlet.loadYouWon(this.g,vehicle.returnTotalPointsAccumulated());
+                midlet.loadYouWon(this.g, vehicle.returnTotalPointsAccumulated());
             }
         }
     }
@@ -152,8 +150,6 @@ public class Juego extends GameCanvas {
     }
 
     void actualizar() {
-        checkForLevelCompleted();
-        checkForGameOver();
         pauseOrUnpause();
         currentKeyCode = getKeyStates();
         if (isPaused) {
@@ -262,6 +258,8 @@ public class Juego extends GameCanvas {
             pauseMenu.drawPausedMenu(this, pausedMenuSelectedIndex, yesNoOptionsIsActive);
         }
         flushGraphics();    //Actualiza los cambios en la memoria de la pantalla
+        checkForGameOver();
+        checkForLevelCompleted();
     }
 
     //MANEJO DE PAUSA
@@ -275,7 +273,7 @@ public class Juego extends GameCanvas {
     }
 
     public void createObstacles() {
-        while(obstacles.size() < currentLevel) {
+        while (obstacles.size() < currentLevel) {
             obstacles.addElement(new Obstacles(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10), 0));
         }
     }
@@ -291,7 +289,7 @@ public class Juego extends GameCanvas {
     }
 
     public void createEnemies() {
-        while(enemies.size() < currentLevel) {
+        while (enemies.size() < currentLevel) {
             if (alternateEnemyCreation) {
                 enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 0));
             } else {

@@ -1,5 +1,3 @@
-package Package;
-
 
 import java.util.Vector;
 import javax.microedition.midlet.*;
@@ -35,7 +33,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         forma.addCommand(OKButton);
         forma.setCommandListener(this);
 
-        //for(int i)
+
 
 
     }
@@ -47,7 +45,11 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         fileManager = new FileManager("data.txt");
         //fileManager.writeToFile(totalPoints);
         fileManager.readFile(highScorePoints, highScoreNames);
+        System.out.println("has read the file");
         highScore = fileManager.returnReadData();
+        for (int i = 0; i < highScorePoints.size(); i++) {
+            System.out.println(highScoreNames.elementAt(i) + " " + highScorePoints.elementAt(i));
+        }
 
         if (isStartOfGame) {
             splashScreen = new SplashScreen(1);
@@ -108,6 +110,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     }
 
     public void changeGameToScreen() {
+        //juego.nullifyObjects();
         juego = null;
         System.gc();
         gui = new GUI(this, highScore);
@@ -152,39 +155,45 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     public void loadYouWon(Graphics g, int totalPointsAccumulated) {
         this.totalPoints = totalPointsAccumulated;
         System.out.println("YOU WON!! CONGRATS!!!");
+        System.out.println(totalPoints);
         //Scanner entrada = new Scanner(System.in);
 
         boolean isAHighScore = false;
 
         for (int i = 0; i < highScorePoints.size(); i++) {
-            if (totalPoints >= ((Integer) highScorePoints.elementAt(i)).intValue()) {
-                highScorePoints.setElementAt(totalPoints + "", i);
+            if (totalPoints >= Integer.parseInt((String) highScorePoints.elementAt(i))) {
+                highScorePoints.insertElementAt(totalPoints + "", i);
                 isAHighScore = true;
                 highScorePosition = i;
+                highScorePoints.setSize(5);
                 break;
             }
         }
 
         if (isAHighScore) {
             loadEnterHighScoreNameScreen();
-            fileManager.writeToFile(highScorePoints, highScoreNames);
-        }
 
-        changeGameToScreen();
+        }
     }
 
     private void loadEnterHighScoreNameScreen() {
-        juego = null;
+        //juego.nullifyObjects();
         display.setCurrent(forma);
     }
 
     public void commandAction(Command cmnd, Displayable dsplbl) {
+
         if (cmnd == OKButton) {
             String highScoreName = enterHighScoreName.getString();
             if (highScorePosition > -1) {
-                highScoreNames.insertElementAt(highScoreName, totalPoints);
-                highScoreNames.removeElementAt(highScoreNames.size() - 1);
+                highScoreNames.insertElementAt(highScoreName, highScorePosition);
+                highScoreNames.setSize(5);
             }
+
+            fileManager.writeToFile(highScorePoints, highScoreNames);
+            fileManager.readFile(highScorePoints, highScoreNames);
+            highScore = fileManager.returnReadData();
+            changeGameToScreen();
         }
     }
 }

@@ -1,4 +1,4 @@
-package Package;
+
 
 
 import java.io.IOException;
@@ -178,10 +178,11 @@ public class Menu {
 
             while(tempHighScore.indexOf("\n")!=-1){
                 g.drawString(tempHighScore.substring(0, tempHighScore.indexOf("\n")), 0, highScoreWordHeight, g.TOP | g.LEFT);
+                System.out.println("*"+tempHighScore.substring(0, tempHighScore.indexOf("\n"))+"*");
                 tempHighScore = tempHighScore.substring(tempHighScore.indexOf("\n")+1, tempHighScore.length());
                 highScoreWordHeight+=(fontHeight+5);
             }
-            g.drawString(highScore, 0, fontHeight + 5, g.TOP | g.LEFT);
+            g.drawString(tempHighScore, 0, highScoreWordHeight, g.TOP | g.LEFT);
         }
         canvas.flushGraphics();
     }
