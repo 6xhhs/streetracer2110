@@ -1,3 +1,5 @@
+package Package;
+
 
 import java.io.IOException;
 import java.util.Random;
@@ -8,6 +10,8 @@ import javax.microedition.lcdui.Image;
 public class Enemies {
     public static final int MIN_SPEED = 4;
 
+
+    private Image originalEnemiesImage;
     private Image enemiesImage;
     private Image enemiesCollidedImage;
     private int x;
@@ -32,7 +36,8 @@ public class Enemies {
         changeInX = random.nextInt(5) + MIN_SPEED;
         if (this.enemiesSelectedIndex == 0) {
             try {
-                enemiesImage = Image.createImage("/motorcycle enemy.png");
+                originalEnemiesImage = Image.createImage("/motorcycle.png");
+                enemiesImage = Image.createImage("/motorcycle.png");
                 enemiesCollidedImage = Image.createImage("/explosion.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -41,7 +46,8 @@ public class Enemies {
             ENEMY_HEIGHT = 40;
         } else if (this.enemiesSelectedIndex == 1) {
             try {
-                enemiesImage = Image.createImage("/motorcycle enemy.png");
+                originalEnemiesImage = Image.createImage("/motorcycle.png");
+                enemiesImage = Image.createImage("/motorcycle.png");
                 enemiesCollidedImage = Image.createImage("/explosion.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -50,7 +56,8 @@ public class Enemies {
             ENEMY_HEIGHT = 40;
         } else {
             try {
-                enemiesImage = Image.createImage("/motorcycle enemy.png");
+                originalEnemiesImage = Image.createImage("/motorcycle.png");
+                enemiesImage = Image.createImage("/motorcycle.png");
                 enemiesCollidedImage = Image.createImage("/explosion.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -161,4 +168,28 @@ public class Enemies {
             }
         }
     }
+
+    public void resetEnemyCoordinates(int newXValue, int newYValue){
+        this.x=newXValue;
+        this.y=newYValue;
+    }
+
+    public void resetHasCollided(){
+        this.enemyHasCollided = false;
+    }
+
+    public void resetEnemiesImage(){
+        this.enemiesImage=originalEnemiesImage;
+    }
+
+    public void resetEnemy(int newXValue, int newYValue){
+        resetEnemyCoordinates(newXValue, newYValue);
+        resetHasCollided();
+        resetEnemiesImage();
+    }
+    
+    public void removeBullets(){
+        this.bullets.removeAllElements();
+    }
+
 }

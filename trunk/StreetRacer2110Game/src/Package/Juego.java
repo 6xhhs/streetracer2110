@@ -1,3 +1,5 @@
+package Package;
+
 
 import java.io.IOException;
 import java.util.Random;
@@ -34,7 +36,9 @@ public class Juego extends GameCanvas {
     private boolean alternateEnemyCreation = false;
     private Display display;
     private int carSelectedIndex;
-    private int currentLevel;
+    private final int currentLevel;
+
+    public int highScore;
 
     public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel) {
 
@@ -61,10 +65,7 @@ public class Juego extends GameCanvas {
         vehicle = new Vehicle(this.ANCHO, this.ALTO, carSelectedIndex);
 
         enemies = new Vector();
-        enemies.addElement(new Enemies(ANCHO + 100, (ALTO - generateRandomCoordinate.nextInt(100) - 60), 0));
-
         obstacles = new Vector();
-        obstacles.addElement(new Obstacles((ANCHO + 100), (ALTO - generateRandomCoordinate.nextInt(100) - 15), 0));
 
         try {
             pausedOpaque = Image.createImage("/paused.png");
@@ -77,7 +78,13 @@ public class Juego extends GameCanvas {
 
         pauseMenu = new PauseMenu(this, g);
 
+        createObstacles();
+        createEnemies();
+
+        highScore = 0;
+
         animador = new Animador(this);      //animador debe ser el ultimo que se crea
+        animador.iniciar();
     }
 
     public void checkForGameOver() {
@@ -93,9 +100,10 @@ public class Juego extends GameCanvas {
 
             //this if is temporary, to avoid getting a nullpointer in Levels
             if (this.currentLevel < 3) {
+                highScore += vehicle.returnTotalPointsAccumulated();
                 midlet.loadNextLevel(this.carSelectedIndex, this.currentLevel + 1);
             } else {
-                midlet.loadNextLevel(this.carSelectedIndex, this.currentLevel);
+                midlet.loadYouWon(this.g,vehicle.returnTotalPointsAccumulated());
             }
         }
     }
@@ -139,7 +147,8 @@ public class Juego extends GameCanvas {
         if (musicIsActive) {
             musicPlayer.startMusicPlayer();
         }
-        animador.iniciar();
+        createObstacles();
+        createEnemies();
     }
 
     void actualizar() {
@@ -148,6 +157,9 @@ public class Juego extends GameCanvas {
         pauseOrUnpause();
         currentKeyCode = getKeyStates();
         if (isPaused) {
+            if (musicPlayer.isPlaying()) {
+                musicPlayer.stopMusicPlayer();
+            }
 
             if ((currentKeyCode & UP_PRESSED) != 0) {
                 pausedMenuSelectedIndex--;
@@ -184,10 +196,12 @@ public class Juego extends GameCanvas {
                     }
                 } else if (pausedMenuSelectedIndex == 1) {
                     if ((currentKeyCode & GAME_C_PRESSED) != 0) {
-                        musicPlayer.stopMusicPlayer();
-                        musicPlayer = null;
-                        animador.terminar();
-                        midlet.changeGameToScreen(musicIsActive);
+//                        musicPlayer.stopMusicPlayer();
+//                        musicPlayer.terminate();
+//                        musicPlayer = null;
+//                        animador.terminar();
+                        nullifyObjects();
+                        midlet.changeGameToScreen();
                     }
                     if ((currentKeyCode & GAME_D_PRESSED) != 0) {
                         yesNoOptionsIsActive = false;
@@ -197,13 +211,18 @@ public class Juego extends GameCanvas {
             }
             return;
         }
+
+        if (musicIsActive) {
+            if (!musicPlayer.isPlaying()) {
+                musicPlayer.startMusicPlayer();
+            }
+        }
         readProcessKeysPressed();
 
-        createObstacles();
-        removeObstacles();
+        resetObstacles();
 
-        createEnemies();
-        removeEnemies();
+        resetEnemyCoordinates();
+        resetEnemies();
         addEnemyBullets();
 
         checkEnemyBulletsVehicleCollision();
@@ -256,15 +275,15 @@ public class Juego extends GameCanvas {
     }
 
     public void createObstacles() {
-        if (obstacles.size() < currentLevel) {
+        while(obstacles.size() < currentLevel) {
             obstacles.addElement(new Obstacles(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10), 0));
         }
     }
 
-    public void removeObstacles() {
+    public void resetObstacles() {
         for (int i = this.obstacles.size() - 1; i >= 0; i--) {
             if ((((Obstacles) obstacles.elementAt(i)).getObstacleX() < -((Obstacles) obstacles.elementAt(i)).getObstacleWidth())) {
-                obstacles.removeElementAt(i);
+                ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10));
             } else {
                 ((Obstacles) obstacles.elementAt(i)).actualizar();
             }
@@ -272,22 +291,30 @@ public class Juego extends GameCanvas {
     }
 
     public void createEnemies() {
-        if (enemies.size() < currentLevel) {
+        while(enemies.size() < currentLevel) {
             if (alternateEnemyCreation) {
                 enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 0));
             } else {
                 enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 1));
 
             }
+            System.out.println("Enemy was created");
             alternateEnemyCreation = !alternateEnemyCreation;
         }
     }
 
-    public void removeEnemies() {
+    public void resetEnemyCoordinates() {
         for (int i = this.enemies.size() - 1; i >= 0; i--) {
-            if ((((Enemies) enemies.elementAt(i)).getEnemyX() < -((Enemies) enemies.elementAt(i)).getEnemyWidth())
-                    || ((Enemies) enemies.elementAt(i)).returnEnemyHasCollided()) {
-                enemies.removeElementAt(i);
+            if ((((Enemies) enemies.elementAt(i)).getEnemyX() < -((Enemies) enemies.elementAt(i)).getEnemyWidth())) {
+                ((Enemies) enemies.elementAt(i)).resetEnemyCoordinates(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
+            }
+        }
+    }
+
+    public void resetEnemies() {
+        for (int i = this.enemies.size() - 1; i >= 0; i--) {
+            if (((Enemies) enemies.elementAt(i)).returnEnemyHasCollided()) {
+                ((Enemies) enemies.elementAt(i)).resetEnemy(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
             } else {
                 ((Enemies) enemies.elementAt(i)).actualizar();
             }
@@ -358,22 +385,30 @@ public class Juego extends GameCanvas {
 
     public void resetJuegoValues() {
         this.vehicle.resetValues();
-        this.enemies.removeAllElements();
-        this.obstacles.removeAllElements();
+
+        for (int i = this.enemies.size() - 1; i >= 0; i--) {
+            ((Enemies) enemies.elementAt(i)).resetEnemy(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
+            ((Enemies) enemies.elementAt(i)).removeBullets();
+        }
+
+        for (int i = this.obstacles.size() - 1; i >= 0; i--) {
+            ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10));
+        }
+
         this.gameLevel.resetValues();
         if (musicIsActive) {
             this.musicPlayer.stopMusicPlayer();
-            this.musicPlayer = null;
+            this.musicPlayer.terminate();
             this.musicPlayer = new MusicPlayer(currentLevel);
-            start();
         }
+        start();
     }
 
     public void nullifyObjects() {
         this.animador.terminar();
         if (musicIsActive) {
             this.musicPlayer.stopMusicPlayer();
-            this.musicPlayer = null;
+            this.musicPlayer.terminate();
         }
         System.gc();
     }

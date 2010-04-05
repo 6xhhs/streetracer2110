@@ -1,3 +1,5 @@
+package Package;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,10 +9,13 @@ import javax.microedition.media.Player;
 
 public class MusicPlayer {
 
+    private boolean isPlaying;
     private Player musicPlayer;
     private InputStream iS;
 
     public MusicPlayer(int index) {
+
+        isPlaying = false;
 
         if (index == 0) {
             try {
@@ -54,10 +59,13 @@ public class MusicPlayer {
 
     public void startMusicPlayer() {
         try {
+            musicPlayer.realize();
+            musicPlayer.prefetch();
             musicPlayer.start();
         } catch (MediaException ex) {
             System.out.println("Media exception error");
         }
+        isPlaying = true;
     }
 
     public void stopMusicPlayer() {
@@ -66,6 +74,16 @@ public class MusicPlayer {
         } catch (MediaException ex) {
             System.out.println("Media exception error");
         }
+        isPlaying=false;
+    }
+
+    void terminate() {
+        musicPlayer.deallocate();
+        musicPlayer = null;
+    }
+
+    boolean isPlaying() {
+        return isPlaying;
     }
 }
 

@@ -1,8 +1,18 @@
+package Package;
+
 
 import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+/**
+ * Representa una pelota que estara moviendose en el campo de juego
+ * hay que documentar todo lo que es publico, como esta clase, metodos y variables(constante)
+ * los objetos privados se documentan normalmente, haciendole comentarios al lado de su
+ * declaracion
+ * @author Manuel Gonzalez Solano, Salvador Aguilar Galindo
+ * @version 1.0, Abril, 2010
+ */
 public class Pelota{
     private static final int VEHICLE_BULLET_X_CHANGE = 15;
     private static final int ENEMY_BULLET_X_CHANGE = 9;
@@ -13,6 +23,13 @@ public class Pelota{
     private int vehicleOrEnemy;
     private boolean hasCollided=false;
 
+    /**
+     * Constructor, crea una pelota con una imagen desde un archivo, y dimensiones dadas
+     * por los parametros
+     * @param x ancho de la pelota
+     * @param y alto de la pelota
+     * @param vehicleOrEnemy indicador de tipo de personaje quien usara la pelota
+     */
     public Pelota(int x, int y, int vehicleOrEnemy) {
         this.vehicleOrEnemy = vehicleOrEnemy;
         this.x = x;
@@ -39,16 +56,28 @@ public class Pelota{
         return x;
     }
 
+    /**
+     * Accesor de la altura de la pelota
+     * @return
+     */
     public int getY(){
         return this.y;
     }
 
+    /**
+     * 
+     * @param hasCollided
+     */
     public void hasCollided(boolean hasCollided){
         if(hasCollided){
             this.hasCollided = hasCollided;
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean returnHasCollided(){
         return this.hasCollided;
     }

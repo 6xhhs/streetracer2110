@@ -1,3 +1,5 @@
+package Package;
+
 
 //solicita un GameCanvas que ejecute los metodos actualizar y dibujar constantemente
 public class Animador implements Runnable {
@@ -7,7 +9,7 @@ public class Animador implements Runnable {
     private boolean corriendo;  //when false, animador will cease to run
     private Thread thread;
 
-    private final int FPS = 30;
+    private final int FPS = 34;
     private final int RETARDO = 1000/FPS;
 
     public Animador(Juego juego){
