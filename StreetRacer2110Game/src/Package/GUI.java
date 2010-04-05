@@ -1,3 +1,5 @@
+package Package;
+
 
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.game.*;
@@ -25,12 +27,15 @@ public class GUI extends GameCanvas {
     private boolean musicIsActive;
     private boolean yesNoMenuIsActive = false;
 
-    public GUI(StreetRacer2110 midlet) {
+    private String highScore;
+
+    public GUI(StreetRacer2110 midlet, String highScore) {
 
         super(false);
 
         this.midlet = midlet;
-
+        this.highScore = highScore;
+        
         setFullScreenMode(true);
 
         width = getWidth();
@@ -48,7 +53,7 @@ public class GUI extends GameCanvas {
         menuOptions = new String[]{"Start Game", "Options", "Instructions", "Credits", "High Score", "Exit"};
         carMenuOptions = new String[]{"S Racer", "M Racer", "SM Racer"};
 
-        menu = new Menu(leftOption, rightOption, menuOptions);
+        menu = new Menu(leftOption, rightOption, menuOptions, highScore);
     }
 
     public void start() {
@@ -248,7 +253,10 @@ public class GUI extends GameCanvas {
     }
 
     public void setItemsToNull() {
-        this.musicPlayer = null;
+        if(musicPlayer!=null){
+            musicPlayer.stopMusicPlayer();
+        }
+        this.musicPlayer.terminate();
         this.menu = null;
 
     }

@@ -1,3 +1,5 @@
+package Package;
+
 
 import java.io.IOException;
 import java.util.Vector;
@@ -56,7 +58,7 @@ public class Vehicle {
         } else if (this.carSelectedIndex == 1) {
             try {
                 vehicleImage = Image.createImage("/M Racer.png");
-                damagedVehicleImage = Image.createImage("/S Racer Damaged.png");
+                damagedVehicleImage = Image.createImage("/M Racer Damaged.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -68,11 +70,11 @@ public class Vehicle {
         } else {
             try {
                 vehicleImage = Image.createImage("/SM Racer.png");
-                damagedVehicleImage = Image.createImage("/S Racer Damaged.png");
+                damagedVehicleImage = Image.createImage("/SM Racer Damaged.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            CAR_WIDTH = 110;
+            CAR_WIDTH = 98;
             CAR_HEIGHT = 65;
             changeInX = 7;
             changeInY = 7;
@@ -187,7 +189,7 @@ public class Vehicle {
         if (carSelectedIndex == 0) {
             this.bulletY = this.y;
         } else {
-            this.bulletY = this.y+2;
+            this.bulletY = this.y+3;
         }
     }
 
@@ -272,5 +274,9 @@ public class Vehicle {
         bullets.removeAllElements();
         lifeImage = (Image) lifeBarImages.elementAt(0);
 
+    }
+
+    public int returnTotalPointsAccumulated(){
+        return this.totalPointsAccumulated;
     }
 }

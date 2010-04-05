@@ -1,3 +1,5 @@
+package Package;
+
 
 import java.io.IOException;
 import javax.microedition.lcdui.*;
@@ -20,11 +22,13 @@ public class Menu {
     private Image carSelectBackground = null;
     private Image sRacerInfo, mRacerInfo, sMRacerInfo;
 
-    public Menu(String leftOption, String rightOption, String[] menuOptions) {
+    private String highScore;
+
+    public Menu(String leftOption, String rightOption, String[] menuOptions, String highScore) {
 
         this.leftOption = leftOption;
         this.menuOptions = menuOptions;
-
+        this.highScore = highScore;
 
         try {
             sRacer = Image.createImage("/SRacerMenu.jpg");
@@ -167,10 +171,17 @@ public class Menu {
             g.drawString("Salvador Aguilar Galindo 967057", 0, 2 * (fontHeight + 5), g.TOP | g.LEFT);
             g.drawString("Carrera: ISC09",0,3*(fontHeight+5),g.TOP|g.LEFT);
         } else if (i == 4) {
+            String tempHighScore = highScore;
+            int highScoreWordHeight=fontHeight + 5;
             g.drawImage(creditsBackground, 0, 0, g.TOP | g.LEFT);
             g.drawString("High Scores", 0, 0, g.TOP | g.LEFT);
-            g.drawString("Man: 252009 pts", 0, fontHeight + 5, g.TOP | g.LEFT);
-            g.drawString("Sal: 30943 pts", 0, 2 * (fontHeight + 5), g.TOP | g.LEFT);
+
+            while(tempHighScore.indexOf("\n")!=-1){
+                g.drawString(tempHighScore.substring(0, tempHighScore.indexOf("\n")), 0, highScoreWordHeight, g.TOP | g.LEFT);
+                tempHighScore = tempHighScore.substring(tempHighScore.indexOf("\n")+1, tempHighScore.length());
+                highScoreWordHeight+=(fontHeight+5);
+            }
+            g.drawString(highScore, 0, fontHeight + 5, g.TOP | g.LEFT);
         }
         canvas.flushGraphics();
     }
