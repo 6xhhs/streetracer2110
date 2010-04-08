@@ -211,7 +211,6 @@ public class Vehicle {
                 } else if (totalDamageCount == 3) {
                     lifeImage = (Image) lifeBarImages.elementAt(3);
                 } else if (totalDamageCount == 4) {
-                    System.out.println("Game Over!!");
                     this.gameOverIsActive = true;
                 }
             }

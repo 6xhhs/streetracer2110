@@ -1,6 +1,4 @@
 
-
-
 import java.io.IOException;
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
@@ -45,6 +43,12 @@ public class SplashScreen extends GameCanvas {
         } else if (index == 5) {
             try {
                 img = Image.createImage("/Level 3 Load Screen.jpg");
+            } catch (IOException e) {
+                System.out.println("Image not found");
+            }
+        } else if (index == 6) {
+            try {
+                img = Image.createImage("/End Of Game Load Screen.jpg");
             } catch (IOException e) {
                 System.out.println("Image not found");
             }
