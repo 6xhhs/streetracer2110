@@ -178,7 +178,6 @@ public class Menu {
             highScoreNames.setSize(5);
             
             for (int e = 0; e < highScorePoints.size(); e++) {
-                System.out.println("*"+highScoreNames.elementAt(e) + " " + highScorePoints.elementAt(e)+"*");
                 g.drawString(highScoreNames.elementAt(e) + " " + highScorePoints.elementAt(e), 0, highScoreWordHeight, g.TOP | g.LEFT);
                 highScoreWordHeight += (fontHeight + 5);
             }

@@ -45,37 +45,37 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
 
         fileManager = new FileManager("data.txt");
         fileManager.readFile(highScorePoints, highScoreNames);
+        loadStartOfGame();
 
+    }
+
+    private void loadStartOfGame() {
         if (isStartOfGame) {
-            splashScreen = new SplashScreen(1);
-            splashScreen.paint();
-            display.setCurrent(splashScreen);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-            splashScreen = new SplashScreen(2);
-            splashScreen.paint();
-            display.setCurrent(splashScreen);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
+
+            loadNewSplashScreen(1);
+            loadNewSplashScreen(2);
+
             gui = new GUI(this, highScorePoints, highScoreNames);
             gui.start();
             display.setCurrent(gui);
             display.vibrate(700);
             splashScreen = null;
-            System.gc();
             isStartOfGame = false;
+            System.gc();
         } else {
             gui.start();
         }
+    }
 
-
-
+    private void loadNewSplashScreen(int splashScreenIndex) {
+        splashScreen = new SplashScreen(splashScreenIndex);
+        splashScreen.paint();
+        display.setCurrent(splashScreen);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void pauseApp() {
@@ -93,13 +93,16 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         gui = null;
         System.gc();
         juego = new Juego(this, carSelectedIndex, this.musicIsActive, 1);
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
-        juego.start();
+
         display.setCurrent(juego);
+        juego.start();
+//        try {
+//            Thread.sleep(200);
+//        } catch (InterruptedException ex) {
+//            ex.printStackTrace();
+//        }
+
+
     }
 
     public void changeGameToScreen() {
@@ -182,13 +185,11 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
 
                 fileManager.writeToFile(highScorePoints, highScoreNames);
                 fileManager.readFile(highScorePoints, highScoreNames);
-                changeGameToScreen();
             }
-            OKButtonIsPressed = false;
-        }
-
-        if(cmnd != OKButton){
             OKButtonIsPressed = true;
         }
+
+        changeGameToScreen();
+        OKButtonIsPressed = false;
     }
 }

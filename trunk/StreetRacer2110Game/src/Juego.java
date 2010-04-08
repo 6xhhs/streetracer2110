@@ -294,7 +294,6 @@ public class Juego extends GameCanvas {
                 enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 1));
 
             }
-            System.out.println("Enemy was created");
             alternateEnemyCreation = !alternateEnemyCreation;
         }
     }
