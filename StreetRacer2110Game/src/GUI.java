@@ -1,6 +1,7 @@
 
 
 
+import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.game.*;
 
@@ -27,15 +28,11 @@ public class GUI extends GameCanvas {
     private boolean musicIsActive;
     private boolean yesNoMenuIsActive = false;
 
-    private String highScore;
-
-    public GUI(StreetRacer2110 midlet, String highScore) {
+    public GUI(StreetRacer2110 midlet, Vector highScorePoints, Vector highScoreNames) {
 
         super(false);
 
         this.midlet = midlet;
-        this.highScore = highScore;
-        
         setFullScreenMode(true);
 
         width = getWidth();
@@ -53,7 +50,7 @@ public class GUI extends GameCanvas {
         menuOptions = new String[]{"Start Game", "Options", "Instructions", "Credits", "High Score", "Exit"};
         carMenuOptions = new String[]{"S Racer", "M Racer", "SM Racer"};
 
-        menu = new Menu(leftOption, rightOption, menuOptions, highScore);
+        menu = new Menu(leftOption, rightOption, menuOptions, highScorePoints, highScoreNames);
     }
 
     public void start() {

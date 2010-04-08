@@ -78,6 +78,7 @@ public class MusicPlayer {
     }
 
     void terminate() {
+        //musicPlayer.close();
         musicPlayer.deallocate();
         musicPlayer = null;
     }
