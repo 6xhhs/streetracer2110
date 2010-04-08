@@ -31,29 +31,23 @@ public class FileManager {
                 fc.create();
                 OutputStream salida = fc.openOutputStream();
                 OutputStreamWriter output = new OutputStreamWriter(salida);
-                output.write("aaa 0\nbbb 0\nccc 0\nddd 0\neee 0");
+                output.write("aaa 0\nbbb 0\nccc 0\nddd 0\neee 0\n");
                 output.close();
             }
             InputStream entrada = fc.openInputStream();
             byte[] datos = new byte[512];
             int leidos = entrada.read(datos);   //returns -1 if nothing is read
-            System.out.println(leidos);
             data = new String(datos, 0, leidos);
-            ;
-            System.out.println(data);
             entrada.close();
             fc.close();
             String tempData = data;
+
             while (tempData.indexOf("\n") != -1) {
                 highScoreNames.addElement(tempData.substring(0, 3));
                 highScorePoints.addElement(tempData.substring(4, tempData.indexOf("\n")));
 
                 tempData = tempData.substring(tempData.indexOf("\n") + 1, tempData.length());
-                System.out.println(tempData);
             }
-            highScoreNames.addElement(tempData.substring(0, 3));
-            highScorePoints.addElement(tempData.substring(4, tempData.length()));
-            System.out.println(tempData);
 
         } catch (IOException ex) {
             System.out.println("something failed big time!");
@@ -71,12 +65,7 @@ public class FileManager {
             OutputStream salida = fc.openOutputStream();
             OutputStreamWriter output = new OutputStreamWriter(salida);
             for (int i = 0; i < highScorePoints.size(); i++) {
-                if (i == highScorePoints.size() - 1) {
-                    output.write(highScoreNames.elementAt(i) + " " + highScorePoints.elementAt(i));
-                } else {
-                    output.write(highScoreNames.elementAt(i) + " " + highScorePoints.elementAt(i) + "\n");
-
-                }
+                output.write(highScoreNames.elementAt(i) + " " + highScorePoints.elementAt(i) + "\n");
             }
             output.close();
             salida.close();

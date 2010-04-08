@@ -1,7 +1,6 @@
 
-
-
 import java.io.IOException;
+import java.util.Vector;
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.*;
 
@@ -21,14 +20,14 @@ public class Menu {
     private Image sMRacer = null;
     private Image carSelectBackground = null;
     private Image sRacerInfo, mRacerInfo, sMRacerInfo;
+    private Vector highScorePoints, highScoreNames;
 
-    private String highScore;
-
-    public Menu(String leftOption, String rightOption, String[] menuOptions, String highScore) {
+    public Menu(String leftOption, String rightOption, String[] menuOptions, Vector highScorePoints, Vector highScoreNames) {
 
         this.leftOption = leftOption;
         this.menuOptions = menuOptions;
-        this.highScore = highScore;
+        this.highScorePoints = highScorePoints;
+        this.highScoreNames = highScoreNames;
 
         try {
             sRacer = Image.createImage("/SRacerMenu.jpg");
@@ -163,26 +162,27 @@ public class Menu {
         } else if (i == 2) {
 
             g.drawImage(instructionsBackground, 0, 0, g.TOP | g.LEFT);
-            
+
         } else if (i == 3) {
             g.drawImage(creditsBackground, 0, 0, g.TOP | g.LEFT);
             g.drawString("Autores", 0, 0, g.TOP | g.LEFT);
             g.drawString("Manuel Gonzalez Solano 1165461", 0, fontHeight + 5, g.TOP | g.LEFT);
             g.drawString("Salvador Aguilar Galindo 967057", 0, 2 * (fontHeight + 5), g.TOP | g.LEFT);
-            g.drawString("Carrera: ISC09",0,3*(fontHeight+5),g.TOP|g.LEFT);
+            g.drawString("Carrera: ISC09", 0, 3 * (fontHeight + 5), g.TOP | g.LEFT);
         } else if (i == 4) {
-            String tempHighScore = highScore;
-            int highScoreWordHeight=fontHeight + 5;
+            int highScoreWordHeight = fontHeight + 5;
             g.drawImage(creditsBackground, 0, 0, g.TOP | g.LEFT);
             g.drawString("High Scores", 0, 0, g.TOP | g.LEFT);
 
-            while(tempHighScore.indexOf("\n")!=-1){
-                g.drawString(tempHighScore.substring(0, tempHighScore.indexOf("\n")), 0, highScoreWordHeight, g.TOP | g.LEFT);
-                System.out.println("*"+tempHighScore.substring(0, tempHighScore.indexOf("\n"))+"*");
-                tempHighScore = tempHighScore.substring(tempHighScore.indexOf("\n")+1, tempHighScore.length());
-                highScoreWordHeight+=(fontHeight+5);
+            highScorePoints.setSize(5);
+            highScoreNames.setSize(5);
+            
+            for (int e = 0; e < highScorePoints.size(); e++) {
+                System.out.println("*"+highScoreNames.elementAt(e) + " " + highScorePoints.elementAt(e)+"*");
+                g.drawString(highScoreNames.elementAt(e) + " " + highScorePoints.elementAt(e), 0, highScoreWordHeight, g.TOP | g.LEFT);
+                highScoreWordHeight += (fontHeight + 5);
             }
-            g.drawString(tempHighScore, 0, highScoreWordHeight, g.TOP | g.LEFT);
+            highScoreWordHeight = fontHeight + 5;
         }
         canvas.flushGraphics();
     }
@@ -257,10 +257,11 @@ public class Menu {
         g.drawString("Sound Active?", (width / 2), padding, g.TOP | g.LEFT);
         g.drawString("A: Yes    B: No", padding, height - padding, g.LEFT | g.BOTTOM);
 
-        if(i==1)
+        if (i == 1) {
             g.drawString("Sound On", (width / 2), (height / 2), g.TOP | g.LEFT);
-        else if(i==0)
+        } else if (i == 0) {
             g.drawString("Sound Off", (width / 2), (height / 2), g.TOP | g.LEFT);
+        }
 
         canvas.flushGraphics();
     }
@@ -275,15 +276,15 @@ public class Menu {
         canvas.flushGraphics();
     }
 
-    public void drawYesNoMenu(GameCanvas canvas, Graphics g){
+    public void drawYesNoMenu(GameCanvas canvas, Graphics g) {
 
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
         g.setFont(font);
-        g.drawImage(mainMenu,0,0,g.TOP|g.LEFT);
+        g.drawImage(mainMenu, 0, 0, g.TOP | g.LEFT);
         g.setColor(0xff6600);
         g.drawString("Shut Down?", 100, 100, g.TOP | g.LEFT);
-        g.drawString("C: YES",120,130,g.TOP|g.LEFT);
-        g.drawString("D: NO",120,160,g.TOP|g.LEFT);
+        g.drawString("C: YES", 120, 130, g.TOP | g.LEFT);
+        g.drawString("D: NO", 120, 160, g.TOP | g.LEFT);
         canvas.flushGraphics();
     }
 }

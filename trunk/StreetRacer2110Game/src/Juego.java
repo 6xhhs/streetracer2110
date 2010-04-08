@@ -92,16 +92,13 @@ public class Juego extends GameCanvas {
     }
 
     public void checkForLevelCompleted() {
-        //if (gameLevel.returnSkyBackgroundXValue() == END_OF_LEVEL_X_VALUE) {
-        if (gameLevel.returnSkyBackgroundXValue() == -50) {
-            nullifyObjects();
+        if (gameLevel.returnSkyBackgroundXValue() == END_OF_LEVEL_X_VALUE) {
 
-            //this if is temporary, to avoid getting a nullpointer in Levels
+            highScore += vehicle.returnTotalPointsAccumulated();
             if (this.currentLevel < 3) {
-                highScore += vehicle.returnTotalPointsAccumulated();
-                midlet.loadNextLevel(this.carSelectedIndex, this.currentLevel + 1);
+                midlet.loadNextLevel(this.carSelectedIndex, this.currentLevel + 1, highScore);
             } else {
-                midlet.loadYouWon(this.g, vehicle.returnTotalPointsAccumulated());
+                midlet.loadYouWon(highScore);
             }
         }
     }
@@ -196,7 +193,7 @@ public class Juego extends GameCanvas {
 //                        musicPlayer.terminate();
 //                        musicPlayer = null;
 //                        animador.terminar();
-                        nullifyObjects();
+                        //nullifyObjects();
                         midlet.changeGameToScreen();
                     }
                     if ((currentKeyCode & GAME_D_PRESSED) != 0) {
@@ -230,6 +227,9 @@ public class Juego extends GameCanvas {
 
         gameLevel.actualizar();
         vehicle.actualizarFireGun();
+
+        checkForGameOver();
+        checkForLevelCompleted();
     }
 
     void dibujar() {
@@ -258,8 +258,6 @@ public class Juego extends GameCanvas {
             pauseMenu.drawPausedMenu(this, pausedMenuSelectedIndex, yesNoOptionsIsActive);
         }
         flushGraphics();    //Actualiza los cambios en la memoria de la pantalla
-        checkForGameOver();
-        checkForLevelCompleted();
     }
 
     //MANEJO DE PAUSA
@@ -402,11 +400,16 @@ public class Juego extends GameCanvas {
         start();
     }
 
-    public void nullifyObjects() {
-        this.animador.terminar();
-        if (musicIsActive) {
-            this.musicPlayer.stopMusicPlayer();
-            this.musicPlayer.terminate();
+    public void nullifyObjects(boolean endAnimador, boolean endMusicPlayer) {
+        if (endAnimador) {
+            this.animador.terminar();
+        }
+
+        if (endMusicPlayer) {
+            if (musicIsActive) {
+                this.musicPlayer.stopMusicPlayer();
+                this.musicPlayer.terminate();
+            }
         }
         System.gc();
     }

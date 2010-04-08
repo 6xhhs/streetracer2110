@@ -14,14 +14,14 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     private boolean musicIsActive;
     private int currentLevel;
     private FileManager fileManager;
-    private String highScore = "";
     private int totalPoints;
     private Vector highScorePoints;
     private Vector highScoreNames;
     private int highScorePosition = -1;
-    Form forma;
-    TextField enterHighScoreName;
-    Command OKButton;
+    private Form forma;
+    private TextField enterHighScoreName;
+    private Command OKButton;
+    private boolean OKButtonIsPressed;
 
     public StreetRacer2110() {
         highScorePoints = new Vector();
@@ -32,7 +32,8 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         OKButton = new Command("OK", Command.OK, 0);
         forma.addCommand(OKButton);
         forma.setCommandListener(this);
-
+        totalPoints = 0;
+        OKButtonIsPressed = false;
 
 
 
@@ -43,13 +44,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         display = Display.getDisplay(this);
 
         fileManager = new FileManager("data.txt");
-        //fileManager.writeToFile(totalPoints);
         fileManager.readFile(highScorePoints, highScoreNames);
-        System.out.println("has read the file");
-        highScore = fileManager.returnReadData();
-        for (int i = 0; i < highScorePoints.size(); i++) {
-            System.out.println(highScoreNames.elementAt(i) + " " + highScorePoints.elementAt(i));
-        }
 
         if (isStartOfGame) {
             splashScreen = new SplashScreen(1);
@@ -68,7 +63,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
-            gui = new GUI(this, highScore);
+            gui = new GUI(this, highScorePoints, highScoreNames);
             gui.start();
             display.setCurrent(gui);
             display.vibrate(700);
@@ -76,9 +71,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
             System.gc();
             isStartOfGame = false;
         } else {
-            gui = new GUI(this, highScore);
             gui.start();
-            display.setCurrent(gui);
         }
 
 
@@ -110,12 +103,14 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     }
 
     public void changeGameToScreen() {
-        //juego.nullifyObjects();
+
+        juego.nullifyObjects(true, true);
         juego = null;
         System.gc();
-        gui = new GUI(this, highScore);
+        gui = new GUI(this, highScorePoints, highScoreNames);
         gui.setMusicIsActive(musicIsActive);
         display.setCurrent(gui);
+        totalPoints = 0;
         gui.start();
     }
 
@@ -130,20 +125,18 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         System.gc();
     }
 
-    public void loadNextLevel(int carSelectedIndex, int currentLevel) {
+    public void loadNextLevel(int carSelectedIndex, int currentLevel, int highScore) {
+        totalPoints += highScore;
         this.carSelectedIndex = carSelectedIndex;
-        System.out.println("Old level: " + this.currentLevel);
         this.currentLevel = currentLevel;
-        System.out.println("New level: " + this.currentLevel);
         splashScreen = new SplashScreen(2 + currentLevel);
         splashScreen.paint();
         display.setCurrent(splashScreen);
+        juego.nullifyObjects(true, true);
         juego = null;
-        System.gc();
         juego = new Juego(this, this.carSelectedIndex, this.musicIsActive, this.currentLevel);
 
         juego.start();
-        //juego.resetJuegoValues();
         display.setCurrent(juego);
 
         splashScreen = null;
@@ -152,11 +145,8 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
 
     }
 
-    public void loadYouWon(Graphics g, int totalPointsAccumulated) {
-        this.totalPoints = totalPointsAccumulated;
-        System.out.println("YOU WON!! CONGRATS!!!");
-        System.out.println(totalPoints);
-        //Scanner entrada = new Scanner(System.in);
+    public void loadYouWon(int totalPointsAccumulated) {
+        this.totalPoints += totalPointsAccumulated;
 
         boolean isAHighScore = false;
 
@@ -172,28 +162,33 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
 
         if (isAHighScore) {
             loadEnterHighScoreNameScreen();
-
+        } else {
+            changeGameToScreen();
         }
     }
 
     private void loadEnterHighScoreNameScreen() {
-        //juego.nullifyObjects();
+        juego.nullifyObjects(true, false);
         display.setCurrent(forma);
     }
 
     public void commandAction(Command cmnd, Displayable dsplbl) {
 
         if (cmnd == OKButton) {
-            String highScoreName = enterHighScoreName.getString();
-            if (highScorePosition > -1) {
+            if (!OKButtonIsPressed) {
+                String highScoreName = enterHighScoreName.getString();
                 highScoreNames.insertElementAt(highScoreName, highScorePosition);
                 highScoreNames.setSize(5);
-            }
 
-            fileManager.writeToFile(highScorePoints, highScoreNames);
-            fileManager.readFile(highScorePoints, highScoreNames);
-            highScore = fileManager.returnReadData();
-            changeGameToScreen();
+                fileManager.writeToFile(highScorePoints, highScoreNames);
+                fileManager.readFile(highScorePoints, highScoreNames);
+                changeGameToScreen();
+            }
+            OKButtonIsPressed = false;
+        }
+
+        if(cmnd != OKButton){
+            OKButtonIsPressed = true;
         }
     }
 }
