@@ -32,14 +32,16 @@ public class Vehicle {
     private boolean gameOverIsActive;
     private Vector lifeBarImages;
     private static final int BULLET_TYPE_INDEX = 1;
-    private boolean carIsAtRamp;
+
+    private boolean vehicleIsAtRamp;
     private int carJumpingRampCount;
-    private boolean vehicleIsRising = true;
+    private boolean vehicleIsRising;
 
     public Vehicle(int screenWidth, int screenHeight, int carSelectedIndex) {
 
-        carJumpingRampCount = 0;
-        this.carIsAtRamp = false;
+        this.vehicleIsRising = true;
+        this.carJumpingRampCount = 0;
+        this.vehicleIsAtRamp = false;
         this.carSelectedIndex = carSelectedIndex;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -156,11 +158,11 @@ public class Vehicle {
         }
     }
 
-    public void actualizar(int carJumpingRampCount, boolean isAtRamp, boolean finalObstacleIsActive) {
+    public void actualizar(int carJumpingRampCount) {
         if (vehicleIsRising) {
             makeVehicleRise(carJumpingRampCount);
         } else {
-            makeVehicleFall(isAtRamp,finalObstacleIsActive);
+            makeVehicleFall();
         }
     }
 
@@ -274,6 +276,9 @@ public class Vehicle {
     }
 
     void resetValues() {
+        this.carJumpingRampCount = 0;
+        this.vehicleIsAtRamp = false;
+        this.vehicleIsRising = true;
         this.x = 0;
         this.y = this.screenHeight - (screenHeight / 4);
         drawDamagedVehicleIsActive = false;
@@ -290,26 +295,29 @@ public class Vehicle {
         return this.totalPointsAccumulated;
     }
 
-    void hasCollidedWithRamp(boolean carIsAtRamp) {
-        this.carIsAtRamp = carIsAtRamp;
+    void hasCollidedWithRamp(boolean vehicleIsAtRamp) {
+        this.vehicleIsAtRamp = vehicleIsAtRamp;
     }
 
     private void makeVehicleRise(int carJumpingRampCount) {
-        if(this.carJumpingRampCount<=carJumpingRampCount){
-            this.y-=changeInY/2;
+        if (this.carJumpingRampCount <= carJumpingRampCount) {
+            this.y -= changeInY / 2;
             this.carJumpingRampCount++;
-        }else{
+        } else {
             this.vehicleIsRising = false;
         }
     }
 
-    private void makeVehicleFall(boolean isAtRamp, boolean finalObstacleIsActive) {
-        if(this.carJumpingRampCount>=0){
-            this.y+=changeInY/2;
+    private void makeVehicleFall() {
+        if (this.carJumpingRampCount >= 0) {
+            this.y += changeInY / 2;
             this.carJumpingRampCount--;
-        }else{
-            isAtRamp = false;
-            finalObstacleIsActive = false;
+        } else {
+            vehicleIsAtRamp = false;
         }
+    }
+
+    public boolean getIsAtRamp() {
+        return this.vehicleIsAtRamp;
     }
 }

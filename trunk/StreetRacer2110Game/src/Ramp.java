@@ -12,10 +12,13 @@ public class Ramp {
     private int rampHeight;
     private int rampWidth;
 
+    private final int ANCHO, ALTO;
+
     public Ramp(int currentLevel, int screenWidth, int screenHeight) {
 
-        rampX = screenWidth;
-        rampY = screenHeight;
+        ANCHO = screenWidth;
+        ALTO = screenHeight;
+
         rampImage = null;
         if (currentLevel == 1) {
             try {
@@ -42,7 +45,6 @@ public class Ramp {
                 ex.printStackTrace();
             }
         }
-
         rampX = screenWidth;
         rampY = screenHeight - rampHeight;
     }
@@ -52,7 +54,8 @@ public class Ramp {
     }
 
     public void actualizar() {
-        this.rampX -= 15;
+        if(this.rampX >= -this.rampWidth)
+            this.rampX -= 15;
     }
 
     public int getRampX() {
@@ -71,8 +74,8 @@ public class Ramp {
         return this.rampHeight;
     }
 
-    public void resetObstacleCoordinates(int newXValue, int newYValue) {
-        this.rampX = newXValue;
-        this.rampY = newYValue;
+    public void resetRampCoordinates() {
+        this.rampX = ANCHO;
+        this.rampY = ALTO-rampHeight;
     }
 }
