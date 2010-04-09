@@ -10,6 +10,7 @@ import javax.microedition.lcdui.game.GameCanvas;
 public class Juego extends GameCanvas {
 
     public static final int END_OF_LEVEL_X_VALUE = -1100;
+    public static final int FINAL_OBSTACLE_START = -200;
     private Levels gameLevel;
     private Vehicle vehicle;
     private final int ANCHO;        //ancho de la pantalla del cell
@@ -36,6 +37,9 @@ public class Juego extends GameCanvas {
     private int carSelectedIndex;
     private final int currentLevel;
     public int highScore;
+    private Ramp ramp;
+    private boolean finalObstacleIsActive;
+    private boolean vehicleIsAtRamp;
 
     public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel) {
 
@@ -46,6 +50,7 @@ public class Juego extends GameCanvas {
 
         this.setFullScreenMode(true);
 
+        this.vehicleIsAtRamp = false;
         this.currentLevel = currentLevel;
 
         pausedMenuSelectedIndex = 0;
@@ -75,6 +80,9 @@ public class Juego extends GameCanvas {
 
         pauseMenu = new PauseMenu(this, g);
 
+        ramp = new Ramp(currentLevel, ANCHO, ALTO);
+        finalObstacleIsActive = false;
+
         createObstacles();
         createEnemies();
 
@@ -103,6 +111,13 @@ public class Juego extends GameCanvas {
         }
     }
 
+    public void checkForFinalObstacle() {
+        if (gameLevel.returnSkyBackgroundXValue() == FINAL_OBSTACLE_START) {
+            this.finalObstacleIsActive = true;
+
+        }
+    }
+
     public void pauseOrUnpause() {
         currentKeyCode = getKeyStates();
         if ((currentKeyCode & GAME_A_PRESSED) != 0) {
@@ -119,17 +134,19 @@ public class Juego extends GameCanvas {
 
     public void readProcessKeysPressed() {
         currentKeyCode = getKeyStates();
-        if ((currentKeyCode & UP_PRESSED) != 0) {
-            vehicle.moveUp();
-        }
-        if ((currentKeyCode & DOWN_PRESSED) != 0) {
-            vehicle.moveDown();
-        }
-        if ((currentKeyCode & LEFT_PRESSED) != 0) {
-            vehicle.moveLeft();
-        }
-        if ((currentKeyCode & RIGHT_PRESSED) != 0) {
-            vehicle.moveRight();
+        if (!this.vehicleIsAtRamp) {
+            if ((currentKeyCode & UP_PRESSED) != 0) {
+                vehicle.moveUp();
+            }
+            if ((currentKeyCode & DOWN_PRESSED) != 0) {
+                vehicle.moveDown();
+            }
+            if ((currentKeyCode & LEFT_PRESSED) != 0) {
+                vehicle.moveLeft();
+            }
+            if ((currentKeyCode & RIGHT_PRESSED) != 0) {
+                vehicle.moveRight();
+            }
         }
         if ((currentKeyCode & FIRE_PRESSED) != 0) {
             vehicle.setBulletX();
@@ -139,9 +156,7 @@ public class Juego extends GameCanvas {
     }
 
     public void start() {
-        if (musicIsActive) {
-            musicPlayer.startMusicPlayer();
-        }
+
         createObstacles();
         createEnemies();
     }
@@ -189,11 +204,7 @@ public class Juego extends GameCanvas {
                     }
                 } else if (pausedMenuSelectedIndex == 1) {
                     if ((currentKeyCode & GAME_C_PRESSED) != 0) {
-//                        musicPlayer.stopMusicPlayer();
-//                        musicPlayer.terminate();
-//                        musicPlayer = null;
-//                        animador.terminar();
-                        //nullifyObjects();
+
                         midlet.changeGameToScreen();
                     }
                     if ((currentKeyCode & GAME_D_PRESSED) != 0) {
@@ -228,6 +239,12 @@ public class Juego extends GameCanvas {
         gameLevel.actualizar();
         vehicle.actualizarFireGun();
 
+        checkForFinalObstacle();
+        if (finalObstacleIsActive) {
+            ramp.actualizar();
+            checkRampVehicleCollisions();
+            vehicle.actualizar(5,this.vehicleIsAtRamp, this.finalObstacleIsActive);
+        }
         checkForGameOver();
         checkForLevelCompleted();
     }
@@ -241,6 +258,10 @@ public class Juego extends GameCanvas {
         gameLevel.dibujar(g);
 
         drawObstacles();
+
+        if (finalObstacleIsActive) {
+            ramp.dibujar(g);
+        }
         vehicle.dibujar(g);
         vehicle.dibujarFireGun(g);
         drawEnemies();
@@ -411,5 +432,14 @@ public class Juego extends GameCanvas {
             }
         }
         System.gc();
+    }
+
+    public void checkRampVehicleCollisions() {
+        if (ramp.getRampX() <= vehicle.getVehicleX()
+                && ramp.getRampY() < vehicle.getVehicleY() + (vehicle.getVehicleHeight() / 2)
+                && ramp.getRampY() + ramp.getRampHeight() > vehicle.getVehicleY() + (vehicle.getVehicleHeight() / 2)) {
+
+            this.vehicleIsAtRamp = true;
+        }
     }
 }

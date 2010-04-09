@@ -1,6 +1,4 @@
 
-
-
 import java.io.IOException;
 import java.util.Vector;
 import javax.microedition.lcdui.Font;
@@ -11,7 +9,6 @@ public class Vehicle {
 
     private static final int MAX_BULLETS = 4;
     private static final int ROAD_TOP_Y_LIMIT = 260;
-
     private Image vehicleImage, damagedVehicleImage;
     private int x;
     private int y;
@@ -34,9 +31,15 @@ public class Vehicle {
     private boolean drawDamagedVehicleIsActive;
     private boolean gameOverIsActive;
     private Vector lifeBarImages;
+    private static final int BULLET_TYPE_INDEX = 1;
+    private boolean carIsAtRamp;
+    private int carJumpingRampCount;
+    private boolean vehicleIsRising = true;
 
     public Vehicle(int screenWidth, int screenHeight, int carSelectedIndex) {
 
+        carJumpingRampCount = 0;
+        this.carIsAtRamp = false;
         this.carSelectedIndex = carSelectedIndex;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -92,7 +95,7 @@ public class Vehicle {
             ex.printStackTrace();
         }
 
-        lifeImage=(Image) lifeBarImages.elementAt(0);
+        lifeImage = (Image) lifeBarImages.elementAt(0);
         drawDamagedVehicleIsActive = false;
         gameOverIsActive = false;
         totalPointsAccumulated = 0;
@@ -153,9 +156,17 @@ public class Vehicle {
         }
     }
 
+    public void actualizar(int carJumpingRampCount, boolean isAtRamp, boolean finalObstacleIsActive) {
+        if (vehicleIsRising) {
+            makeVehicleRise(carJumpingRampCount);
+        } else {
+            makeVehicleFall(isAtRamp,finalObstacleIsActive);
+        }
+    }
+
     public void agregarBullet() {
         if (bullets.size() < MAX_BULLETS) {
-            bullets.addElement(new Pelota(this.bulletX, this.bulletY, 1));
+            bullets.addElement(new Pelota(this.bulletX, this.bulletY, BULLET_TYPE_INDEX));
         }
     }
 
@@ -189,7 +200,7 @@ public class Vehicle {
         if (carSelectedIndex == 0) {
             this.bulletY = this.y;
         } else {
-            this.bulletY = this.y+3;
+            this.bulletY = this.y + 3;
         }
     }
 
@@ -197,7 +208,7 @@ public class Vehicle {
         if (hasCollided) {
             drawDamagedVehicleIsActive = true;
 
-            if(addPoints){
+            if (addPoints) {
                 totalPointsAccumulated += 15;
             }
             damageCount++;
@@ -275,7 +286,30 @@ public class Vehicle {
 
     }
 
-    public int returnTotalPointsAccumulated(){
+    public int returnTotalPointsAccumulated() {
         return this.totalPointsAccumulated;
+    }
+
+    void hasCollidedWithRamp(boolean carIsAtRamp) {
+        this.carIsAtRamp = carIsAtRamp;
+    }
+
+    private void makeVehicleRise(int carJumpingRampCount) {
+        if(this.carJumpingRampCount<=carJumpingRampCount){
+            this.y-=changeInY/2;
+            this.carJumpingRampCount++;
+        }else{
+            this.vehicleIsRising = false;
+        }
+    }
+
+    private void makeVehicleFall(boolean isAtRamp, boolean finalObstacleIsActive) {
+        if(this.carJumpingRampCount>=0){
+            this.y+=changeInY/2;
+            this.carJumpingRampCount--;
+        }else{
+            isAtRamp = false;
+            finalObstacleIsActive = false;
+        }
     }
 }
