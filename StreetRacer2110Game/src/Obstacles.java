@@ -22,21 +22,21 @@ public class Obstacles {
 
         if (obstacleSelect == 0) {
             try {
-                obstacleImage = Image.createImage("/hole.png");
+                obstacleImage = Image.createImage("/pothole.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            obstacleWidth = 55;
-            obstacleHeight = 14;
+            obstacleWidth = 50;
+            obstacleHeight = 13;
         } else if (obstacleSelect == 1) {
             try {
-                obstacleImage = Image.createImage("/hole.png");
+                obstacleImage = Image.createImage("/pothole.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
-            obstacleWidth = 55;
-            obstacleHeight = 14;
+            obstacleWidth = 50;
+            obstacleHeight = 13;
         }
     }
 

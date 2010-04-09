@@ -1,6 +1,4 @@
 
-
-
 import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
@@ -8,9 +6,9 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 public class Enemies {
+
     public static final int MIN_SPEED = 4;
-
-
+    private static final int CREATE_BULLET_DELAY_TIME = 40;
     private Image originalEnemiesImage;
     private Image enemiesImage;
     private Image enemiesCollidedImage;
@@ -25,7 +23,8 @@ public class Enemies {
     private static Random random = new Random();
     private int changeInX;
     private boolean enemyHasCollided = false;
-    private int addBulletCount=0;
+    private int addBulletCount = 0;
+    private static final int BULLET_TYPE_INDEX = 2;
 
     public Enemies(int xCoordinate, int yCoordinate, int enemiesSelectedIndex) {
 
@@ -81,8 +80,8 @@ public class Enemies {
 
     public void agregarBullet() {
         addBulletCount++;
-        if (addBulletCount>=40) {
-            bullets.addElement(new Pelota(this.bulletX, this.bulletY, 2));
+        if (addBulletCount>=CREATE_BULLET_DELAY_TIME) {
+            bullets.addElement(new Pelota(this.bulletX, this.bulletY, BULLET_TYPE_INDEX));
             addBulletCount=0;
         }
 
@@ -169,27 +168,26 @@ public class Enemies {
         }
     }
 
-    public void resetEnemyCoordinates(int newXValue, int newYValue){
-        this.x=newXValue;
-        this.y=newYValue;
+    public void resetEnemyCoordinates(int newXValue, int newYValue) {
+        this.x = newXValue;
+        this.y = newYValue;
     }
 
-    public void resetHasCollided(){
+    public void resetHasCollided() {
         this.enemyHasCollided = false;
     }
 
-    public void resetEnemiesImage(){
-        this.enemiesImage=originalEnemiesImage;
+    public void resetEnemiesImage() {
+        this.enemiesImage = originalEnemiesImage;
     }
 
-    public void resetEnemy(int newXValue, int newYValue){
+    public void resetEnemy(int newXValue, int newYValue) {
         resetEnemyCoordinates(newXValue, newYValue);
         resetHasCollided();
         resetEnemiesImage();
     }
-    
-    public void removeBullets(){
+
+    public void removeBullets() {
         this.bullets.removeAllElements();
     }
-
 }

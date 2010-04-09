@@ -96,13 +96,6 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
 
         display.setCurrent(juego);
         juego.start();
-//        try {
-//            Thread.sleep(200);
-//        } catch (InterruptedException ex) {
-//            ex.printStackTrace();
-//        }
-
-
     }
 
     public void changeGameToScreen() {
@@ -139,8 +132,9 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         juego = null;
         juego = new Juego(this, this.carSelectedIndex, this.musicIsActive, this.currentLevel);
 
-        juego.start();
+
         display.setCurrent(juego);
+        juego.start();
 
         splashScreen = null;
         System.gc();

@@ -1,6 +1,4 @@
 
-
-
 import java.io.IOException;
 import java.io.InputStream;
 import javax.microedition.media.Manager;
@@ -24,7 +22,7 @@ public class MusicPlayer {
             } catch (IOException ioe) {
                 System.out.println("IO exception error");
             } catch (MediaException me) {
-                System.out.println("Media exception error");
+                System.out.println("Media exception error at constructor");
             }
 
         } else if (index == 1) {
@@ -34,7 +32,7 @@ public class MusicPlayer {
             } catch (IOException ioe) {
                 System.out.println("IO exception error");
             } catch (MediaException me) {
-                System.out.println("Media exception error");
+                System.out.println("Media exception error at constructor");
             }
         } else if (index == 2) {
             try {
@@ -43,27 +41,28 @@ public class MusicPlayer {
             } catch (IOException ioe) {
                 System.out.println("IO exception error");
             } catch (MediaException me) {
-                System.out.println("Media exception error");
+                System.out.println("Media exception error at constructor");
             }
         } else if (index == 3) {
-                        try {
+            try {
                 iS = getClass().getResourceAsStream("linkinParkFaint.mid");
                 musicPlayer = Manager.createPlayer(iS, "audio/midi");
             } catch (IOException ioe) {
                 System.out.println("IO exception error");
             } catch (MediaException me) {
-                System.out.println("Media exception error");
+                System.out.println("Media exception error at constructor");
             }
         }
     }
 
     public void startMusicPlayer() {
+        System.out.println("music player started");
         try {
             musicPlayer.realize();
             musicPlayer.prefetch();
             musicPlayer.start();
         } catch (MediaException ex) {
-            System.out.println("Media exception error");
+            System.out.println("Media exception error at startMusicPlayer");
         }
         isPlaying = true;
     }
@@ -72,9 +71,9 @@ public class MusicPlayer {
         try {
             musicPlayer.stop();
         } catch (MediaException ex) {
-            System.out.println("Media exception error");
+            System.out.println("Media exception error at stopMusicPlayer");
         }
-        isPlaying=false;
+        isPlaying = false;
     }
 
     void terminate() {
