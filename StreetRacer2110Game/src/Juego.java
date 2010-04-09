@@ -10,7 +10,7 @@ import javax.microedition.lcdui.game.GameCanvas;
 public class Juego extends GameCanvas {
 
     public static final int END_OF_LEVEL_X_VALUE = -1100;
-    public static final int FINAL_OBSTACLE_START = -200;
+    public static final int FINAL_OBSTACLE_START = -800;
     private Levels gameLevel;
     private Vehicle vehicle;
     private final int ANCHO;        //ancho de la pantalla del cell
@@ -50,7 +50,6 @@ public class Juego extends GameCanvas {
 
         this.setFullScreenMode(true);
 
-        this.vehicleIsAtRamp = false;
         this.currentLevel = currentLevel;
 
         pausedMenuSelectedIndex = 0;
@@ -82,6 +81,7 @@ public class Juego extends GameCanvas {
 
         ramp = new Ramp(currentLevel, ANCHO, ALTO);
         finalObstacleIsActive = false;
+        this.vehicleIsAtRamp = false;
 
         createObstacles();
         createEnemies();
@@ -108,13 +108,6 @@ public class Juego extends GameCanvas {
             } else {
                 midlet.loadYouWon(highScore);
             }
-        }
-    }
-
-    public void checkForFinalObstacle() {
-        if (gameLevel.returnSkyBackgroundXValue() == FINAL_OBSTACLE_START) {
-            this.finalObstacleIsActive = true;
-
         }
     }
 
@@ -161,7 +154,7 @@ public class Juego extends GameCanvas {
         createEnemies();
     }
 
-    void actualizar() {
+    public void actualizar() {
         pauseOrUnpause();
         currentKeyCode = getKeyStates();
         if (isPaused) {
@@ -240,11 +233,8 @@ public class Juego extends GameCanvas {
         vehicle.actualizarFireGun();
 
         checkForFinalObstacle();
-        if (finalObstacleIsActive) {
-            ramp.actualizar();
-            checkRampVehicleCollisions();
-            vehicle.actualizar(5,this.vehicleIsAtRamp, this.finalObstacleIsActive);
-        }
+        actualizarRampVehicleMovements();
+
         checkForGameOver();
         checkForLevelCompleted();
     }
@@ -313,7 +303,6 @@ public class Juego extends GameCanvas {
                 enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 0));
             } else {
                 enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 1));
-
             }
             alternateEnemyCreation = !alternateEnemyCreation;
         }
@@ -348,8 +337,6 @@ public class Juego extends GameCanvas {
                 display.vibrate(200);
                 ((Enemies) this.enemies.elementAt(i)).hasCollided(true);
             }
-
-
         }
     }
 
@@ -366,8 +353,6 @@ public class Juego extends GameCanvas {
                 display.vibrate(200);
                 ((Obstacles) obstacles.elementAt(i)).hasCollided(true);
             }
-
-
         }
     }
 
@@ -400,7 +385,12 @@ public class Juego extends GameCanvas {
     }
 
     public void resetJuegoValues() {
+
+        this.vehicleIsAtRamp = false;
+        this.finalObstacleIsActive = false;
+
         this.vehicle.resetValues();
+        this.ramp.resetRampCoordinates();
 
         for (int i = this.enemies.size() - 1; i >= 0; i--) {
             ((Enemies) enemies.elementAt(i)).resetEnemy(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
@@ -434,12 +424,34 @@ public class Juego extends GameCanvas {
         System.gc();
     }
 
+    public void checkForFinalObstacle() {
+        if (gameLevel.returnSkyBackgroundXValue() == FINAL_OBSTACLE_START) {
+            this.finalObstacleIsActive = true;
+            vehicle.hasCollidedWithRamp(true);
+        }
+    }
+
     public void checkRampVehicleCollisions() {
         if (ramp.getRampX() <= vehicle.getVehicleX()
+                && ramp.getRampX() + (ramp.getRampWidth() / 2) > vehicle.getVehicleX() + (vehicle.getVehicleWidth() / 2)
                 && ramp.getRampY() < vehicle.getVehicleY() + (vehicle.getVehicleHeight() / 2)
                 && ramp.getRampY() + ramp.getRampHeight() > vehicle.getVehicleY() + (vehicle.getVehicleHeight() / 2)) {
 
             this.vehicleIsAtRamp = true;
+        }
+    }
+
+    private void actualizarRampVehicleMovements() {
+        if (finalObstacleIsActive) {
+            ramp.actualizar();
+            checkRampVehicleCollisions();
+            if (this.vehicleIsAtRamp) {
+                vehicle.actualizar(7);
+            }
+            if (!vehicle.getIsAtRamp()) {
+                this.vehicleIsAtRamp = false;
+                this.finalObstacleIsActive = false;
+            }
         }
     }
 }
