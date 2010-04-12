@@ -69,7 +69,7 @@ public class Vehicle {
 
                 vehicleImages.addElement(Image.createImage("/M Racer.png"));
                 vehicleImages.addElement(Image.createImage("/M Racer Damaged.png"));
-                vehicleImages.addElement(Image.createImage("/S Racer Ramp.png"));
+                vehicleImages.addElement(Image.createImage("/M Racer Ramp.png"));
 
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -84,7 +84,7 @@ public class Vehicle {
 
                 vehicleImages.addElement(Image.createImage("/SM Racer.png"));
                 vehicleImages.addElement(Image.createImage("/SM Racer Damaged.png"));
-                vehicleImages.addElement(Image.createImage("/S Racer Ramp.png"));
+                vehicleImages.addElement(Image.createImage("/SM Racer Ramp.png"));
 
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -141,7 +141,7 @@ public class Vehicle {
         g.setFont(font);
         g.setColor(0xff6600);
 
-        g.drawString("Score: " + totalPointsAccumulated, 190, 8, g.TOP | g.LEFT);
+        g.drawString("Score: " + totalPointsAccumulated, 191, 8, g.TOP | g.LEFT);
     }
 
     public void moveLeft() {

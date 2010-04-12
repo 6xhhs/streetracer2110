@@ -276,7 +276,7 @@ public class Juego extends GameCanvas {
 
     public void createObstacles() {
         while (obstacles.size() < currentLevel) {
-            obstacles.addElement(new Obstacles(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10), 0));
+            obstacles.addElement(new Obstacles(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10), this.currentLevel));
         }
     }
 

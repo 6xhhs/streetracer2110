@@ -64,7 +64,7 @@ public class GUI extends GameCanvas {
     }
     // Nokia softkeys: -6 and -7 values are OK on Nokia phones
     private int LEFT_SOFTKEY_CODE = -6;
-    private int RIGHT_SOFTKEY_CODE = -7;
+    //private int RIGHT_SOFTKEY_CODE = -7;
 
     protected void keyPressed(int keyCode) {
 

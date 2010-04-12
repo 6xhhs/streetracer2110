@@ -1,6 +1,4 @@
 
-
-
 import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -20,7 +18,7 @@ public class Obstacles {
 
         this.obstacleHasCollided = false;
 
-        if (obstacleSelect == 0) {
+        if (obstacleSelect == 1) {
             try {
                 obstacleImage = Image.createImage("/pothole.png");
             } catch (IOException ex) {
@@ -28,13 +26,21 @@ public class Obstacles {
             }
             obstacleWidth = 50;
             obstacleHeight = 13;
-        } else if (obstacleSelect == 1) {
+        } else if (obstacleSelect == 2) {
+            try {
+                obstacleImage = Image.createImage("/cactus.png");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            obstacleWidth = 21;
+            obstacleHeight = 23;
+        } else if (obstacleSelect == 3) {
             try {
                 obstacleImage = Image.createImage("/pothole.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-
             obstacleWidth = 50;
             obstacleHeight = 13;
         }
@@ -74,9 +80,9 @@ public class Obstacles {
         }
     }
 
-    public void resetObstacleCoordinates(int newXValue, int newYValue){
-        this.obstacleX=newXValue;
-        this.obstacleY=newYValue;
-        this.obstacleHasCollided=false;
+    public void resetObstacleCoordinates(int newXValue, int newYValue) {
+        this.obstacleX = newXValue;
+        this.obstacleY = newYValue;
+        this.obstacleHasCollided = false;
     }
 }
