@@ -57,8 +57,8 @@ public class Menu {
 
         // clear inactive menu background
 
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
+        //int width = canvas.getWidth();
+        //int height = canvas.getHeight();
 
         g.setColor(0xffff33);
 
@@ -229,7 +229,6 @@ public class Menu {
         g.setFont(font);
         g.setColor(0xff6600); // black
 
-        g.drawString("Pick Your Ride", 50, 0, g.TOP | g.LEFT);
         g.drawString(leftOption, padding, height - padding, g.LEFT | g.BOTTOM);
         g.drawString(okOption, ((width / 2) + 25), height - padding, g.RIGHT | g.BOTTOM);
 
@@ -253,13 +252,13 @@ public class Menu {
         g.setFont(font);
         g.setColor(0xff6600); // orange
 
-        g.drawString("Sound Active?", (width / 2), padding, g.TOP | g.LEFT);
-        g.drawString("A: Yes    B: No", padding, height - padding, g.LEFT | g.BOTTOM);
+        g.drawString("Sound Active?", 5, padding, g.TOP | g.LEFT);
+        g.drawString("A: Yes    B: No", 5, height - padding, g.LEFT | g.BOTTOM);
 
         if (i == 1) {
-            g.drawString("Sound On", (width / 2), (height / 2), g.TOP | g.LEFT);
+            g.drawString("Sound On", 5, (height / 5), g.TOP | g.LEFT);
         } else if (i == 0) {
-            g.drawString("Sound Off", (width / 2), (height / 2), g.TOP | g.LEFT);
+            g.drawString("Sound Off", 5, (height / 5), g.TOP | g.LEFT);
         }
 
         canvas.flushGraphics();

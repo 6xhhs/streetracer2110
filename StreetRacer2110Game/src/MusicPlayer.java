@@ -27,7 +27,7 @@ public class MusicPlayer {
 
         } else if (index == 1) {
             try {
-                iS = getClass().getResourceAsStream("linkinParkFaint.mid");
+                iS = getClass().getResourceAsStream("faint.mid");
                 musicPlayer = Manager.createPlayer(iS, "audio/midi");
             } catch (IOException ioe) {
                 System.out.println("IO exception error");
@@ -36,7 +36,7 @@ public class MusicPlayer {
             }
         } else if (index == 2) {
             try {
-                iS = getClass().getResourceAsStream("macarenamix.mid");
+                iS = getClass().getResourceAsStream("Metallica I Disappear.mid");
                 musicPlayer = Manager.createPlayer(iS, "audio/midi");
             } catch (IOException ioe) {
                 System.out.println("IO exception error");
@@ -45,7 +45,7 @@ public class MusicPlayer {
             }
         } else if (index == 3) {
             try {
-                iS = getClass().getResourceAsStream("linkinParkFaint.mid");
+                iS = getClass().getResourceAsStream("faint.mid");
                 musicPlayer = Manager.createPlayer(iS, "audio/midi");
             } catch (IOException ioe) {
                 System.out.println("IO exception error");
@@ -76,7 +76,6 @@ public class MusicPlayer {
     }
 
     void terminate() {
-        //musicPlayer.close();
         musicPlayer.deallocate();
         musicPlayer = null;
     }
