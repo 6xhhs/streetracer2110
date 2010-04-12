@@ -9,7 +9,6 @@ public class Vehicle {
 
     private static final int MAX_BULLETS = 4;
     private static final int ROAD_TOP_Y_LIMIT = 260;
-    private Image vehicleImage, damagedVehicleImage;
     private int x;
     private int y;
     private int screenWidth;
@@ -28,16 +27,20 @@ public class Vehicle {
     private int totalDamageReceived;
     private int totalPointsAccumulated;
     private Font font;
-    private boolean drawDamagedVehicleIsActive;
     private boolean gameOverIsActive;
     private Vector lifeBarImages;
     private static final int BULLET_TYPE_INDEX = 1;
-
     private boolean vehicleIsAtRamp;
     private int carJumpingRampCount;
     private boolean vehicleIsRising;
+    private boolean drawNormalVehicleIsActive;
+    private boolean drawDamagedVehicleIsActive;
+    private boolean drawRisingVehicleIsActive;
+    private Vector vehicleImages;
 
     public Vehicle(int screenWidth, int screenHeight, int carSelectedIndex) {
+
+        this.vehicleImages = new Vector();
 
         this.vehicleIsRising = true;
         this.carJumpingRampCount = 0;
@@ -50,8 +53,9 @@ public class Vehicle {
 
         if (this.carSelectedIndex == 0) {
             try {
-                vehicleImage = Image.createImage("/S Racer.png");
-                damagedVehicleImage = Image.createImage("/S Racer Damaged.png");
+                vehicleImages.addElement(Image.createImage("/S Racer.png"));
+                vehicleImages.addElement(Image.createImage("/S Racer Damaged.png"));
+                vehicleImages.addElement(Image.createImage("/S Racer Ramp.png"));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -62,8 +66,11 @@ public class Vehicle {
             totalDamageReceived = 1;
         } else if (this.carSelectedIndex == 1) {
             try {
-                vehicleImage = Image.createImage("/M Racer.png");
-                damagedVehicleImage = Image.createImage("/M Racer Damaged.png");
+
+                vehicleImages.addElement(Image.createImage("/M Racer.png"));
+                vehicleImages.addElement(Image.createImage("/M Racer Damaged.png"));
+                vehicleImages.addElement(Image.createImage("/S Racer Ramp.png"));
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -74,8 +81,11 @@ public class Vehicle {
             totalDamageReceived = 3;
         } else {
             try {
-                vehicleImage = Image.createImage("/SM Racer.png");
-                damagedVehicleImage = Image.createImage("/SM Racer Damaged.png");
+
+                vehicleImages.addElement(Image.createImage("/SM Racer.png"));
+                vehicleImages.addElement(Image.createImage("/SM Racer Damaged.png"));
+                vehicleImages.addElement(Image.createImage("/S Racer Ramp.png"));
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -89,16 +99,21 @@ public class Vehicle {
         lifeBarImages = new Vector();
 
         try {
-            lifeBarImages.addElement(Image.createImage("/full life.png"));
-            lifeBarImages.addElement(Image.createImage("/three fourths life.png"));
-            lifeBarImages.addElement(Image.createImage("/half life.png"));
-            lifeBarImages.addElement(Image.createImage("/one fourth life.png"));
+            lifeBarImages.addElement(Image.createImage("/life bar 1.png"));
+            lifeBarImages.addElement(Image.createImage("/life bar 2.png"));
+            lifeBarImages.addElement(Image.createImage("/life bar 3.png"));
+            lifeBarImages.addElement(Image.createImage("/life bar 4.png"));
+            lifeBarImages.addElement(Image.createImage("/life bar background.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
         lifeImage = (Image) lifeBarImages.elementAt(0);
+        
+        this.drawNormalVehicleIsActive = true;
+        this.drawRisingVehicleIsActive = false;
         drawDamagedVehicleIsActive = false;
+
         gameOverIsActive = false;
         totalPointsAccumulated = 0;
         damageCount = 0;
@@ -109,21 +124,24 @@ public class Vehicle {
     }
 
     public void dibujar(Graphics g) {
+        g.drawImage((Image) lifeBarImages.elementAt(4), 0, 0, g.TOP | g.LEFT);
 
-        if (drawDamagedVehicleIsActive) {
-            g.drawImage(damagedVehicleImage, x, y, g.TOP | g.LEFT);
+        if(drawNormalVehicleIsActive){
+            g.drawImage((Image)vehicleImages.elementAt(0), x, y, g.TOP|g.LEFT);
+        }else if (drawDamagedVehicleIsActive) {
+            g.drawImage((Image)vehicleImages.elementAt(1), x, y, g.TOP|g.LEFT);
             drawDamagedVehicleIsActive = false;
-        } else {
-            g.drawImage(vehicleImage, x, y, g.TOP | g.LEFT);
+            drawNormalVehicleIsActive = true;
+        } else if(drawRisingVehicleIsActive) {
+            g.drawImage((Image)vehicleImages.elementAt(2), x, y, g.TOP|g.LEFT);
         }
         if (!gameOverIsActive) {
             g.drawImage(lifeImage, 0, 0, g.TOP | g.LEFT);
         }
         g.setFont(font);
-        g.setColor(0x000000);
-        g.fillRect(160, 0, 110, 25);
         g.setColor(0xff6600);
-        g.drawString("Score: " + totalPointsAccumulated, 162, 2, g.TOP | g.LEFT);
+
+        g.drawString("Score: " + totalPointsAccumulated, 190, 8, g.TOP | g.LEFT);
     }
 
     public void moveLeft() {
@@ -160,8 +178,13 @@ public class Vehicle {
 
     public void actualizar(int carJumpingRampCount) {
         if (vehicleIsRising) {
+            drawDamagedVehicleIsActive = false;
+            drawNormalVehicleIsActive = false;
+            drawRisingVehicleIsActive = true;
             makeVehicleRise(carJumpingRampCount);
         } else {
+            drawRisingVehicleIsActive = false;
+            drawNormalVehicleIsActive = true;
             makeVehicleFall();
         }
     }
@@ -208,6 +231,7 @@ public class Vehicle {
 
     public void hasCollided(boolean hasCollided, boolean addPoints) {
         if (hasCollided) {
+            drawNormalVehicleIsActive = false;
             drawDamagedVehicleIsActive = true;
 
             if (addPoints) {
@@ -281,7 +305,9 @@ public class Vehicle {
         this.vehicleIsRising = true;
         this.x = 0;
         this.y = this.screenHeight - (screenHeight / 4);
+        drawNormalVehicleIsActive = true;
         drawDamagedVehicleIsActive = false;
+        drawRisingVehicleIsActive = false;
         gameOverIsActive = false;
         totalPointsAccumulated = 0;
         damageCount = 0;
@@ -295,13 +321,13 @@ public class Vehicle {
         return this.totalPointsAccumulated;
     }
 
-    void hasCollidedWithRamp(boolean vehicleIsAtRamp) {
+    public void hasCollidedWithRamp(boolean vehicleIsAtRamp) {
         this.vehicleIsAtRamp = vehicleIsAtRamp;
     }
 
     private void makeVehicleRise(int carJumpingRampCount) {
         if (this.carJumpingRampCount <= carJumpingRampCount) {
-            this.y -= changeInY / 2;
+            this.y -= 7;
             this.carJumpingRampCount++;
         } else {
             this.vehicleIsRising = false;
@@ -310,7 +336,7 @@ public class Vehicle {
 
     private void makeVehicleFall() {
         if (this.carJumpingRampCount >= 0) {
-            this.y += changeInY / 2;
+            this.y += 7;
             this.carJumpingRampCount--;
         } else {
             vehicleIsAtRamp = false;
