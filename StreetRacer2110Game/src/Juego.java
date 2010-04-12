@@ -210,24 +210,17 @@ public class Juego extends GameCanvas {
         }
 
         if (musicIsActive) {
-            if (!musicPlayer.isPlaying()) {
+            if ( musicPlayer!=null && !musicPlayer.isPlaying()) {
                 musicPlayer.startMusicPlayer();
             }
         }
         readProcessKeysPressed();
 
-        resetObstacles();
-
-        resetEnemyCoordinates();
-        resetEnemies();
-        addEnemyBullets();
-
-        checkEnemyBulletsVehicleCollision();
+        runThroughEnemiesVector();
 
         vehicle.checkBulletsEnemyCollision(enemies);
 
-        checkVehicleCollisions();
-        checkObstaclesVehicleCollisions();
+        runThroughObstaclesVector();
 
         gameLevel.actualizar();
         vehicle.actualizarFireGun();
@@ -287,13 +280,32 @@ public class Juego extends GameCanvas {
         }
     }
 
-    public void resetObstacles() {
-        for (int i = this.obstacles.size() - 1; i >= 0; i--) {
-            if ((((Obstacles) obstacles.elementAt(i)).getObstacleX() < -((Obstacles) obstacles.elementAt(i)).getObstacleWidth())) {
-                ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10));
-            } else {
-                ((Obstacles) obstacles.elementAt(i)).actualizar();
+    public void resetObstacles(int i) {
+        if ((((Obstacles) obstacles.elementAt(i)).getObstacleX() < -((Obstacles) obstacles.elementAt(i)).getObstacleWidth())) {
+            ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10));
+        } else {
+            ((Obstacles) obstacles.elementAt(i)).actualizar();
+        }
+    }
+
+    public void checkObstaclesVehicleCollisions(int i) {
+        if (((Obstacles) obstacles.elementAt(i)).getObstacleX() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
+                && ((Obstacles) obstacles.elementAt(i)).getObstacleX() >= vehicle.getVehicleX()
+                && ((Obstacles) obstacles.elementAt(i)).getObstacleY() < (vehicle.getVehicleY()) + vehicle.getVehicleHeight()
+                && ((Obstacles) obstacles.elementAt(i)).getObstacleY() + ((Obstacles) obstacles.elementAt(i)).getObstacleHeight() + 10 > (vehicle.getVehicleY() + vehicle.getVehicleHeight())) {
+
+            if (!((Obstacles) obstacles.elementAt(i)).obstacleHasCollided()) {
+                vehicle.hasCollided(true, false);
             }
+            display.vibrate(200);
+            ((Obstacles) obstacles.elementAt(i)).hasCollided(true);
+        }
+    }
+
+    public void runThroughObstaclesVector() {
+        for (int i = this.obstacles.size() - 1; i >= 0; i--) {
+            resetObstacles(i);
+            checkObstaclesVehicleCollisions(i);
         }
     }
 
@@ -308,66 +320,60 @@ public class Juego extends GameCanvas {
         }
     }
 
-    public void resetEnemyCoordinates() {
-        for (int i = this.enemies.size() - 1; i >= 0; i--) {
-            if ((((Enemies) enemies.elementAt(i)).getEnemyX() < -((Enemies) enemies.elementAt(i)).getEnemyWidth())) {
-                ((Enemies) enemies.elementAt(i)).resetEnemyCoordinates(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
-            }
+    public void resetEnemyCoordinates(int i) {
+        if ((((Enemies) enemies.elementAt(i)).getEnemyX() < -((Enemies) enemies.elementAt(i)).getEnemyWidth())) {
+            ((Enemies) enemies.elementAt(i)).resetEnemyCoordinates(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
         }
     }
 
-    public void resetEnemies() {
-        for (int i = this.enemies.size() - 1; i >= 0; i--) {
-            if (((Enemies) enemies.elementAt(i)).returnEnemyHasCollided()) {
-                ((Enemies) enemies.elementAt(i)).resetEnemy(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
-            } else {
-                ((Enemies) enemies.elementAt(i)).actualizar();
-            }
+    public void resetEnemies(int i) {
+        if (((Enemies) enemies.elementAt(i)).returnEnemyHasCollided()) {
+            ((Enemies) enemies.elementAt(i)).resetEnemy(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
+        } else {
+            ((Enemies) enemies.elementAt(i)).actualizar();
         }
     }
 
-    public void checkVehicleCollisions() {
-        for (int i = this.enemies.size() - 1; i >= 0; i--) {
-            if (((Enemies) enemies.elementAt(i)).getEnemyX() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
-                    && ((Enemies) enemies.elementAt(i)).getEnemyX() >= vehicle.getVehicleX()
-                    && ((Enemies) enemies.elementAt(i)).getEnemyY() + (((Enemies) enemies.elementAt(i)).getEnemyHeight() / 2) < (vehicle.getVehicleY() + vehicle.getVehicleHeight())
-                    && ((Enemies) enemies.elementAt(i)).getEnemyY() + (((Enemies) enemies.elementAt(i)).getEnemyHeight() / 2) > vehicle.getVehicleY()) {
+    public void checkVehicleCollisions(int i) {
+        if (((Enemies) enemies.elementAt(i)).getEnemyX() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
+                && ((Enemies) enemies.elementAt(i)).getEnemyX() >= vehicle.getVehicleX()
+                && ((Enemies) enemies.elementAt(i)).getEnemyY() + (((Enemies) enemies.elementAt(i)).getEnemyHeight() / 2) < (vehicle.getVehicleY() + vehicle.getVehicleHeight())
+                && ((Enemies) enemies.elementAt(i)).getEnemyY() + (((Enemies) enemies.elementAt(i)).getEnemyHeight() / 2) > vehicle.getVehicleY()) {
 
-                vehicle.hasCollided(true, true);
-                display.vibrate(200);
-                ((Enemies) this.enemies.elementAt(i)).hasCollided(true);
-            }
+            vehicle.hasCollided(true, true);
+            display.vibrate(200);
+            ((Enemies) this.enemies.elementAt(i)).hasCollided(true);
         }
     }
 
-    public void checkObstaclesVehicleCollisions() {
-        for (int i = this.obstacles.size() - 1; i >= 0; i--) {
-            if (((Obstacles) obstacles.elementAt(i)).getObstacleX() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
-                    && ((Obstacles) obstacles.elementAt(i)).getObstacleX() >= vehicle.getVehicleX()
-                    && ((Obstacles) obstacles.elementAt(i)).getObstacleY() < (vehicle.getVehicleY()) + vehicle.getVehicleHeight()
-                    && ((Obstacles) obstacles.elementAt(i)).getObstacleY() + ((Obstacles) obstacles.elementAt(i)).getObstacleHeight() + 10 > (vehicle.getVehicleY() + vehicle.getVehicleHeight())) {
-
-                if (!((Obstacles) obstacles.elementAt(i)).obstacleHasCollided()) {
-                    vehicle.hasCollided(true, false);
-                }
-                display.vibrate(200);
-                ((Obstacles) obstacles.elementAt(i)).hasCollided(true);
-            }
-        }
+    public void addEnemyBullets(int i) {
+        ((Enemies) enemies.elementAt(i)).setBulletX();
+        ((Enemies) enemies.elementAt(i)).setBulletY();
+        ((Enemies) enemies.elementAt(i)).agregarBullet();
+        ((Enemies) enemies.elementAt(i)).actualizarFireGun();
     }
 
-    public void addEnemyBullets() {
-        for (int i = this.enemies.size() - 1; i >= 0; i--) {
-            ((Enemies) enemies.elementAt(i)).setBulletX();
-            ((Enemies) enemies.elementAt(i)).setBulletY();
-            ((Enemies) enemies.elementAt(i)).agregarBullet();
-            ((Enemies) enemies.elementAt(i)).actualizarFireGun();
-        }
+    private void checkEnemyBulletsVehicleCollision(int i) {
+        ((Enemies) enemies.elementAt(i)).checkEnemyBulletsVehicleCollision(vehicle);
     }
 
-    private void checkEnemyBulletsVehicleCollision() {
+    //this method will do all the updates for enemies
+    public void runThroughEnemiesVector() {
         for (int i = this.enemies.size() - 1; i >= 0; i--) {
-            ((Enemies) enemies.elementAt(i)).checkEnemyBulletsVehicleCollision(vehicle);
+            // adds enemies bullets
+            addEnemyBullets(i);
+
+            // checks enemybullets collisions
+            checkEnemyBulletsVehicleCollision(i);
+
+            //resets enemies coordinates if they collide
+            resetEnemies(i);
+
+            //reset enemy coorinates if enemies go off screen
+            resetEnemyCoordinates(i);
+
+            // check for vehicleCollisions
+            checkVehicleCollisions(i);
         }
     }
 

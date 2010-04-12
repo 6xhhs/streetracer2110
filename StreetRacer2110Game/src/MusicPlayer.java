@@ -56,7 +56,6 @@ public class MusicPlayer {
     }
 
     public void startMusicPlayer() {
-        System.out.println("music player started");
         try {
             musicPlayer.realize();
             musicPlayer.prefetch();
