@@ -71,7 +71,7 @@ public class Background {
         }
     }
 
-    public void dibujar2(Graphics g) {
+    public void dibujarMovingStreet(Graphics g) {
         g.drawImage(backgroundImage, x, alto - backgroundImage.getHeight(), g.TOP | g.LEFT);
         g.drawImage(backgroundImage2, x2, alto - backgroundImage.getHeight(), g.TOP | g.LEFT);
     }

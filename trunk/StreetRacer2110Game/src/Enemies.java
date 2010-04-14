@@ -26,8 +26,11 @@ public class Enemies {
     private int addBulletCount = 0;
     private static final int BULLET_TYPE_INDEX = 2;
 
+    private int bulletsVectorSize;
+
     public Enemies(int xCoordinate, int yCoordinate, int enemiesSelectedIndex) {
 
+        bulletsVectorSize = 0;
 
         this.enemiesSelectedIndex = enemiesSelectedIndex;
         this.x = xCoordinate;
@@ -81,6 +84,8 @@ public class Enemies {
     public void agregarBullet() {
         addBulletCount++;
         if (addBulletCount>=CREATE_BULLET_DELAY_TIME) {
+            setBulletX();
+            setBulletY();
             bullets.addElement(new Pelota(this.bulletX, this.bulletY, BULLET_TYPE_INDEX));
             addBulletCount=0;
         }
@@ -88,13 +93,17 @@ public class Enemies {
     }
 
     public void dibujarFireGun(Graphics g) {
-        for (int i = this.bullets.size() - 1; i >= 0; i--) {
+        //optimized here
+        bulletsVectorSize=this.bullets.size()-1;
+        for (int i = bulletsVectorSize; i >= 0; i--) {
             ((Pelota) bullets.elementAt(i)).dibujar(g);
         }
     }
 
     public void actualizarFireGun() {
-        for (int i = this.bullets.size() - 1; i >= 0; i--) {
+        //optimized here
+       // bulletsVectorSize= this.bullets.size()-1;
+        for (int i = bullets.size()-1; i >= 0; i--) {
             if (((Pelota) bullets.elementAt(i)).getX() < 0 || ((Pelota) bullets.elementAt(i)).returnHasCollided()) {
                 bullets.removeElementAt(i);
             } else {
@@ -152,8 +161,10 @@ public class Enemies {
     }
 
     public void checkEnemyBulletsVehicleCollision(Vehicle vehicle) {
+        //optimized here
         if (bullets != null && vehicle != null) {
-            for (int i = bullets.size() - 1; i >= 0; i--) {
+            //bulletsVectorSize=this.bullets.size()-1;
+            for (int i = bullets.size()-1; i >= 0; i--) {
 
                 if (((Pelota) bullets.elementAt(i)).getX() < vehicle.getVehicleX() + vehicle.getVehicleWidth()
                         && ((Pelota) bullets.elementAt(i)).getX() > vehicle.getVehicleX()
