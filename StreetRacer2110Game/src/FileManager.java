@@ -11,22 +11,18 @@ public class FileManager {
 
     private String file;
     private String data;
-    private int totalPointsAccumulated;
-    private static final int READ_FILE = 0;
-    private static final int WRITE_FILE = 1;
+    private int hiScrVecSize;
 
     public FileManager(String file) {
         this.file = file;
         this.data = "";
-
-
+        hiScrVecSize=0;
     }
 
     public void readFile(Vector highScorePoints, Vector highScoreNames) {
         //read data
         try {
             FileConnection fc = (FileConnection) Connector.open("file:///e:/" + file, Connector.READ_WRITE);
-            //FileConnection fc = (FileConnection) Connector.open("file:///datos.txt", Connector.READ_WRITE);
             if (!fc.exists()) {
                 fc.create();
                 OutputStream salida = fc.openOutputStream();
@@ -64,7 +60,8 @@ public class FileManager {
             }
             OutputStream salida = fc.openOutputStream();
             OutputStreamWriter output = new OutputStreamWriter(salida);
-            for (int i = 0; i < highScorePoints.size(); i++) {
+            hiScrVecSize = highScorePoints.size();
+            for (int i = 0; i < hiScrVecSize; i++) {
                 output.write(highScoreNames.elementAt(i) + " " + highScorePoints.elementAt(i) + "\n");
             }
             output.close();

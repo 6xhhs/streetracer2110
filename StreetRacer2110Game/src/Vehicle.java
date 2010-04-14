@@ -7,7 +7,7 @@ import javax.microedition.lcdui.Image;
 
 public class Vehicle {
 
-    private static final int MAX_BULLETS = 4;
+    private static final int MAX_BULLETS = 3;
     private static final int ROAD_TOP_Y_LIMIT = 260;
     private int x;
     private int y;
@@ -38,8 +38,10 @@ public class Vehicle {
     private boolean drawRisingVehicleIsActive;
     private Vector vehicleImages;
 
+    private int bulletsVectorSize;
     public Vehicle(int screenWidth, int screenHeight, int carSelectedIndex) {
 
+        bulletsVectorSize=0;
         this.vehicleImages = new Vector();
 
         this.vehicleIsRising = true;
@@ -190,19 +192,24 @@ public class Vehicle {
     }
 
     public void agregarBullet() {
+        //bulletsVectorSize = bullets.size();
         if (bullets.size() < MAX_BULLETS) {
+            setBulletX();
+            setBulletY();
             bullets.addElement(new Pelota(this.bulletX, this.bulletY, BULLET_TYPE_INDEX));
         }
     }
 
     public void dibujarFireGun(Graphics g) {
-        for (int i = this.bullets.size() - 1; i >= 0; i--) {
+        bulletsVectorSize = bullets.size()-1;
+        for (int i = bulletsVectorSize; i >= 0; i--) {
             ((Pelota) bullets.elementAt(i)).dibujar(g);
         }
     }
 
     public void actualizarFireGun() {
-        for (int i = this.bullets.size() - 1; i >= 0; i--) {
+        bulletsVectorSize = bullets.size()-1;
+        for (int i = bulletsVectorSize; i >= 0; i--) {
             if (((Pelota) bullets.elementAt(i)).getX() >= (screenWidth + 5) || ((Pelota) bullets.elementAt(i)).returnHasCollided()) {
                 bullets.removeElementAt(i);
             } else {
@@ -271,10 +278,12 @@ public class Vehicle {
     }
 
     public void checkBulletsEnemyCollision(Vector enemies) {
+        int enemiesVectorSize = enemies.size()-1;
         if (bullets != null && enemies != null) {
-            for (int i = bullets.size() - 1; i >= 0; i--) {
+            bulletsVectorSize = bullets.size()-1;
+            for (int i = bulletsVectorSize; i >= 0; i--) {
 
-                for (int j = enemies.size() - 1; j >= 0; j--) {
+                for (int j = enemiesVectorSize; j >= 0; j--) {
                     if (((Pelota) bullets.elementAt(i)).getX() > ((Enemies) enemies.elementAt(j)).getEnemyX()
                             && ((Pelota) bullets.elementAt(i)).getX() < ((Enemies) enemies.elementAt(j)).getEnemyX() + ((Enemies) enemies.elementAt(j)).getEnemyWidth()
                             && ((Pelota) bullets.elementAt(i)).getY() > ((Enemies) enemies.elementAt(j)).getEnemyY()

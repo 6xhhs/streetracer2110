@@ -52,7 +52,7 @@ public class Levels {
         sky.dibujar(g);
         clouds.dibujar(g);
         midground.dibujar(g);
-        foreground.dibujar2(g);
+        foreground.dibujarMovingStreet(g);
     }
 
     public void actualizar() {

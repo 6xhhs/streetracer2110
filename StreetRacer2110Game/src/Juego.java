@@ -9,8 +9,8 @@ import javax.microedition.lcdui.game.GameCanvas;
 
 public class Juego extends GameCanvas {
 
-    public static final int END_OF_LEVEL_X_VALUE = -1100;
-    public static final int FINAL_OBSTACLE_START = -800;
+    public static final int LEVEL_END = -1100;
+    public static final int START_RAMP = -800;
     private Levels gameLevel;
     private Vehicle vehicle;
     private final int ANCHO;        //ancho de la pantalla del cell
@@ -22,24 +22,34 @@ public class Juego extends GameCanvas {
     private Image pausedOpaque;
     private StreetRacer2110 midlet;
     private boolean keyIsPressed = true;
-    private int pausedMenuSelectedIndex;
+    private int psdMenuIndex;
     private PauseMenu pauseMenu;
-    private boolean yesNoOptionsIsActive = false;
-    private boolean returnToMenuIsActive = false;
+    private boolean ysNoIsActive = false;
+    private boolean retToMenuIsActive = false;
     private boolean exitGameIsActive = false;
     private Vector enemies;
     private Vector obstacles;
-    private static Random generateRandomCoordinate = new Random();
+    private static final int MAX_RAND_COORDS = 20;
+    private static Random randCoord = new Random();
+    private int[] randXEnemCoords;
+    private int[] randYEnemCoords;
+    private int[] randXObstCoords;
+    private int[] randYObstCoords;
+    private int obstCoordsIndex;
+    private int enemCoordsIndex;
     private MusicPlayer musicPlayer;
     private boolean musicIsActive;
-    private boolean alternateEnemyCreation = false;
+    private boolean createAltEnemy = false;
     private Display display;
     private int carSelectedIndex;
     private final int currentLevel;
     public int highScore;
     private Ramp ramp;
-    private boolean finalObstacleIsActive;
+    private boolean rampIsActive;
     private boolean vehicleIsAtRamp;
+    private boolean removeEnemy;
+    private int enemiesVectorSize;
+    private int obstaclesVectorSize;
 
     public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel) {
 
@@ -48,11 +58,10 @@ public class Juego extends GameCanvas {
         this.midlet = midlet;
         this.display = Display.getDisplay(midlet);
 
-        this.setFullScreenMode(true);
-
         this.currentLevel = currentLevel;
 
-        pausedMenuSelectedIndex = 0;
+        this.removeEnemy = false;
+        this.setFullScreenMode(true);
 
         this.carSelectedIndex = carSelectedIndex;
         this.ANCHO = getWidth();
@@ -65,42 +74,64 @@ public class Juego extends GameCanvas {
 
         vehicle = new Vehicle(this.ANCHO, this.ALTO, carSelectedIndex);
 
-        enemies = new Vector();
-        obstacles = new Vector();
+        this.gameLevel = new Levels(currentLevel, ANCHO, ALTO);
+
+        pauseMenu = new PauseMenu(this, g);
+
+        ramp = new Ramp(currentLevel, ANCHO, ALTO);
+        rampIsActive = false;
+        this.vehicleIsAtRamp = false;
+
+        highScore = 0;
 
         try {
             pausedOpaque = Image.createImage("/paused.png");
         } catch (IOException ex) {
             System.out.println("Error no puedo cargar la imagen paused.png");
         }
+
         isPaused = false;
+        psdMenuIndex = 0;
 
-        this.gameLevel = new Levels(currentLevel, ANCHO, ALTO);
+        obstCoordsIndex = 0;
+        enemCoordsIndex = 0;
+        randXEnemCoords = new int[MAX_RAND_COORDS];
+        randYEnemCoords = new int[MAX_RAND_COORDS];
+        randXObstCoords = new int[MAX_RAND_COORDS];
+        randYObstCoords = new int[MAX_RAND_COORDS];
+        for (int i = 0; i < MAX_RAND_COORDS; i++) {
+            randXEnemCoords[i] = (ANCHO + randCoord.nextInt(110));
+            randYEnemCoords[i] = (ALTO - randCoord.nextInt(100) - 65);
+            randXObstCoords[i] = ANCHO + randCoord.nextInt(120);
+            randYObstCoords[i] = (ALTO - randCoord.nextInt(100) - 10);
+        }
 
-        pauseMenu = new PauseMenu(this, g);
-
-        ramp = new Ramp(currentLevel, ANCHO, ALTO);
-        finalObstacleIsActive = false;
-        this.vehicleIsAtRamp = false;
-
+        enemies = new Vector();
+        obstacles = new Vector();
+        enemiesVectorSize = 0;
+        obstaclesVectorSize = 0;
         createObstacles();
         createEnemies();
-
-        highScore = 0;
-
+        
         animador = new Animador(this);      //animador debe ser el ultimo que se crea
         animador.iniciar();
     }
 
-    public void checkForGameOver() {
+    public void start() {
+
+        createObstacles();
+        createEnemies();
+    }
+
+    public void checkGameOver() {
         if (vehicle.returnGameOver()) {
             vehicle.setGameOver(false);
             midlet.restartGame();
         }
     }
 
-    public void checkForLevelCompleted() {
-        if (gameLevel.returnSkyBackgroundXValue() == END_OF_LEVEL_X_VALUE) {
+    public void checkLevelCompleted() {
+        if (gameLevel.returnSkyBackgroundXValue() == LEVEL_END) {
 
             highScore += vehicle.returnTotalPointsAccumulated();
             if (this.currentLevel < 3) {
@@ -111,7 +142,7 @@ public class Juego extends GameCanvas {
         }
     }
 
-    public void pauseOrUnpause() {
+    public void pauseUnpause() {
         currentKeyCode = getKeyStates();
         if ((currentKeyCode & GAME_A_PRESSED) != 0) {
             //Pausar??
@@ -125,7 +156,7 @@ public class Juego extends GameCanvas {
         }
     }
 
-    public void readProcessKeysPressed() {
+    public void ctrlKeysPressed() {
         currentKeyCode = getKeyStates();
         if (!this.vehicleIsAtRamp) {
             if ((currentKeyCode & UP_PRESSED) != 0) {
@@ -142,20 +173,14 @@ public class Juego extends GameCanvas {
             }
         }
         if ((currentKeyCode & FIRE_PRESSED) != 0) {
-            vehicle.setBulletX();
-            vehicle.setBulletY();
+//            vehicle.setBulletX();
+//            vehicle.setBulletY();
             vehicle.agregarBullet();
         }
     }
 
-    public void start() {
-
-        createObstacles();
-        createEnemies();
-    }
-
     public void actualizar() {
-        pauseOrUnpause();
+        pauseUnpause();
         currentKeyCode = getKeyStates();
         if (isPaused) {
             if (musicPlayer.isPlaying()) {
@@ -163,46 +188,46 @@ public class Juego extends GameCanvas {
             }
 
             if ((currentKeyCode & UP_PRESSED) != 0) {
-                pausedMenuSelectedIndex--;
-                if (pausedMenuSelectedIndex < 0) {
-                    pausedMenuSelectedIndex = 2;
+                psdMenuIndex--;
+                if (psdMenuIndex < 0) {
+                    psdMenuIndex = 2;
                 }
             } else if ((currentKeyCode & DOWN_PRESSED) != 0) {
-                pausedMenuSelectedIndex++;
-                if (pausedMenuSelectedIndex > 2) {
-                    pausedMenuSelectedIndex = 0;
+                psdMenuIndex++;
+                if (psdMenuIndex > 2) {
+                    psdMenuIndex = 0;
                 }
             } else if ((currentKeyCode & FIRE_PRESSED) != 0) {
-                if (pausedMenuSelectedIndex == 0) {
+                if (psdMenuIndex == 0) {
                     isPaused = !isPaused;
 
-                } else if (pausedMenuSelectedIndex == 1) {
-                    yesNoOptionsIsActive = true;
-                    returnToMenuIsActive = true;
+                } else if (psdMenuIndex == 1) {
+                    ysNoIsActive = true;
+                    retToMenuIsActive = true;
 
-                } else if (pausedMenuSelectedIndex == 2) {
-                    yesNoOptionsIsActive = true;
+                } else if (psdMenuIndex == 2) {
+                    ysNoIsActive = true;
                     exitGameIsActive = true;
                 }
             }
 
-            if (yesNoOptionsIsActive) {
-                if (pausedMenuSelectedIndex == 2) {
+            if (ysNoIsActive) {
+                if (psdMenuIndex == 2) {
                     if ((currentKeyCode & GAME_C_PRESSED) != 0) {
                         midlet.notifyDestroyed();
                     }
                     if ((currentKeyCode & GAME_D_PRESSED) != 0) {
-                        yesNoOptionsIsActive = false;
+                        ysNoIsActive = false;
                         exitGameIsActive = false;
                     }
-                } else if (pausedMenuSelectedIndex == 1) {
+                } else if (psdMenuIndex == 1) {
                     if ((currentKeyCode & GAME_C_PRESSED) != 0) {
 
                         midlet.changeGameToScreen();
                     }
                     if ((currentKeyCode & GAME_D_PRESSED) != 0) {
-                        yesNoOptionsIsActive = false;
-                        returnToMenuIsActive = false;
+                        ysNoIsActive = false;
+                        retToMenuIsActive = false;
                     }
                 }
             }
@@ -210,11 +235,11 @@ public class Juego extends GameCanvas {
         }
 
         if (musicIsActive) {
-            if ( musicPlayer!=null && !musicPlayer.isPlaying()) {
+            if (musicPlayer != null && !musicPlayer.isPlaying()) {
                 musicPlayer.startMusicPlayer();
             }
         }
-        readProcessKeysPressed();
+        ctrlKeysPressed();
 
         runThroughEnemiesVector();
 
@@ -228,8 +253,8 @@ public class Juego extends GameCanvas {
         checkForFinalObstacle();
         actualizarRampVehicleMovements();
 
-        checkForGameOver();
-        checkForLevelCompleted();
+        checkGameOver();
+        checkLevelCompleted();
     }
 
     void dibujar() {
@@ -242,7 +267,7 @@ public class Juego extends GameCanvas {
 
         drawObstacles();
 
-        if (finalObstacleIsActive) {
+        if (rampIsActive) {
             ramp.dibujar(g);
         }
         vehicle.dibujar(g);
@@ -252,14 +277,14 @@ public class Juego extends GameCanvas {
         if (isPaused) {
 
             g.drawImage(pausedOpaque, 0, 0, g.TOP | g.LEFT);
-            if (yesNoOptionsIsActive) {
-                if (returnToMenuIsActive) {
-                    pausedMenuSelectedIndex = 1;
+            if (ysNoIsActive) {
+                if (retToMenuIsActive) {
+                    psdMenuIndex = 1;
                 } else if (exitGameIsActive) {
-                    pausedMenuSelectedIndex = 2;
+                    psdMenuIndex = 2;
                 }
             }
-            pauseMenu.drawPausedMenu(this, pausedMenuSelectedIndex, yesNoOptionsIsActive);
+            pauseMenu.drawPausedMenu(this, psdMenuIndex, ysNoIsActive);
         }
         flushGraphics();    //Actualiza los cambios en la memoria de la pantalla
     }
@@ -275,14 +300,17 @@ public class Juego extends GameCanvas {
     }
 
     public void createObstacles() {
+        //vectorSize=obstacles.size();
         while (obstacles.size() < currentLevel) {
-            obstacles.addElement(new Obstacles(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10), this.currentLevel));
+            obstacles.addElement(new Obstacles(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex], this.currentLevel));
+            updateObstCoords();
         }
     }
 
     public void resetObstacles(int i) {
         if ((((Obstacles) obstacles.elementAt(i)).getObstacleX() < -((Obstacles) obstacles.elementAt(i)).getObstacleWidth())) {
-            ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10));
+            ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex]);
+            updateObstCoords();
         } else {
             ((Obstacles) obstacles.elementAt(i)).actualizar();
         }
@@ -303,6 +331,7 @@ public class Juego extends GameCanvas {
     }
 
     public void runThroughObstaclesVector() {
+        obstaclesVectorSize = this.obstacles.size() - 1;
         for (int i = this.obstacles.size() - 1; i >= 0; i--) {
             resetObstacles(i);
             checkObstaclesVehicleCollisions(i);
@@ -310,25 +339,40 @@ public class Juego extends GameCanvas {
     }
 
     public void createEnemies() {
-        while (enemies.size() < currentLevel) {
-            if (alternateEnemyCreation) {
-                enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 0));
+        //vectorSize = enemies.size();
+        while (this.enemies.size() < currentLevel) {
+            if (createAltEnemy) {
+                enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 0));
             } else {
-                enemies.addElement(new Enemies(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65), 1));
+                enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 1));
             }
-            alternateEnemyCreation = !alternateEnemyCreation;
+            updateEnemCoords();
+            createAltEnemy = !createAltEnemy;
         }
     }
 
     public void resetEnemyCoordinates(int i) {
+        //**********modified to remove enemy after the ramp flag is true
         if ((((Enemies) enemies.elementAt(i)).getEnemyX() < -((Enemies) enemies.elementAt(i)).getEnemyWidth())) {
-            ((Enemies) enemies.elementAt(i)).resetEnemyCoordinates(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
+            if (gameLevel.returnSkyBackgroundXValue() <= this.START_RAMP) {
+                enemies.removeElementAt(i);
+            } else {
+                ((Enemies) enemies.elementAt(i)).resetEnemyCoordinates(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
+                updateEnemCoords();
+            }
         }
     }
 
     public void resetEnemies(int i) {
+        //*********modified to remove enemy after ramp flag becomes true
         if (((Enemies) enemies.elementAt(i)).returnEnemyHasCollided()) {
-            ((Enemies) enemies.elementAt(i)).resetEnemy(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
+            if (gameLevel.returnSkyBackgroundXValue() <= this.START_RAMP) {
+                enemies.removeElementAt(i);
+                removeEnemy = true;
+            } else {
+                ((Enemies) enemies.elementAt(i)).resetEnemy(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
+                updateEnemCoords();
+            }
         } else {
             ((Enemies) enemies.elementAt(i)).actualizar();
         }
@@ -347,8 +391,8 @@ public class Juego extends GameCanvas {
     }
 
     public void addEnemyBullets(int i) {
-        ((Enemies) enemies.elementAt(i)).setBulletX();
-        ((Enemies) enemies.elementAt(i)).setBulletY();
+//        ((Enemies) enemies.elementAt(i)).setBulletX();
+//        ((Enemies) enemies.elementAt(i)).setBulletY();
         ((Enemies) enemies.elementAt(i)).agregarBullet();
         ((Enemies) enemies.elementAt(i)).actualizarFireGun();
     }
@@ -359,32 +403,39 @@ public class Juego extends GameCanvas {
 
     //this method will do all the updates for enemies
     public void runThroughEnemiesVector() {
-        for (int i = this.enemies.size() - 1; i >= 0; i--) {
+        enemiesVectorSize = this.enemies.size() - 1;
+        for (int i = enemiesVectorSize; i >= 0; i--) {
             // adds enemies bullets
             addEnemyBullets(i);
 
             // checks enemybullets collisions
             checkEnemyBulletsVehicleCollision(i);
 
+            // check for vehicleCollisions
+            checkVehicleCollisions(i);
+
             //resets enemies coordinates if they collide
             resetEnemies(i);
 
-            //reset enemy coorinates if enemies go off screen
-            resetEnemyCoordinates(i);
-
-            // check for vehicleCollisions
-            checkVehicleCollisions(i);
+            if (!removeEnemy) {
+                //reset enemy coorinates if enemies go off screen
+                resetEnemyCoordinates(i);
+            } else {
+                removeEnemy = false;
+            }
         }
     }
 
     private void drawObstacles() {
-        for (int i = this.obstacles.size() - 1; i >= 0; i--) {
+        obstaclesVectorSize = this.obstacles.size() - 1;
+        for (int i = obstaclesVectorSize; i >= 0; i--) {
             ((Obstacles) obstacles.elementAt(i)).dibujar(g);
         }
     }
 
     private void drawEnemies() {
-        for (int i = this.enemies.size() - 1; i >= 0; i--) {
+        enemiesVectorSize = this.enemies.size() - 1;
+        for (int i = enemiesVectorSize; i >= 0; i--) {
             ((Enemies) enemies.elementAt(i)).dibujar(g);
             ((Enemies) enemies.elementAt(i)).dibujarFireGun(g);
         }
@@ -393,18 +444,22 @@ public class Juego extends GameCanvas {
     public void resetJuegoValues() {
 
         this.vehicleIsAtRamp = false;
-        this.finalObstacleIsActive = false;
+        this.rampIsActive = false;
 
         this.vehicle.resetValues();
         this.ramp.resetRampCoordinates();
 
-        for (int i = this.enemies.size() - 1; i >= 0; i--) {
-            ((Enemies) enemies.elementAt(i)).resetEnemy(ANCHO + generateRandomCoordinate.nextInt(110), (ALTO - generateRandomCoordinate.nextInt(100) - 65));
+        enemiesVectorSize = enemies.size() - 1;
+        for (int i = enemiesVectorSize; i >= 0; i--) {
+            ((Enemies) enemies.elementAt(i)).resetEnemy(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
             ((Enemies) enemies.elementAt(i)).removeBullets();
+            updateEnemCoords();
         }
 
-        for (int i = this.obstacles.size() - 1; i >= 0; i--) {
-            ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(ANCHO + generateRandomCoordinate.nextInt(120), (ALTO - generateRandomCoordinate.nextInt(100) - 10));
+        obstaclesVectorSize = obstacles.size() - 1;
+        for (int i = obstaclesVectorSize; i >= 0; i--) {
+            ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex]);
+            updateObstCoords();
         }
 
         this.gameLevel.resetValues();
@@ -413,7 +468,7 @@ public class Juego extends GameCanvas {
             this.musicPlayer.terminate();
             this.musicPlayer = new MusicPlayer(currentLevel);
         }
-        start();
+        //start();
     }
 
     public void nullifyObjects(boolean endAnimador, boolean endMusicPlayer) {
@@ -427,12 +482,11 @@ public class Juego extends GameCanvas {
                 this.musicPlayer.terminate();
             }
         }
-        System.gc();
     }
 
     public void checkForFinalObstacle() {
-        if (gameLevel.returnSkyBackgroundXValue() == FINAL_OBSTACLE_START) {
-            this.finalObstacleIsActive = true;
+        if (gameLevel.returnSkyBackgroundXValue() == START_RAMP) {
+            this.rampIsActive = true;
             vehicle.hasCollidedWithRamp(true);
         }
     }
@@ -448,7 +502,7 @@ public class Juego extends GameCanvas {
     }
 
     private void actualizarRampVehicleMovements() {
-        if (finalObstacleIsActive) {
+        if (rampIsActive) {
             ramp.actualizar();
             checkRampVehicleCollisions();
             if (this.vehicleIsAtRamp) {
@@ -456,8 +510,22 @@ public class Juego extends GameCanvas {
             }
             if (!vehicle.getIsAtRamp()) {
                 this.vehicleIsAtRamp = false;
-                this.finalObstacleIsActive = false;
+                this.rampIsActive = false;
             }
+        }
+    }
+
+    private void updateEnemCoords() {
+        enemCoordsIndex++;
+        if (enemCoordsIndex >= MAX_RAND_COORDS) {
+            enemCoordsIndex = 0;
+        }
+    }
+
+    private void updateObstCoords() {
+        obstCoordsIndex++;
+        if (obstCoordsIndex >= MAX_RAND_COORDS) {
+            obstCoordsIndex = 0;
         }
     }
 }

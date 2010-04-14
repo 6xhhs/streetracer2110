@@ -91,9 +91,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         this.musicIsActive = musicIsActive;
         gui.setItemsToNull();
         gui = null;
-        System.gc();
         juego = new Juego(this, carSelectedIndex, this.musicIsActive, 1);
-
         display.setCurrent(juego);
         juego.start();
     }
@@ -102,7 +100,6 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
 
         juego.nullifyObjects(true, true);
         juego = null;
-        System.gc();
         gui = new GUI(this, highScorePoints, highScoreNames);
         gui.setMusicIsActive(musicIsActive);
         display.setCurrent(gui);
@@ -117,29 +114,26 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         display.setCurrent(splashScreen);
         juego.resetJuegoValues();
         display.setCurrent(juego);
+        juego.start();
         splashScreen = null;
-        System.gc();
     }
 
     public void loadNextLevel(int carSelectedIndex, int currentLevel, int highScore) {
-        totalPoints += highScore;
-        this.carSelectedIndex = carSelectedIndex;
-        this.currentLevel = currentLevel;
         splashScreen = new SplashScreen(2 + currentLevel);
         splashScreen.paint();
         display.setCurrent(splashScreen);
+
+        totalPoints += highScore;
+        this.carSelectedIndex = carSelectedIndex;
+        this.currentLevel = currentLevel;
         juego.nullifyObjects(true, true);
         juego = null;
         juego = new Juego(this, this.carSelectedIndex, this.musicIsActive, this.currentLevel);
-
 
         display.setCurrent(juego);
         juego.start();
 
         splashScreen = null;
-        System.gc();
-
-
     }
 
     public void loadYouWon(int totalPointsAccumulated) {
