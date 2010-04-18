@@ -1,5 +1,5 @@
 
-//solicita un GameCanvas que ejecute los metodos actualizar y dibujar constantemente
+//solicita un GameCanvas que ejecute los metodos update y draw constantemente
 public class Animador implements Runnable {
 
     private Juego juego;    //gui deberia ser una interface
@@ -18,11 +18,11 @@ public class Animador implements Runnable {
         while (corriendo) {
 
             //indicarle al gui que actualice a todos los objetos (posicion)
-            juego.actualizar();
+            juego.update();
 
             if (corriendo) {
                 //Actualice la pantalla
-                juego.dibujar();
+                juego.draw();
 
                 try {
 

@@ -48,8 +48,8 @@ public class Juego extends GameCanvas {
     private boolean rampIsActive;
     private boolean vehicleIsAtRamp;
     private boolean removeEnemy;
-    private int enemiesVectorSize;
-    private int obstaclesVectorSize;
+    private int enemVecSize;
+    private int obstVecSize;
 
     public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel) {
 
@@ -108,8 +108,8 @@ public class Juego extends GameCanvas {
 
         enemies = new Vector();
         obstacles = new Vector();
-        enemiesVectorSize = 0;
-        obstaclesVectorSize = 0;
+        enemVecSize = 0;
+        obstVecSize = 0;
         createObstacles();
         createEnemies();
         
@@ -124,7 +124,7 @@ public class Juego extends GameCanvas {
     }
 
     public void checkGameOver() {
-        if (vehicle.returnGameOver()) {
+        if (vehicle.getGameOver()) {
             vehicle.setGameOver(false);
             midlet.restartGame();
         }
@@ -133,7 +133,7 @@ public class Juego extends GameCanvas {
     public void checkLevelCompleted() {
         if (gameLevel.returnSkyBackgroundXValue() == LEVEL_END) {
 
-            highScore += vehicle.returnTotalPointsAccumulated();
+            highScore += vehicle.getTotalPoints();
             if (this.currentLevel < 3) {
                 midlet.loadNextLevel(this.carSelectedIndex, this.currentLevel + 1, highScore);
             } else {
@@ -175,11 +175,11 @@ public class Juego extends GameCanvas {
         if ((currentKeyCode & FIRE_PRESSED) != 0) {
 //            vehicle.setBulletX();
 //            vehicle.setBulletY();
-            vehicle.agregarBullet();
+            vehicle.addBullet();
         }
     }
 
-    public void actualizar() {
+    public void update() {
         pauseUnpause();
         currentKeyCode = getKeyStates();
         if (isPaused) {
@@ -243,12 +243,12 @@ public class Juego extends GameCanvas {
 
         runThroughEnemiesVector();
 
-        vehicle.checkBulletsEnemyCollision(enemies);
+        vehicle.checkBulletsEnemCollision(enemies);
 
         runThroughObstaclesVector();
 
         gameLevel.actualizar();
-        vehicle.actualizarFireGun();
+        vehicle.updateAmmo();
 
         checkForFinalObstacle();
         actualizarRampVehicleMovements();
@@ -257,12 +257,12 @@ public class Juego extends GameCanvas {
         checkLevelCompleted();
     }
 
-    void dibujar() {
+    void draw() {
         // Borrar primeramente toda la pantalla
         g.setColor(0x000066);  // R(00) G(FF) B (00)
         g.fillRect(0, 0, ANCHO, ALTO);
 
-        // Despues dibujar todos los objetos de la aplicacion
+        // Despues draw todos los objetos de la aplicacion
         gameLevel.dibujar(g);
 
         drawObstacles();
@@ -270,8 +270,8 @@ public class Juego extends GameCanvas {
         if (rampIsActive) {
             ramp.dibujar(g);
         }
-        vehicle.dibujar(g);
-        vehicle.dibujarFireGun(g);
+        vehicle.draw(g);
+        vehicle.drawAmmo(g);
         drawEnemies();
 
         if (isPaused) {
@@ -300,7 +300,6 @@ public class Juego extends GameCanvas {
     }
 
     public void createObstacles() {
-        //vectorSize=obstacles.size();
         while (obstacles.size() < currentLevel) {
             obstacles.addElement(new Obstacles(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex], this.currentLevel));
             updateObstCoords();
@@ -331,7 +330,7 @@ public class Juego extends GameCanvas {
     }
 
     public void runThroughObstaclesVector() {
-        obstaclesVectorSize = this.obstacles.size() - 1;
+        obstVecSize = this.obstacles.size() - 1;
         for (int i = this.obstacles.size() - 1; i >= 0; i--) {
             resetObstacles(i);
             checkObstaclesVehicleCollisions(i);
@@ -339,7 +338,6 @@ public class Juego extends GameCanvas {
     }
 
     public void createEnemies() {
-        //vectorSize = enemies.size();
         while (this.enemies.size() < currentLevel) {
             if (createAltEnemy) {
                 enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 0));
@@ -352,19 +350,17 @@ public class Juego extends GameCanvas {
     }
 
     public void resetEnemyCoordinates(int i) {
-        //**********modified to remove enemy after the ramp flag is true
         if ((((Enemies) enemies.elementAt(i)).getEnemyX() < -((Enemies) enemies.elementAt(i)).getEnemyWidth())) {
             if (gameLevel.returnSkyBackgroundXValue() <= this.START_RAMP) {
                 enemies.removeElementAt(i);
             } else {
-                ((Enemies) enemies.elementAt(i)).resetEnemyCoordinates(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
+                ((Enemies) enemies.elementAt(i)).resetEnemCoords(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
                 updateEnemCoords();
             }
         }
     }
 
     public void resetEnemies(int i) {
-        //*********modified to remove enemy after ramp flag becomes true
         if (((Enemies) enemies.elementAt(i)).returnEnemyHasCollided()) {
             if (gameLevel.returnSkyBackgroundXValue() <= this.START_RAMP) {
                 enemies.removeElementAt(i);
@@ -374,7 +370,7 @@ public class Juego extends GameCanvas {
                 updateEnemCoords();
             }
         } else {
-            ((Enemies) enemies.elementAt(i)).actualizar();
+            ((Enemies) enemies.elementAt(i)).update();
         }
     }
 
@@ -391,20 +387,18 @@ public class Juego extends GameCanvas {
     }
 
     public void addEnemyBullets(int i) {
-//        ((Enemies) enemies.elementAt(i)).setBulletX();
-//        ((Enemies) enemies.elementAt(i)).setBulletY();
-        ((Enemies) enemies.elementAt(i)).agregarBullet();
-        ((Enemies) enemies.elementAt(i)).actualizarFireGun();
+        ((Enemies) enemies.elementAt(i)).addBullet();
+        ((Enemies) enemies.elementAt(i)).updateAmmo();
     }
 
     private void checkEnemyBulletsVehicleCollision(int i) {
-        ((Enemies) enemies.elementAt(i)).checkEnemyBulletsVehicleCollision(vehicle);
+        ((Enemies) enemies.elementAt(i)).checkBulletsVehicleCollisions(vehicle);
     }
 
     //this method will do all the updates for enemies
     public void runThroughEnemiesVector() {
-        enemiesVectorSize = this.enemies.size() - 1;
-        for (int i = enemiesVectorSize; i >= 0; i--) {
+        enemVecSize = this.enemies.size() - 1;
+        for (int i = enemVecSize; i >= 0; i--) {
             // adds enemies bullets
             addEnemyBullets(i);
 
@@ -427,17 +421,17 @@ public class Juego extends GameCanvas {
     }
 
     private void drawObstacles() {
-        obstaclesVectorSize = this.obstacles.size() - 1;
-        for (int i = obstaclesVectorSize; i >= 0; i--) {
+        obstVecSize = this.obstacles.size() - 1;
+        for (int i = obstVecSize; i >= 0; i--) {
             ((Obstacles) obstacles.elementAt(i)).dibujar(g);
         }
     }
 
     private void drawEnemies() {
-        enemiesVectorSize = this.enemies.size() - 1;
-        for (int i = enemiesVectorSize; i >= 0; i--) {
-            ((Enemies) enemies.elementAt(i)).dibujar(g);
-            ((Enemies) enemies.elementAt(i)).dibujarFireGun(g);
+        enemVecSize = this.enemies.size() - 1;
+        for (int i = enemVecSize; i >= 0; i--) {
+            ((Enemies) enemies.elementAt(i)).draw(g);
+            ((Enemies) enemies.elementAt(i)).drawAmmo(g);
         }
     }
 
@@ -449,15 +443,15 @@ public class Juego extends GameCanvas {
         this.vehicle.resetValues();
         this.ramp.resetRampCoordinates();
 
-        enemiesVectorSize = enemies.size() - 1;
-        for (int i = enemiesVectorSize; i >= 0; i--) {
+        enemVecSize = enemies.size() - 1;
+        for (int i = enemVecSize; i >= 0; i--) {
             ((Enemies) enemies.elementAt(i)).resetEnemy(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
-            ((Enemies) enemies.elementAt(i)).removeBullets();
+            ((Enemies) enemies.elementAt(i)).removeAllBullets();
             updateEnemCoords();
         }
 
-        obstaclesVectorSize = obstacles.size() - 1;
-        for (int i = obstaclesVectorSize; i >= 0; i--) {
+        obstVecSize = obstacles.size() - 1;
+        for (int i = obstVecSize; i >= 0; i--) {
             ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex]);
             updateObstCoords();
         }
@@ -506,7 +500,7 @@ public class Juego extends GameCanvas {
             ramp.actualizar();
             checkRampVehicleCollisions();
             if (this.vehicleIsAtRamp) {
-                vehicle.actualizar(7);
+                vehicle.update(7);
             }
             if (!vehicle.getIsAtRamp()) {
                 this.vehicleIsAtRamp = false;
