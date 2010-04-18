@@ -25,7 +25,6 @@ public class Enemies {
     private boolean enemyHasCollided = false;
     private int addBulletCount = 0;
     private static final int BULLET_TYPE_INDEX = 2;
-
     private int bulletsVectorSize;
 
     public Enemies(int xCoordinate, int yCoordinate, int enemiesSelectedIndex) {
@@ -71,39 +70,35 @@ public class Enemies {
         bullets = new Vector();
     }
 
-    public void dibujar(Graphics g) {
-
+    public void draw(Graphics g) {
         g.drawImage(enemiesImage, x, y, g.TOP | g.LEFT);
     }
 
-    public void actualizar() {
+    public void update() {
         this.x -= changeInX;
-
     }
 
-    public void agregarBullet() {
+    public void addBullet() {
         addBulletCount++;
-        if (addBulletCount>=CREATE_BULLET_DELAY_TIME) {
+        if (addBulletCount >= CREATE_BULLET_DELAY_TIME) {
             setBulletX();
             setBulletY();
             bullets.addElement(new Pelota(this.bulletX, this.bulletY, BULLET_TYPE_INDEX));
-            addBulletCount=0;
+            addBulletCount = 0;
         }
 
     }
 
-    public void dibujarFireGun(Graphics g) {
+    public void drawAmmo(Graphics g) {
         //optimized here
-        bulletsVectorSize=this.bullets.size()-1;
+        bulletsVectorSize = this.bullets.size() - 1;
         for (int i = bulletsVectorSize; i >= 0; i--) {
             ((Pelota) bullets.elementAt(i)).dibujar(g);
         }
     }
 
-    public void actualizarFireGun() {
-        //optimized here
-       // bulletsVectorSize= this.bullets.size()-1;
-        for (int i = bullets.size()-1; i >= 0; i--) {
+    public void updateAmmo() {
+        for (int i = bullets.size() - 1; i >= 0; i--) {
             if (((Pelota) bullets.elementAt(i)).getX() < 0 || ((Pelota) bullets.elementAt(i)).returnHasCollided()) {
                 bullets.removeElementAt(i);
             } else {
@@ -138,7 +133,6 @@ public class Enemies {
 
     public int getEnemyY() {
         return this.y;
-        //+ (ENEMY_HEIGHT/2);
     }
 
     public int getEnemyWidth() {
@@ -160,11 +154,10 @@ public class Enemies {
         return this.enemyHasCollided;
     }
 
-    public void checkEnemyBulletsVehicleCollision(Vehicle vehicle) {
+    public void checkBulletsVehicleCollisions(Vehicle vehicle) {
         //optimized here
         if (bullets != null && vehicle != null) {
-            //bulletsVectorSize=this.bullets.size()-1;
-            for (int i = bullets.size()-1; i >= 0; i--) {
+            for (int i = bullets.size() - 1; i >= 0; i--) {
 
                 if (((Pelota) bullets.elementAt(i)).getX() < vehicle.getVehicleX() + vehicle.getVehicleWidth()
                         && ((Pelota) bullets.elementAt(i)).getX() > vehicle.getVehicleX()
@@ -179,7 +172,7 @@ public class Enemies {
         }
     }
 
-    public void resetEnemyCoordinates(int newXValue, int newYValue) {
+    public void resetEnemCoords(int newXValue, int newYValue) {
         this.x = newXValue;
         this.y = newYValue;
     }
@@ -188,17 +181,17 @@ public class Enemies {
         this.enemyHasCollided = false;
     }
 
-    public void resetEnemiesImage() {
+    public void resetEnemImage() {
         this.enemiesImage = originalEnemiesImage;
     }
 
     public void resetEnemy(int newXValue, int newYValue) {
-        resetEnemyCoordinates(newXValue, newYValue);
+        resetEnemCoords(newXValue, newYValue);
         resetHasCollided();
-        resetEnemiesImage();
+        resetEnemImage();
     }
 
-    public void removeBullets() {
+    public void removeAllBullets() {
         this.bullets.removeAllElements();
     }
 }

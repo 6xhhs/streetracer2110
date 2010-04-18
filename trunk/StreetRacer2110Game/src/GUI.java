@@ -67,8 +67,6 @@ public class GUI extends GameCanvas {
     //private int RIGHT_SOFTKEY_CODE = -7;
 
     protected void keyPressed(int keyCode) {
-
-
         // work with menu according to its current state
 
         if (menuIsActive) { // draw active menu if menuIsActive is true
@@ -77,7 +75,6 @@ public class GUI extends GameCanvas {
             if (keyCode == UP) {
 
                 currentlySelectedIndex--;
-
 
                 if (currentlySelectedIndex < 0) {
 
@@ -101,7 +98,7 @@ public class GUI extends GameCanvas {
 
                 clearScreen();
                 g.setColor(0xFFFFFF); // black
-                clearScreen();
+                //clearScreen();
 
                 if (currentlySelectedIndex == 2 || currentlySelectedIndex == 3 || currentlySelectedIndex == 4) {
 
@@ -212,8 +209,6 @@ public class GUI extends GameCanvas {
 
         } else if (yesNoMenuIsActive) {
 
-
-
             keyCode = getGameAction(keyCode);
             if (keyCode == GAME_C) {
                 exitGUI();
@@ -235,7 +230,6 @@ public class GUI extends GameCanvas {
     }
 
     public void clearScreen() {
-
         g.setColor(0x000000); // white
         g.fillRect(0, 0, width, height);
         flushGraphics();

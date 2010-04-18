@@ -22,8 +22,10 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     private TextField enterHighScoreName;
     private Command OKButton;
     private boolean OKButtonIsPressed;
+    private int hiScrVecSize;
 
     public StreetRacer2110() {
+        hiScrVecSize=0;
         highScorePoints = new Vector();
         highScoreNames = new Vector();
         forma = new Form("High Score");
@@ -34,9 +36,6 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         forma.setCommandListener(this);
         totalPoints = 0;
         OKButtonIsPressed = false;
-
-
-
     }
 
     public void startApp() {
@@ -46,7 +45,6 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         fileManager = new FileManager("data.txt");
         fileManager.readFile(highScorePoints, highScoreNames);
         loadStartOfGame();
-
     }
 
     private void loadStartOfGame() {
@@ -140,8 +138,8 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         this.totalPoints += totalPointsAccumulated;
 
         boolean isAHighScore = false;
-
-        for (int i = 0; i < highScorePoints.size(); i++) {
+        hiScrVecSize = highScorePoints.size();
+        for (int i = 0; i < hiScrVecSize; i++) {
             if (totalPoints >= Integer.parseInt((String) highScorePoints.elementAt(i))) {
                 highScorePoints.insertElementAt(totalPoints + "", i);
                 isAHighScore = true;
@@ -159,8 +157,8 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     }
 
     private void loadEnterHighScoreNameScreen() {
-        juego.nullifyObjects(true, false);
         display.setCurrent(forma);
+        juego.nullifyObjects(true, false);
     }
 
     public void commandAction(Command cmnd, Displayable dsplbl) {

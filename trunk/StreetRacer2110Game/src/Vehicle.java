@@ -7,7 +7,7 @@ import javax.microedition.lcdui.Image;
 
 public class Vehicle {
 
-    private static final int MAX_BULLETS = 3;
+    //private static final int MAX_BULLETS = 3;
     private static final int ROAD_TOP_Y_LIMIT = 260;
     private int x;
     private int y;
@@ -29,7 +29,7 @@ public class Vehicle {
     private Font font;
     private boolean gameOverIsActive;
     private Vector lifeBarImages;
-    private static final int BULLET_TYPE_INDEX = 1;
+    //private static final int BULLET_TYPE_INDEX = 1;
     private boolean vehicleIsAtRamp;
     private int carJumpingRampCount;
     private boolean vehicleIsRising;
@@ -37,11 +37,10 @@ public class Vehicle {
     private boolean drawDamagedVehicleIsActive;
     private boolean drawRisingVehicleIsActive;
     private Vector vehicleImages;
-
     private int bulletsVectorSize;
+
     public Vehicle(int screenWidth, int screenHeight, int carSelectedIndex) {
 
-        bulletsVectorSize=0;
         this.vehicleImages = new Vector();
 
         this.vehicleIsRising = true;
@@ -111,7 +110,7 @@ public class Vehicle {
         }
 
         lifeImage = (Image) lifeBarImages.elementAt(0);
-        
+
         this.drawNormalVehicleIsActive = true;
         this.drawRisingVehicleIsActive = false;
         drawDamagedVehicleIsActive = false;
@@ -121,21 +120,25 @@ public class Vehicle {
         damageCount = 0;
         totalDamageCount = 0;
         bullets = new Vector();
+        for (int i = 0; i < 3; i++) {
+            bullets.addElement(new Pelota(0, 0, 1));
+        }
+        bulletsVectorSize = 3;
 
         font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
     }
 
-    public void dibujar(Graphics g) {
+    public void draw(Graphics g) {
         g.drawImage((Image) lifeBarImages.elementAt(4), 0, 0, g.TOP | g.LEFT);
 
-        if(drawNormalVehicleIsActive){
-            g.drawImage((Image)vehicleImages.elementAt(0), x, y, g.TOP|g.LEFT);
-        }else if (drawDamagedVehicleIsActive) {
-            g.drawImage((Image)vehicleImages.elementAt(1), x, y, g.TOP|g.LEFT);
+        if (drawNormalVehicleIsActive) {
+            g.drawImage((Image) vehicleImages.elementAt(0), x, y, g.TOP | g.LEFT);
+        } else if (drawDamagedVehicleIsActive) {
+            g.drawImage((Image) vehicleImages.elementAt(1), x, y, g.TOP | g.LEFT);
             drawDamagedVehicleIsActive = false;
             drawNormalVehicleIsActive = true;
-        } else if(drawRisingVehicleIsActive) {
-            g.drawImage((Image)vehicleImages.elementAt(2), x, y, g.TOP|g.LEFT);
+        } else if (drawRisingVehicleIsActive) {
+            g.drawImage((Image) vehicleImages.elementAt(2), x, y, g.TOP | g.LEFT);
         }
         if (!gameOverIsActive) {
             g.drawImage(lifeImage, 0, 0, g.TOP | g.LEFT);
@@ -178,7 +181,7 @@ public class Vehicle {
         }
     }
 
-    public void actualizar(int carJumpingRampCount) {
+    public void update(int carJumpingRampCount) {
         if (vehicleIsRising) {
             drawDamagedVehicleIsActive = false;
             drawNormalVehicleIsActive = false;
@@ -191,29 +194,33 @@ public class Vehicle {
         }
     }
 
-    public void agregarBullet() {
-        //bulletsVectorSize = bullets.size();
-        if (bullets.size() < MAX_BULLETS) {
-            setBulletX();
-            setBulletY();
-            bullets.addElement(new Pelota(this.bulletX, this.bulletY, BULLET_TYPE_INDEX));
+    public void addBullet() {
+        for (int i = 0; i < bulletsVectorSize; i++) {
+            if (((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
+                setBulletCoords(i);
+                ((Pelota) bullets.elementAt(i)).setCanFireBullet(false);
+                break;
+            }
         }
     }
 
-    public void dibujarFireGun(Graphics g) {
-        bulletsVectorSize = bullets.size()-1;
-        for (int i = bulletsVectorSize; i >= 0; i--) {
-            ((Pelota) bullets.elementAt(i)).dibujar(g);
+    public void drawAmmo(Graphics g) {
+        for (int i = 0; i < bulletsVectorSize; i++) {
+            if (!((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
+                ((Pelota) bullets.elementAt(i)).dibujar(g);
+            }
         }
     }
 
-    public void actualizarFireGun() {
-        bulletsVectorSize = bullets.size()-1;
-        for (int i = bulletsVectorSize; i >= 0; i--) {
-            if (((Pelota) bullets.elementAt(i)).getX() >= (screenWidth + 5) || ((Pelota) bullets.elementAt(i)).returnHasCollided()) {
-                bullets.removeElementAt(i);
-            } else {
-                ((Pelota) bullets.elementAt(i)).actualizar();
+    public void updateAmmo() {
+        for (int i = 0; i < bulletsVectorSize; i++) {
+            if (!((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
+                if (((Pelota) bullets.elementAt(i)).getX() >= (screenWidth + 5)) {
+                    ((Pelota) bullets.elementAt(i)).resetCoords();
+                    ((Pelota) bullets.elementAt(i)).setCanFireBullet(true);
+                } else {
+                    ((Pelota) bullets.elementAt(i)).actualizar();
+                }
             }
         }
     }
@@ -240,24 +247,57 @@ public class Vehicle {
         if (hasCollided) {
             drawNormalVehicleIsActive = false;
             drawDamagedVehicleIsActive = true;
+            addPoints(addPoints);
+            updateDamage();
+        }
+    }
 
-            if (addPoints) {
-                totalPointsAccumulated += 15;
+    private void resetBoolFlags() {
+        this.vehicleIsAtRamp = false;
+        this.vehicleIsRising = true;
+        drawNormalVehicleIsActive = true;
+        drawDamagedVehicleIsActive = false;
+        drawRisingVehicleIsActive = false;
+        gameOverIsActive = false;
+    }
+
+    private void resetBullets() {
+        for (int i = 0; i < bulletsVectorSize; i++) {
+            ((Pelota) bullets.elementAt(i)).resetCoords();
+            ((Pelota) bullets.elementAt(i)).setCanFireBullet(true);
+        }
+    }
+
+    private void resetCoords() {
+        this.x = 0;
+        this.y = this.screenHeight - (screenHeight / 4);
+    }
+
+    private void resetDamage() {
+        damageCount = 0;
+        totalDamageCount = 0;
+    }
+
+    private void updateDamage() {
+        damageCount++;
+        if (damageCount == totalDamageReceived) {
+            damageCount = 0;
+            totalDamageCount++;
+            if (totalDamageCount == 1) {
+                lifeImage = (Image) lifeBarImages.elementAt(1);
+            } else if (totalDamageCount == 2) {
+                lifeImage = (Image) lifeBarImages.elementAt(2);
+            } else if (totalDamageCount == 3) {
+                lifeImage = (Image) lifeBarImages.elementAt(3);
+            } else if (totalDamageCount == 4) {
+                this.gameOverIsActive = true;
             }
-            damageCount++;
-            if (damageCount == totalDamageReceived) {
-                damageCount = 0;
-                totalDamageCount++;
-                if (totalDamageCount == 1) {
-                    lifeImage = (Image) lifeBarImages.elementAt(1);
-                } else if (totalDamageCount == 2) {
-                    lifeImage = (Image) lifeBarImages.elementAt(2);
-                } else if (totalDamageCount == 3) {
-                    lifeImage = (Image) lifeBarImages.elementAt(3);
-                } else if (totalDamageCount == 4) {
-                    this.gameOverIsActive = true;
-                }
-            }
+        }
+    }
+
+    private void addPoints(boolean addPoints) {
+        if (addPoints) {
+            totalPointsAccumulated += 15;
         }
     }
 
@@ -277,11 +317,10 @@ public class Vehicle {
         return this.CAR_HEIGHT;
     }
 
-    public void checkBulletsEnemyCollision(Vector enemies) {
-        int enemiesVectorSize = enemies.size()-1;
+    public void checkBulletsEnemCollision(Vector enemies) {
+        int enemiesVectorSize = enemies.size() - 1;
         if (bullets != null && enemies != null) {
-            bulletsVectorSize = bullets.size()-1;
-            for (int i = bulletsVectorSize; i >= 0; i--) {
+            for (int i = 0; i < bulletsVectorSize; i++) {
 
                 for (int j = enemiesVectorSize; j >= 0; j--) {
                     if (((Pelota) bullets.elementAt(i)).getX() > ((Enemies) enemies.elementAt(j)).getEnemyX()
@@ -290,7 +329,8 @@ public class Vehicle {
                             && ((Pelota) bullets.elementAt(i)).getY() < ((Enemies) enemies.elementAt(j)).getEnemyY() + ((Enemies) enemies.elementAt(j)).getEnemyHeight()
                             && ((Pelota) bullets.elementAt(i)).getX() < screenWidth) {
 
-                        ((Pelota) bullets.elementAt(i)).hasCollided(true);
+                        ((Pelota) bullets.elementAt(i)).resetCoords();
+                        ((Pelota) bullets.elementAt(i)).setCanFireBullet(true);
                         ((Enemies) enemies.elementAt(j)).hasCollided(true);
                         totalPointsAccumulated += 30;
                     }
@@ -300,7 +340,7 @@ public class Vehicle {
         }
     }
 
-    public boolean returnGameOver() {
+    public boolean getGameOver() {
         return this.gameOverIsActive;
     }
 
@@ -308,25 +348,17 @@ public class Vehicle {
         this.gameOverIsActive = false;
     }
 
-    void resetValues() {
+    public void resetValues() {
         this.carJumpingRampCount = 0;
-        this.vehicleIsAtRamp = false;
-        this.vehicleIsRising = true;
-        this.x = 0;
-        this.y = this.screenHeight - (screenHeight / 4);
-        drawNormalVehicleIsActive = true;
-        drawDamagedVehicleIsActive = false;
-        drawRisingVehicleIsActive = false;
-        gameOverIsActive = false;
         totalPointsAccumulated = 0;
-        damageCount = 0;
-        totalDamageCount = 0;
-        bullets.removeAllElements();
+        resetCoords();
+        resetBoolFlags();
+        resetDamage();
+        resetBullets();
         lifeImage = (Image) lifeBarImages.elementAt(0);
-
     }
 
-    public int returnTotalPointsAccumulated() {
+    public int getTotalPoints() {
         return this.totalPointsAccumulated;
     }
 
@@ -354,5 +386,11 @@ public class Vehicle {
 
     public boolean getIsAtRamp() {
         return this.vehicleIsAtRamp;
+    }
+
+    private void setBulletCoords(int i) {
+        setBulletX();
+        setBulletY();
+        ((Pelota) bullets.elementAt(i)).setCoords(this.bulletX, this.bulletY);
     }
 }
