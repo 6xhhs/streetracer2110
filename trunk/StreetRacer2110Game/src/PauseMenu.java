@@ -1,9 +1,16 @@
 
 
+
+
+
+
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.game.GameCanvas;
-
+/**
+ * encargado en crear el menú de pausa del juego
+ * @author Manuel González Solano y Salvador Aguilar Galindo
+ */
 public class PauseMenu {
 
     private Graphics g;
@@ -11,7 +18,11 @@ public class PauseMenu {
     private int height;
     private int fontHeight;
     private Font font;
-
+/**
+ * Constructor, determina cuál es la pantalla y su tamano
+ * @param canvas canvas del juego
+ * @param g graphics de la pantalla actual
+ */
     public PauseMenu(GameCanvas canvas, Graphics g) {
 
         this.g = g;
@@ -19,6 +30,13 @@ public class PauseMenu {
         height = canvas.getHeight();
     }
 
+    /**
+     * dibuja al menú de pausa en la pantalla actual de acuerdo a la opción seleccionada de éste.
+     * @param canvas canvas del juego
+     * @param i índice de selección de opción del menú de pausa
+     * @param yesNoOptionsIsActive determina se la opción de si o no está activada para la salida
+     * al menú principal o para la salida de la aplicación
+     */
     public void drawPausedMenu(GameCanvas canvas, int i, boolean yesNoOptionsIsActive) {
 
         if (!yesNoOptionsIsActive) {
@@ -53,7 +71,13 @@ public class PauseMenu {
 
         canvas.flushGraphics();
     }
-    
+
+    /**
+     * dibuja la opción de si o no para la salida al menú principal o para la
+     * salida de la aplicación.
+     * @param canvas canvas del juego
+     * @param g graphics de la pantalla actual
+     */
     public void drawAreYouSureMenu(GameCanvas canvas,Graphics g){
         g.drawString("Are you sure?      C:Yes     D:No", 1, 320, g.TOP | g.LEFT);
         canvas.flushGraphics();

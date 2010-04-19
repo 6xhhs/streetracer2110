@@ -1,9 +1,17 @@
 
 
 
+
+
+
+
 import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
-
+/**
+ * Se encarga de los niveles que tiene el juego.
+ * @author Salvador Aguilar Galindo, Manuel González Solano
+ * @version 1.0, Abril 2010
+ */
 public class Levels {
 
     private Background foreground;
@@ -11,7 +19,12 @@ public class Levels {
     private Background clouds;
     private Background sky;
     private int level;
-
+/**
+ * Constructor, crea un nuevo nivel segun el índice del nivel actual.
+ * @param level Nivel seleccionado
+ * @param width El ancho del nivel
+ * @param height El largo del nivel
+ */
     public Levels(int level, int width, int height) {
 
         this.level = level;
@@ -47,14 +60,19 @@ public class Levels {
         }
 
     }
-
+    /*
+     * Se encarga de dibujar todos los fondos
+     * del nivel.
+     */
     public void dibujar(Graphics g) {
         sky.dibujar(g);
         clouds.dibujar(g);
         midground.dibujar(g);
         foreground.dibujarMovingStreet(g);
     }
-
+    /*
+     * Se encarga de que los fondos se muevan.
+     */
     public void actualizar() {
         sky.moveBackgroundImage();
         clouds.moveBackgroundImage();
@@ -62,13 +80,19 @@ public class Levels {
         foreground.moveBackgroundImage();
     }
 
+    /**
+     * reinicia los valores de los fondos.
+     */
     void resetValues() {
         foreground.resetValues();
         midground.resetValues();
         sky.resetValues();
         clouds.resetValues();
     }
-
+/**
+ *
+ * @return el valor en x de la posición del fondo sky
+ */
     public int returnSkyBackgroundXValue(){
         return sky.returnXValue();
     }

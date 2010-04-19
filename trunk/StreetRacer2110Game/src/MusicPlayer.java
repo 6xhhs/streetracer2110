@@ -1,16 +1,26 @@
 
+
+
+
+
 import java.io.IOException;
 import java.io.InputStream;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
-
+/**
+ * Encargada del manejo de música dentro de la aplicación.
+ * @author Manuel González Solano y Salvador Aguilar Galindo
+ */
 public class MusicPlayer {
 
     private boolean isPlaying;
     private Player musicPlayer;
     private InputStream iS;
-
+/**
+ * Constructor, selecciona una canción segun el índice de selección.
+ * @param index índice de selección de canción
+ */
     public MusicPlayer(int index) {
 
         isPlaying = false;
@@ -54,7 +64,9 @@ public class MusicPlayer {
             }
         }
     }
-
+/**
+ * inicia al reproductor de música
+ */
     public void startMusicPlayer() {
         try {
             musicPlayer.realize();
@@ -66,6 +78,9 @@ public class MusicPlayer {
         isPlaying = true;
     }
 
+    /**
+     * interrumpe al reproductor de música
+     */
     public void stopMusicPlayer() {
         try {
             musicPlayer.stop();
@@ -74,12 +89,18 @@ public class MusicPlayer {
         }
         isPlaying = false;
     }
-
+/**
+ * destruye al reproductor de música
+ */
     void terminate() {
         musicPlayer.deallocate();
         musicPlayer = null;
     }
 
+    /**
+     *
+     * @return el estado de reproducción de música
+     */
     boolean isPlaying() {
         return isPlaying;
     }

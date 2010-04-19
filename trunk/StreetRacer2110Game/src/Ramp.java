@@ -1,4 +1,8 @@
 
+
+
+
+
 import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -45,7 +49,7 @@ public class Ramp {
                 ex.printStackTrace();
             }
         }
-        rampX = screenWidth;
+        rampX = screenWidth*2;
         rampY = screenHeight - rampHeight;
     }
 

@@ -1,4 +1,8 @@
 
+
+
+
+
 import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
@@ -7,10 +11,18 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.GameCanvas;
 
+/**
+ * Se encargara de crear el  vehículo del juego, cargar el nivel,
+ * crear a los enemigos y los objetos, así como la música,
+ * revisar si se perdió, maneja el menú de pausa, y se encarga de
+ * revisar si existen colisiones
+ * @author Salvador Aguilar Galindo, Manuel González Solano
+ * @version 1.0, Abril 2010
+ */
 public class Juego extends GameCanvas {
 
     public static final int LEVEL_END = -1100;
-    public static final int START_RAMP = -800;
+    public static final int START_RAMP = -950;
     private Levels gameLevel;
     private Vehicle vehicle;
     private final int ANCHO;        //ancho de la pantalla del cell
@@ -39,7 +51,6 @@ public class Juego extends GameCanvas {
     private int enemCoordsIndex;
     private MusicPlayer musicPlayer;
     private boolean musicIsActive;
-    private boolean createAltEnemy = false;
     private Display display;
     private int carSelectedIndex;
     private final int currentLevel;
@@ -47,10 +58,19 @@ public class Juego extends GameCanvas {
     private Ramp ramp;
     private boolean rampIsActive;
     private boolean vehicleIsAtRamp;
+    private boolean madeItToRamp;
     private boolean removeEnemy;
     private int enemVecSize;
     private int obstVecSize;
 
+    /**
+     *Constructor, crea una nueva instancia del juego, segun el nivel actual,
+     * el carro seleccionado y el estado del audio.
+     * @param midlet El midlet del juego.
+     * @param carSelectedIndex Asignara el auto dependiendo de la selección del usuario.
+     * @param musicIsActive booleano que dira si esta o no activa la música.
+     * @param currentLevel Asignara el nivel correspondiente.
+     */
     public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel) {
 
         super(true);
@@ -80,6 +100,7 @@ public class Juego extends GameCanvas {
 
         ramp = new Ramp(currentLevel, ANCHO, ALTO);
         rampIsActive = false;
+        madeItToRamp = false;
         this.vehicleIsAtRamp = false;
 
         highScore = 0;
@@ -108,21 +129,29 @@ public class Juego extends GameCanvas {
 
         enemies = new Vector();
         obstacles = new Vector();
-        enemVecSize = 0;
+        //enemVecSize = 0;
         obstVecSize = 0;
         createObstacles();
-        createEnemies();
-        
+        createEnemies(this.currentLevel);
+
         animador = new Animador(this);      //animador debe ser el ultimo que se crea
         animador.iniciar();
     }
 
+    /**
+     *  Manda llamar a los metodos createObstacles y createEnemies.
+     */
     public void start() {
 
         createObstacles();
-        createEnemies();
+        createEnemies(this.currentLevel);
     }
 
+    /**
+     *  Revisa si se llamo al metodo de auto, returnGameOver,
+     * en caso de ser así, coloca setGameOver de juego en false
+     * y reinicia el juego desde el midlet.
+     */
     public void checkGameOver() {
         if (vehicle.getGameOver()) {
             vehicle.setGameOver(false);
@@ -130,6 +159,12 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * Se en casa de revisar si el el fondo de pantalla ha llegado al final
+     * con la constante LEVEL_END en caso de ser así, asigna los valores de mejores
+     * puntajes, en caso de ser un nivel, inferior al 3, éste carga el siguiente nivel,
+     * de lo contrartio el metodo loadYouWon.
+     */
     public void checkLevelCompleted() {
         if (gameLevel.returnSkyBackgroundXValue() == LEVEL_END) {
 
@@ -142,6 +177,10 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * Revisa si el juego se encuentra en pasua o no de acuerdo a
+     * la tecla apretada.
+     */
     public void pauseUnpause() {
         currentKeyCode = getKeyStates();
         if ((currentKeyCode & GAME_A_PRESSED) != 0) {
@@ -156,6 +195,10 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * Revisa las teclas apretadas cuando el juego no está en paussado,
+     * en caso de que no esté en la rampa final del juego.
+     */
     public void ctrlKeysPressed() {
         currentKeyCode = getKeyStates();
         if (!this.vehicleIsAtRamp) {
@@ -179,6 +222,12 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * Revisa si el estado actual del juego. Si es que está en pausa, revisa
+     * qué teclas se oprimen para realizar una tarea. Luego, actualiza a los
+     * objetos que se encuentran dentro del juego actual y busca si el nivel
+     * se ha completado o si el jugador a perdido.
+     */
     public void update() {
         pauseUnpause();
         currentKeyCode = getKeyStates();
@@ -257,6 +306,10 @@ public class Juego extends GameCanvas {
         checkLevelCompleted();
     }
 
+    /**
+     * dibuja a los objetos del juego, desde los enemigos hasta las imágenes del nivel.
+     * También se encarga de dibujar el menú de pausa si se encuentra activado.
+     */
     void draw() {
         // Borrar primeramente toda la pantalla
         g.setColor(0x000066);  // R(00) G(FF) B (00)
@@ -299,6 +352,10 @@ public class Juego extends GameCanvas {
     protected void showNotify() {
     }
 
+    /**
+     * Crea los obstáculos de manera aleatora, y dependiendo del nivel,
+     * es el obstáculo que aparece.
+     */
     public void createObstacles() {
         while (obstacles.size() < currentLevel) {
             obstacles.addElement(new Obstacles(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex], this.currentLevel));
@@ -306,6 +363,11 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * En caso de salir de la pantalla reinicia los valores de los obstaculos,
+     * para que vuelvan a aprecer.
+     * @param i la posición dentro del vector de obstáculos del obstáculo en cuestión
+     */
     public void resetObstacles(int i) {
         if ((((Obstacles) obstacles.elementAt(i)).getObstacleX() < -((Obstacles) obstacles.elementAt(i)).getObstacleWidth())) {
             ((Obstacles) obstacles.elementAt(i)).resetObstacleCoordinates(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex]);
@@ -315,6 +377,11 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * Se encarga de revisar si ha habido una colisión entre algun objeto
+     * con el auto del juego.
+     * @param i la posición dentro del vector de obstáculos del obstáculo en cuestión.
+     */
     public void checkObstaclesVehicleCollisions(int i) {
         if (((Obstacles) obstacles.elementAt(i)).getObstacleX() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
                 && ((Obstacles) obstacles.elementAt(i)).getObstacleX() >= vehicle.getVehicleX()
@@ -329,6 +396,9 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * Recorre el vector de los obstáculos para actualizar a los mismos.
+     */
     public void runThroughObstaclesVector() {
         obstVecSize = this.obstacles.size() - 1;
         for (int i = this.obstacles.size() - 1; i >= 0; i--) {
@@ -337,22 +407,43 @@ public class Juego extends GameCanvas {
         }
     }
 
-    public void createEnemies() {
-        while (this.enemies.size() < currentLevel) {
-            if (createAltEnemy) {
+    /**
+     * Se encarga de crear los enemigos, de acuerdo
+     * al nivel que se encuentre el usuario.
+     * @param gameLevel el nivel actual del juego
+     */
+    public void createEnemies(int gameLevel) {
+        if (this.enemies.size() == 0) {
+            if (gameLevel == 1) {
                 enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 0));
-            } else {
+                updateEnemCoords();
+                enemVecSize = 1;
+            } else if (gameLevel == 2) {
+                enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 0));
+                updateEnemCoords();
                 enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 1));
+                enemVecSize = 2;
+            } else if (gameLevel == 3) {
+                enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 0));
+                updateEnemCoords();
+                enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 1));
+                updateEnemCoords();
+                enemies.addElement(new Enemies(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex], 0));
+                enemVecSize = 3;
             }
-            updateEnemCoords();
-            createAltEnemy = !createAltEnemy;
         }
     }
 
+    /**
+     * Reinicia la posición del enemigo si es que se ha salido de pantalla,
+     * tomando en cuenta si se ha llegado al obstaculo final.
+     * @param i la posición del enemigo dentro del vector de enemigos
+     */
     public void resetEnemyCoordinates(int i) {
         if ((((Enemies) enemies.elementAt(i)).getEnemyX() < -((Enemies) enemies.elementAt(i)).getEnemyWidth())) {
-            if (gameLevel.returnSkyBackgroundXValue() <= this.START_RAMP) {
+            if (madeItToRamp) {
                 enemies.removeElementAt(i);
+                enemVecSize--;
             } else {
                 ((Enemies) enemies.elementAt(i)).resetEnemCoords(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
                 updateEnemCoords();
@@ -360,11 +451,17 @@ public class Juego extends GameCanvas {
         }
     }
 
-    public void resetEnemies(int i) {
+    /**
+     * Reinicia a los enemigos que hayan colisionado, tomando en cuenta
+     * si se ha llegado al obstaculo final.
+     * @param i la posición del enemigo dentro del vector de enemigos
+     */
+    public void resetCollidedEnems(int i) {
         if (((Enemies) enemies.elementAt(i)).returnEnemyHasCollided()) {
-            if (gameLevel.returnSkyBackgroundXValue() <= this.START_RAMP) {
+            if (madeItToRamp) {
                 enemies.removeElementAt(i);
                 removeEnemy = true;
+                enemVecSize--;
             } else {
                 ((Enemies) enemies.elementAt(i)).resetEnemy(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
                 updateEnemCoords();
@@ -374,6 +471,12 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * Revisa las posiciones del enemigo y del vehículo para determinar si
+     * hay una colisión, lo cual activaría las variables de colisiones del
+     * vehículo y del enemigo además de provocar que el celular vibre.
+     * @param i la posición dentro del vector de enemigos del enemigo en cuestión
+     */
     public void checkVehicleCollisions(int i) {
         if (((Enemies) enemies.elementAt(i)).getEnemyX() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
                 && ((Enemies) enemies.elementAt(i)).getEnemyX() >= vehicle.getVehicleX()
@@ -386,22 +489,34 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * crea una nueva para un enemigo dado y actualiza el estado de sus balas.
+     * @param i la posición dentro del vector de enemigos del enemigo.
+     */
     public void addEnemyBullets(int i) {
         ((Enemies) enemies.elementAt(i)).addBullet();
         ((Enemies) enemies.elementAt(i)).updateAmmo();
     }
 
+    /**
+     * determina si hay una colisión entre una bala del enemigo y el vehículo.
+     * @param i la posición del enemigo dentro del vector de enemigos al cual
+     * le pertenece la bala en cuestión
+     */
     private void checkEnemyBulletsVehicleCollision(int i) {
         ((Enemies) enemies.elementAt(i)).checkBulletsVehicleCollisions(vehicle);
     }
 
-    //this method will do all the updates for enemies
+    /**
+     * recorre el vector de enemigos para ejecutar las actualizaciones y
+     * reiniciaciones de los enemigos dentro del juego.
+     */
     public void runThroughEnemiesVector() {
-        enemVecSize = this.enemies.size() - 1;
-        for (int i = enemVecSize; i >= 0; i--) {
-            // adds enemies bullets
-            addEnemyBullets(i);
-
+        for (int i = 0; i < enemVecSize; i++) {
+            if (this.currentLevel > 1) {
+                // adds enemies bullets
+                addEnemyBullets(i);
+            }
             // checks enemybullets collisions
             checkEnemyBulletsVehicleCollision(i);
 
@@ -409,7 +524,7 @@ public class Juego extends GameCanvas {
             checkVehicleCollisions(i);
 
             //resets enemies coordinates if they collide
-            resetEnemies(i);
+            resetCollidedEnems(i);
 
             if (!removeEnemy) {
                 //reset enemy coorinates if enemies go off screen
@@ -420,6 +535,9 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * dibuja a los obstáculos en la pantalla del juego.
+     */
     private void drawObstacles() {
         obstVecSize = this.obstacles.size() - 1;
         for (int i = obstVecSize; i >= 0; i--) {
@@ -427,28 +545,30 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * dibuja a los enemigos en la pantalla del juego.
+     */
     private void drawEnemies() {
-        enemVecSize = this.enemies.size() - 1;
-        for (int i = enemVecSize; i >= 0; i--) {
+        enemVecSize = this.enemies.size();
+        for (int i = 0; i < enemVecSize; i++) {
             ((Enemies) enemies.elementAt(i)).draw(g);
             ((Enemies) enemies.elementAt(i)).drawAmmo(g);
         }
     }
 
+    /**
+     * reinicia los objetos del juego actual
+     */
     public void resetJuegoValues() {
-
-        this.vehicleIsAtRamp = false;
-        this.rampIsActive = false;
 
         this.vehicle.resetValues();
         this.ramp.resetRampCoordinates();
 
-        enemVecSize = enemies.size() - 1;
-        for (int i = enemVecSize; i >= 0; i--) {
-            ((Enemies) enemies.elementAt(i)).resetEnemy(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
-            ((Enemies) enemies.elementAt(i)).removeAllBullets();
-            updateEnemCoords();
-        }
+        enemies.removeAllElements();
+        enemVecSize = 0;
+        this.vehicleIsAtRamp = false;
+        this.rampIsActive = false;
+        this.madeItToRamp = false;
 
         obstVecSize = obstacles.size() - 1;
         for (int i = obstVecSize; i >= 0; i--) {
@@ -465,6 +585,12 @@ public class Juego extends GameCanvas {
         //start();
     }
 
+    /**
+     * nulifica al animador y/o reproductor de música.
+     * @param endAnimador bandera que dice si el animador será destruido
+     * @param endMusicPlayer bandera que dice si el reproductor de música
+     * sera destruido
+     */
     public void nullifyObjects(boolean endAnimador, boolean endMusicPlayer) {
         if (endAnimador) {
             this.animador.terminar();
@@ -478,13 +604,22 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * analiza la posicion del fondo del cielo para deterimar si se
+     * debe activar el último obstáculo o no.
+     */
     public void checkForFinalObstacle() {
         if (gameLevel.returnSkyBackgroundXValue() == START_RAMP) {
             this.rampIsActive = true;
+            this.madeItToRamp = true;
             vehicle.hasCollidedWithRamp(true);
         }
     }
 
+    /**
+     * compara las posiciones de la rampa y del vehículo para determinar si
+     * el vehículo ha llegado a la rampa o no.
+     */
     public void checkRampVehicleCollisions() {
         if (ramp.getRampX() <= vehicle.getVehicleX()
                 && ramp.getRampX() + (ramp.getRampWidth() / 2) > vehicle.getVehicleX() + (vehicle.getVehicleWidth() / 2)
@@ -495,6 +630,9 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * controla la imagen del vehículo segun su posición con respecto a la rampa.
+     */
     private void actualizarRampVehicleMovements() {
         if (rampIsActive) {
             ramp.actualizar();
@@ -509,6 +647,10 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * actualiza al índice del vector de posiciones aleatorias que se usan para
+     * ubicar a los enemigos.
+     */
     private void updateEnemCoords() {
         enemCoordsIndex++;
         if (enemCoordsIndex >= MAX_RAND_COORDS) {
@@ -516,6 +658,10 @@ public class Juego extends GameCanvas {
         }
     }
 
+    /**
+     * actualiza al índice del vector de posiciones aleatorioas que se usan para
+     * ubicar a los obstáculos
+     */
     private void updateObstCoords() {
         obstCoordsIndex++;
         if (obstCoordsIndex >= MAX_RAND_COORDS) {

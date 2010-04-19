@@ -1,7 +1,15 @@
 
+
+
 import java.util.Vector;
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
+/*
+ * Se encarga de dar inicio a la aplicación, así como
+ * cargar las pantallas de inicio.
+ *@author Salvador Aguilar Galindo, Manuel González Solano
+ *@version 1.0, Abril 2010
+ */
 
 public class StreetRacer2110 extends MIDlet implements CommandListener {
 
@@ -24,8 +32,12 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     private boolean OKButtonIsPressed;
     private int hiScrVecSize;
 
+    /**
+     * Constructor, crea los vectores de los mejores puntajes y la pantalla para ingresar
+     * el nombre del jugador.
+     */
     public StreetRacer2110() {
-        hiScrVecSize=0;
+        hiScrVecSize = 0;
         highScorePoints = new Vector();
         highScoreNames = new Vector();
         forma = new Form("High Score");
@@ -38,6 +50,10 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         OKButtonIsPressed = false;
     }
 
+    /**
+     * se establece como el objeto a ser desplegado en pantalla, recupera
+     * los valores de high score desde un archivo e inicia a la aplicación.
+     */
     public void startApp() {
 
         display = Display.getDisplay(this);
@@ -47,6 +63,10 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         loadStartOfGame();
     }
 
+    /**
+     * carga las primeras imágenes del juego, las cuales son splash screens,
+     * seguidas por el menú principal.
+     */
     private void loadStartOfGame() {
         if (isStartOfGame) {
 
@@ -65,6 +85,11 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         }
     }
 
+    /**
+     * crea y despliega una nueva splash screen determinada por el índice de
+     * selección.
+     * @param splashScreenIndex indica qué splash screen se debe de crear.
+     */
     private void loadNewSplashScreen(int splashScreenIndex) {
         splashScreen = new SplashScreen(splashScreenIndex);
         splashScreen.paint();
@@ -79,12 +104,22 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     public void pauseApp() {
     }
 
+    /**
+     * acaba con la aplicación.
+     * @param unconditional
+     */
     public void destroyApp(boolean unconditional) {
 
         display.setCurrent(null);
         notifyDestroyed();
     }
 
+    /**
+     * cambia al menú principal por el juego como objeto que se despliega
+     * en pantalla.
+     * @param carSelectedIndex indica qué auto fue seleccionado
+     * @param musicIsActive indica el estado del audio
+     */
     public void changeScreenToGame(int carSelectedIndex, boolean musicIsActive) {
         this.musicIsActive = musicIsActive;
         gui.setItemsToNull();
@@ -94,6 +129,10 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         juego.start();
     }
 
+    /**
+     * cambia al juego por el menú principal como el objeto que se despliega
+     * en pantalla.
+     */
     public void changeGameToScreen() {
 
         juego.nullifyObjects(true, true);
@@ -105,6 +144,9 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         gui.start();
     }
 
+    /**
+     * reinicia al juego, cargando la splash screen adecuada mientras carga.
+     */
     public void restartGame() {
 
         splashScreen = new SplashScreen(3);
@@ -116,6 +158,12 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         splashScreen = null;
     }
 
+    /**
+     * crea y carga el siguiente nivel del juego.
+     * @param carSelectedIndex indica el auto selecciondado
+     * @param currentLevel indica el nivel actual del juego
+     * @param highScore el puntaje total del juego
+     */
     public void loadNextLevel(int carSelectedIndex, int currentLevel, int highScore) {
         splashScreen = new SplashScreen(2 + currentLevel);
         splashScreen.paint();
@@ -134,6 +182,11 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         splashScreen = null;
     }
 
+    /**
+     * carga la pantalla de juego ganado, y si el puntaje acumulado está entre
+     * los 5 mejores, carga la pantalla para agregar el nombre del jugador.
+     * @param totalPointsAccumulated puntaje total del juego acabado
+     */
     public void loadYouWon(int totalPointsAccumulated) {
         this.totalPoints += totalPointsAccumulated;
 
@@ -156,11 +209,20 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         }
     }
 
+    /**
+     * despliega la pantalla en donde el jugador escribirá su nombre, y luego
+     * destruye al juego actual.
+     */
     private void loadEnterHighScoreNameScreen() {
         display.setCurrent(forma);
         juego.nullifyObjects(true, false);
     }
 
+    /**
+     * determina qué botón fue oprimido, tomando las acciones necesarias.
+     * @param cmnd indica que botón fue oprimido
+     * @param dsplbl
+     */
     public void commandAction(Command cmnd, Displayable dsplbl) {
 
         if (cmnd == OKButton) {
