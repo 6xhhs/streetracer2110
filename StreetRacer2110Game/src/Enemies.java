@@ -1,10 +1,19 @@
 
+
+
+
+
 import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+/**
+ * Se encarga de manejar los enemigos que apareceran en el juego
+ * @author Salvador Aguilar Galindo, Manuel González Solano
+ * @version 1.0, Abril 2010
+ */
 public class Enemies {
 
     public static final int MIN_SPEED = 4;
@@ -26,7 +35,13 @@ public class Enemies {
     private int addBulletCount = 0;
     private static final int BULLET_TYPE_INDEX = 2;
     private int bulletsVectorSize;
-
+/**
+ * Constructor, crea un nuevo enemigo segun el índice de selección de enemigo,
+ * creándolo en la posición dada.
+ * @param xCoordinate posición en x que tomará el enemigo
+ * @param yCoordinate posición en y que tomará el enemigo
+ * @param enemiesSelectedIndex índice de de selección de enemigo
+ */
     public Enemies(int xCoordinate, int yCoordinate, int enemiesSelectedIndex) {
 
         bulletsVectorSize = 0;
@@ -47,14 +62,14 @@ public class Enemies {
             ENEMY_HEIGHT = 40;
         } else if (this.enemiesSelectedIndex == 1) {
             try {
-                originalEnemiesImage = Image.createImage("/motorcycle.png");
-                enemiesImage = Image.createImage("/motorcycle.png");
+                originalEnemiesImage = Image.createImage("/Tk.png");
+                enemiesImage = Image.createImage("/Tk.png");
                 enemiesCollidedImage = Image.createImage("/explosion.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            ENEMY_WIDTH = 75;
-            ENEMY_HEIGHT = 40;
+            ENEMY_WIDTH = 90;
+            ENEMY_HEIGHT = 47;
         } else {
             try {
                 originalEnemiesImage = Image.createImage("/motorcycle.png");
@@ -70,14 +85,24 @@ public class Enemies {
         bullets = new Vector();
     }
 
+    /**
+     * Dibuja la imagen del enemigo dado en la pantalla
+     * @param g es el canvas del juego actual
+     */
     public void draw(Graphics g) {
         g.drawImage(enemiesImage, x, y, g.TOP | g.LEFT);
     }
 
+    /**
+     * actualiza la posicion x del enemigo
+     */
     public void update() {
         this.x -= changeInX;
     }
 
+    /**
+     * decide si el enemigo actual puede disparar una bala
+     */
     public void addBullet() {
         addBulletCount++;
         if (addBulletCount >= CREATE_BULLET_DELAY_TIME) {
@@ -89,6 +114,10 @@ public class Enemies {
 
     }
 
+    /**
+     * dibuja la bala desde la pistola del enemigo actual
+     * @param g es el canvas del juego actual
+     */
     public void drawAmmo(Graphics g) {
         //optimized here
         bulletsVectorSize = this.bullets.size() - 1;
@@ -97,6 +126,11 @@ public class Enemies {
         }
     }
 
+    /**
+     * decide si actualiza o destruye las balas del enemigo
+     * si es que la bala se haya salido de la pantalla, haya
+     * chocado o sigua viva
+     */
     public void updateAmmo() {
         for (int i = bullets.size() - 1; i >= 0; i--) {
             if (((Pelota) bullets.elementAt(i)).getX() < 0 || ((Pelota) bullets.elementAt(i)).returnHasCollided()) {
@@ -107,42 +141,70 @@ public class Enemies {
         }
     }
 
+    /**
+     * decide en dónde queda la posición x de la pistola del enemigo, asignándole tal posición
+     * al valor x de una bala
+     */
     public void setBulletX() {
         if (enemiesSelectedIndex == 0) {
             this.bulletX = this.x - 5;
         } else if (enemiesSelectedIndex == 1) {
-            this.bulletX = this.x - 5;
+            this.bulletX = this.x + ENEMY_WIDTH / 2;
         } else {
             this.bulletX = this.x - 5;
         }
     }
 
+    /**
+     * decide en dónde queda la posición y de la pistola del enemigo, asignándole tal posición
+     * al valor y de una bala
+     */
     public void setBulletY() {
         if (enemiesSelectedIndex == 0) {
             this.bulletY = this.y;
         } else if (enemiesSelectedIndex == 1) {
-            this.bulletY = this.y;
+            this.bulletY = this.y + ENEMY_HEIGHT / 3;
         } else {
             this.bulletY = this.y;
         }
     }
 
+    /**
+     *
+     * @return la posición x del enemigo
+     */
     public int getEnemyX() {
         return this.x;
     }
 
+    /**
+     *
+     * @return la posición y del enemigo
+     */
     public int getEnemyY() {
         return this.y;
     }
 
+    /**
+     *
+     * @return qué tan ancho es el enemigo
+     */
     public int getEnemyWidth() {
         return this.ENEMY_WIDTH;
     }
 
+    /**
+     *
+     * @return qué tan alto es el enemigo
+     */
     public int getEnemyHeight() {
         return this.ENEMY_HEIGHT;
     }
 
+    /**
+     * identifica una colisión por parte del enemigo
+     * @param hasCollided el valor que indica si hay una colisión o no
+     */
     public void hasCollided(boolean hasCollided) {
         if (hasCollided) {
             enemiesImage = enemiesCollidedImage;
@@ -150,10 +212,19 @@ public class Enemies {
         }
     }
 
+    /**
+     *
+     * @return el valor que indica si hay una colisión por parte del enemigo
+     */
     public boolean returnEnemyHasCollided() {
         return this.enemyHasCollided;
     }
 
+    /**
+     * revisa el Vector de balas para identificar colisiones por parte de las misma
+     * con un vehículo dado
+     * @param vehicle el vehículo actual del juego
+     */
     public void checkBulletsVehicleCollisions(Vehicle vehicle) {
         //optimized here
         if (bullets != null && vehicle != null) {
@@ -172,25 +243,44 @@ public class Enemies {
         }
     }
 
+    /**
+     * reinicia la posición del enemigo
+     * @param newXValue la nueva posición en x del enemigo
+     * @param newYValue la nueva posición en y del enemigo
+     */
     public void resetEnemCoords(int newXValue, int newYValue) {
         this.x = newXValue;
         this.y = newYValue;
     }
 
+    /**
+     * reinicia a la variable encargada de identificar si hay una colisión o no.
+     */
     public void resetHasCollided() {
         this.enemyHasCollided = false;
     }
 
+    /**
+     * reinicia la imagen del enemigo
+     */
     public void resetEnemImage() {
         this.enemiesImage = originalEnemiesImage;
     }
 
+    /**
+     * reincia a todos los valores del enemigo
+     * @param newXValue la nueva posición en x del enemigo
+     * @param newYValue la nueva posición en y del enemigo
+     */
     public void resetEnemy(int newXValue, int newYValue) {
         resetEnemCoords(newXValue, newYValue);
         resetHasCollided();
         resetEnemImage();
     }
 
+    /**
+     * elimina todas las balas que están dentro del vector de balas del enemigo
+     */
     public void removeAllBullets() {
         this.bullets.removeAllElements();
     }

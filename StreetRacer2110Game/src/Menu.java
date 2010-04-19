@@ -1,9 +1,19 @@
 
+
+
+
+
 import java.io.IOException;
 import java.util.Vector;
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.*;
-
+/*
+ * Se encarga de dibujar los menus previos a que inicie juego, las imagenes
+ * de los menus, sería el menú principal. (el menú de pausa se maneja en juego)
+ * @author Salvador Aguilar Galindo, Manuel González Solano
+ * @version 1.0, Abril 2010
+ *
+ */
 public class Menu {
 
     private Image mainMenu = null;
@@ -21,7 +31,14 @@ public class Menu {
     private Image carSelectBackground = null;
     private Image sRacerInfo, mRacerInfo, sMRacerInfo;
     private Vector highScorePoints, highScoreNames;
-
+    /**
+     * Constructor, crea un nuevo menú con las imágenes necesarias, los valores de high score y las opciones del menú principal
+     * @param leftOption String que indica que se selecciono la opción izquierda.
+     * @param rightOption String que indica que se selecciono la opción derecha.
+     * @param menuOptions Arreglo que muestra las opciones del menú.
+     * @param highScorePoints Vector que maneja los mejores puntajes.
+     * @param highScoreNames Vector que maneja los nombres de los mejores puntajes.
+     */
     public Menu(String leftOption, String rightOption, String[] menuOptions, Vector highScorePoints, Vector highScoreNames) {
 
         this.leftOption = leftOption;
@@ -48,7 +65,11 @@ public class Menu {
             ex.printStackTrace();
         }
     }
-
+    /**
+     * Se encarga de dibujar el menú .
+     * @param canvas el canvas en donde se realizaran las actividades.
+     * @param graphics donde se dibujara el menú inactivo
+     */
     public void drawInactiveMenu(GameCanvas canvas, Graphics graphics) {
 
         // create inactive menu font
@@ -56,18 +77,18 @@ public class Menu {
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
 
         // clear inactive menu background
-
-        //int width = canvas.getWidth();
-        //int height = canvas.getHeight();
-
         g.setColor(0xffff33);
 
         // draw left and right menu options
-
         g.setFont(font);
         canvas.flushGraphics();
     }
-
+    /**
+     * Dibuja el menú principal, su posición y la de los elementos.
+     * @param canvas indicara donde se dibuajara el menú.
+     * @param graphics de la pantalla actual
+     * @param selectedOptionIndex indicará qué opción está seleccionada.
+     */
     public void drawActiveMenu(GameCanvas canvas, Graphics graphics, int selectedOptionIndex) {
         this.selectedIndex = selectedOptionIndex;
         this.g = graphics;
@@ -96,7 +117,7 @@ public class Menu {
             int menuMaxHeight = 0;
             int currentWidth = 0;
 
-            // we'll simply check each option and find the maximal width
+            //check each option and find the maximal width
 
             for (int i = 0; i < menuOptions.length; i++) {
 
@@ -127,12 +148,9 @@ public class Menu {
             for (int i = 0; i < menuOptions.length; i++) {
 
                 if (i != selectedIndex) { // draw unselected menu option
-
                     g.setColor(0xffffff); // black
-
                 } // end if draw unselected menu option
                 else { // draw selected menu option
-
                     g.setColor(0xff6600); // orange
                 }
 
@@ -143,7 +161,13 @@ public class Menu {
             canvas.flushGraphics();
         }
     }
-
+    /**
+     * Dibuja los elementos de los menus, dependiendo de cual menú
+     * esté seleccionado
+     * @param canvas canvas del juego
+     * @param graphics de la pantalla actual
+     * @param i indicara qué menú esta seleccionado.
+     */
     public void drawMenuItems(GameCanvas canvas, Graphics graphics, int i) {
 
         this.g = graphics;
@@ -186,24 +210,46 @@ public class Menu {
         canvas.flushGraphics();
     }
 
+    /**
+     *
+     * @return graphics de la pantalla actual
+     */
     public Graphics returnGraphics() {
         return this.g;
     }
 
+    /**
+     * actualiza al índice que indica qué opción del menú principal está seleccionada.
+     * @param updatedIndex el índice nuevo de las opciones del menú principal
+     */
     public void updateActualizedSelectedIndex(int updatedIndex) {
         this.selectedIndex = updatedIndex;
     }
-
+    /**
+     *
+     * @return el índice de las opciones del menú principal
+     */
     public int returnActualizedSelectedIndex() {
         return this.selectedIndex;
     }
 
+    /**
+     * actualiza al menú principal
+     * @param graphics graphics nuevo para desplegar en pantalla
+     * @param selectedOptionIndex índice de las opciones del menú principal
+     */
     public void updateActiveMenu(Graphics graphics, int selectedOptionIndex) {
         this.g = graphics;
         this.selectedIndex = selectedOptionIndex;
 
     }
 
+    /**
+     * dibuja al menú de selección de auto segun el auto seleccionado.
+     * @param canvas Canvas de juego
+     * @param g graphics de la pantalla actual
+     * @param i índice de las opciones de autos que se pueden seleccionar
+     */
     public void drawSelectCarMenu(GameCanvas canvas, Graphics g, int i) {
         this.g = g;
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
@@ -235,6 +281,13 @@ public class Menu {
         canvas.flushGraphics();
     }
 
+    /**
+     * dibuja a los contenidos de la opción de Options del menú principal, tomando
+     * en cuenta la selección del estado del audio.
+     * @param canvas canvas del juego
+     * @param g graphics de la pantalla actual
+     * @param i índice del estado del audio
+     */
     public void drawOptionsMenu(GameCanvas canvas, Graphics g, int i) {
         this.g = g;
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
@@ -264,6 +317,12 @@ public class Menu {
         canvas.flushGraphics();
     }
 
+    /**
+     * al seleccionar el auto deseado e iniciar el juego, se encarga de dibujar
+     * el letrero de "Let's Go!" en pantalla
+     * @param canvas canvas del juego
+     * @param g graphics de la pantalla actual
+     */
     public void drawLetsGoOnScreen(GameCanvas canvas, Graphics g) {
         this.g = g;
 
@@ -274,6 +333,12 @@ public class Menu {
         canvas.flushGraphics();
     }
 
+    /**
+     * al seleccionar la opción de Exit del menú principal, se encarga de dibujar el submenú
+     * di si o no para confirmar la salida del juego
+     * @param canvas canvas del juego
+     * @param g graphics de la pantalla actual
+     */
     public void drawYesNoMenu(GameCanvas canvas, Graphics g) {
 
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);

@@ -1,10 +1,19 @@
 
+
+
+
+
 import java.io.IOException;
 import java.util.Vector;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-
+ /*
+ * Se encarga de manejar al auto que aparecerá en la pantalla
+  * durante el juego.
+ * @author Salvador Aguilar Galindo, Manuel González Solano
+ * @version 1.0, Abril 2010
+ */
 public class Vehicle {
 
     //private static final int MAX_BULLETS = 3;
@@ -38,7 +47,15 @@ public class Vehicle {
     private boolean drawRisingVehicleIsActive;
     private Vector vehicleImages;
     private int bulletsVectorSize;
-
+    /**
+     * Constructor, indica que auto se seleccionó, después, le asigna sus valores,
+     * dependiendo del tamaño, así como la velocidad que tendrán
+     * y el escudo que tendrán contra las balas, agrega una barra de vida
+     * acorde al auto elejido
+     * @param screenWidth determina el ancho de la pantalla
+     * @param screenHeight determina el alto de la pantalla
+     * @param carSelectedIndex indica el auto seleccionado
+     */
     public Vehicle(int screenWidth, int screenHeight, int carSelectedIndex) {
 
         this.vehicleImages = new Vector();
@@ -127,7 +144,11 @@ public class Vehicle {
 
         font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
     }
-
+    /**
+     * Dibujara al auto dependiendo del estado en el que se presente,
+     * su vida y puntos que lleva el jugador.
+     * @param g graphics de la pantalla actual
+     */
     public void draw(Graphics g) {
         g.drawImage((Image) lifeBarImages.elementAt(4), 0, 0, g.TOP | g.LEFT);
 
@@ -149,6 +170,10 @@ public class Vehicle {
         g.drawString("Score: " + totalPointsAccumulated, 191, 8, g.TOP | g.LEFT);
     }
 
+    /**
+     * controla el movimiento hacia la izquierda del auto, tomando en cuenta
+     * los límites de la pantalla.
+     */
     public void moveLeft() {
         if (x <= 0) {
             x = 0;
@@ -157,6 +182,10 @@ public class Vehicle {
         }
     }
 
+    /**
+     * controla el movimiento hacia la derecha del auto, tomando en cuenta
+     * los límites de la pantalla.
+     */
     public void moveRight() {
         if (x >= screenWidth - CAR_WIDTH) {
             x = screenWidth - CAR_WIDTH;
@@ -164,7 +193,10 @@ public class Vehicle {
             x += changeInX;
         }
     }
-
+    /**
+     * controla el movimiento hacia arriba del auto, tomando en cuenta
+     * los límites de la carretera.
+     */
     public void moveUp() {
         if (y <= ROAD_TOP_Y_LIMIT - CAR_HEIGHT) {
             y = ROAD_TOP_Y_LIMIT - CAR_HEIGHT;
@@ -172,7 +204,10 @@ public class Vehicle {
             y -= changeInY;
         }
     }
-
+/**
+ * controla el movimiento hacia abajo del auto, tomando en cuenta
+     * los límites de la pantalla.
+ */
     public void moveDown() {
         if (y >= screenHeight - CAR_HEIGHT) {
             y = screenHeight - CAR_HEIGHT;
@@ -180,7 +215,11 @@ public class Vehicle {
             y += changeInY;
         }
     }
-
+    /**
+     * actualiza el estado del vehículo, dependiendo de su posición en el juego
+     * con respecto a la rampa final.
+     * @param carJumpingRampCount indica si el auto está subiendo o bajando la rampa
+     */
     public void update(int carJumpingRampCount) {
         if (vehicleIsRising) {
             drawDamagedVehicleIsActive = false;
@@ -194,6 +233,9 @@ public class Vehicle {
         }
     }
 
+    /**
+     * activa una bala si es que existe una que no esté activa actualmente.
+     */
     public void addBullet() {
         for (int i = 0; i < bulletsVectorSize; i++) {
             if (((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
@@ -204,6 +246,10 @@ public class Vehicle {
         }
     }
 
+    /**
+     * dibuja las balas del auto en la pantalla.
+     * @param g graphics de la pantalla actual
+     */
     public void drawAmmo(Graphics g) {
         for (int i = 0; i < bulletsVectorSize; i++) {
             if (!((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
@@ -212,6 +258,11 @@ public class Vehicle {
         }
     }
 
+    /**
+     * actualiza el estado de las balas, activando las que se hayan salido
+     * de fuera de pantalla o las que hayan colisionado, y actualizando las que
+     * se encuentran 'vivas'.
+     */
     public void updateAmmo() {
         for (int i = 0; i < bulletsVectorSize; i++) {
             if (!((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
@@ -225,6 +276,10 @@ public class Vehicle {
         }
     }
 
+    /**
+     * establece la posición x de una bala a ser creada de acuerdo a la
+     * ubicación de la pistola del auto actual.
+     */
     public void setBulletX() {
         if (carSelectedIndex == 0) {
             this.bulletX = this.x + 85;
@@ -235,6 +290,10 @@ public class Vehicle {
         }
     }
 
+    /**
+     * establece la posición y de una bala a ser creada de acuerdo a la
+     * ubicación de la pistola del auto actual.
+     */
     public void setBulletY() {
         if (carSelectedIndex == 0) {
             this.bulletY = this.y;
@@ -243,6 +302,13 @@ public class Vehicle {
         }
     }
 
+    /**
+     * cambia el estado del auto con respecto a las colisiones, agregando
+     * el puntaje adecuado si es que haya colisionado con un enemigo.
+     * @param hasCollided indica si hay una colisión o no
+     * @param addPoints indica si debe agregar puntos por haber colisionado
+     * con un enemigo o no
+     */
     public void hasCollided(boolean hasCollided, boolean addPoints) {
         if (hasCollided) {
             drawNormalVehicleIsActive = false;
@@ -252,6 +318,9 @@ public class Vehicle {
         }
     }
 
+    /**
+     * reinicia las banderas booleanas del auto.
+     */
     private void resetBoolFlags() {
         this.vehicleIsAtRamp = false;
         this.vehicleIsRising = true;
@@ -261,6 +330,10 @@ public class Vehicle {
         gameOverIsActive = false;
     }
 
+    /**
+     * reinicia las balas del vehículo, tanto en posición como
+     * en el estado que se encuentran.
+     */
     private void resetBullets() {
         for (int i = 0; i < bulletsVectorSize; i++) {
             ((Pelota) bullets.elementAt(i)).resetCoords();
@@ -268,16 +341,26 @@ public class Vehicle {
         }
     }
 
+    /**
+     * reinicia la posición del vehículo.
+     */
     private void resetCoords() {
         this.x = 0;
         this.y = this.screenHeight - (screenHeight / 4);
     }
 
+    /**
+     * reinicia a los indicadores de la salud del vehículo.
+     */
     private void resetDamage() {
         damageCount = 0;
         totalDamageCount = 0;
     }
 
+    /**
+     * actualiza al estado de salud del vehículo, activando a la bandera de
+     * juego perdido se se ha agotado.
+     */
     private void updateDamage() {
         damageCount++;
         if (damageCount == totalDamageReceived) {
@@ -295,28 +378,53 @@ public class Vehicle {
         }
     }
 
+    /**
+     * agrega puntos al puntaje total.
+     * @param addPoints indica si se debe agregar puntos o no
+     */
     private void addPoints(boolean addPoints) {
         if (addPoints) {
             totalPointsAccumulated += 15;
         }
     }
 
+    /**
+     *
+     * @return la posición en x del vehículo.
+     */
     public int getVehicleX() {
         return this.x;
     }
-
+/**
+ *
+ * @return el ancho del vehículo.
+ */
     public int getVehicleWidth() {
         return this.CAR_WIDTH;
     }
 
+    /**
+     *
+     * @return la posición en y del vehículo.
+     */
     public int getVehicleY() {
         return this.y;
     }
 
+    /**
+     *
+     * @return la altura del vehículo.
+     */
     public int getVehicleHeight() {
         return this.CAR_HEIGHT;
     }
 
+    /**
+     * determina si hubo una colisión entre una bala del auto actual y algun enemigo dentro
+     * del vector de enemigos dado, agregando puntos y eliminando a los objetos involucrados
+     * si esto se cumple.
+     * @param enemies conjunto de enemigos dentro del juego
+     */
     public void checkBulletsEnemCollision(Vector enemies) {
         int enemiesVectorSize = enemies.size() - 1;
         if (bullets != null && enemies != null) {
@@ -340,14 +448,26 @@ public class Vehicle {
         }
     }
 
+    /**
+     *
+     * @return regresa el estado de juego perdido.
+     */
     public boolean getGameOver() {
         return this.gameOverIsActive;
     }
 
+    /**
+     * determina el estado de juego perdido.
+     * @param indica si el jugador a perdido o no
+     */
     public void setGameOver(boolean flag) {
         this.gameOverIsActive = false;
     }
 
+    /**
+     * reinicia los valores del vehículo actual, tanto su posición y estado de salud
+     * como sus balas y puntaje.
+     */
     public void resetValues() {
         this.carJumpingRampCount = 0;
         totalPointsAccumulated = 0;
@@ -358,14 +478,28 @@ public class Vehicle {
         lifeImage = (Image) lifeBarImages.elementAt(0);
     }
 
+    /**
+     *
+     * @return total de puntos acumulados.
+     */
     public int getTotalPoints() {
         return this.totalPointsAccumulated;
     }
 
+    /**
+     * determina si el vehículo ha llegado a la rampa.
+     * @param vehicleIsAtRamp indica si el vehículo está en la rampa o no
+     */
     public void hasCollidedWithRamp(boolean vehicleIsAtRamp) {
         this.vehicleIsAtRamp = vehicleIsAtRamp;
     }
 
+    /**
+     * hace que la imagen del vehículo gire para desplazarse a lo largo
+     * de la rampa.
+     * @param carJumpingRampCount indica el tiempo que se demora el vehículo
+     * en librar la rampa
+     */
     private void makeVehicleRise(int carJumpingRampCount) {
         if (this.carJumpingRampCount <= carJumpingRampCount) {
             this.y -= 7;
@@ -375,6 +509,10 @@ public class Vehicle {
         }
     }
 
+    /**
+     * cuando el vehículo haya librado la rampa, gira su imagen para empezar
+     * el aterrizar.
+     */
     private void makeVehicleFall() {
         if (this.carJumpingRampCount >= 0) {
             this.y += 7;
@@ -384,10 +522,18 @@ public class Vehicle {
         }
     }
 
+    /**
+     *
+     * @return la posición del vehículo con respecto a la rampa.
+     */
     public boolean getIsAtRamp() {
         return this.vehicleIsAtRamp;
     }
 
+    /**
+     * establece la posición de una bala del vehículo.
+     * @param i indica qué bala dentro del vector de balas será activada.
+     */
     private void setBulletCoords(int i) {
         setBulletX();
         setBulletY();
