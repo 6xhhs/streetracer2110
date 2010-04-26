@@ -1,8 +1,4 @@
 
-
-
-
-
 import java.io.IOException;
 import java.util.Vector;
 import javax.microedition.lcdui.*;
@@ -14,13 +10,15 @@ import javax.microedition.lcdui.game.*;
  * @version 1.0, Abril 2010
  *
  */
+
 public class Menu {
 
     private Image mainMenu = null;
-    private Image creditsBackground;
-    private Image instructionsBackground;
-    private String leftOption; // will be displayed when menu is inactive
-    private String okOption = "Ready!";
+    private Image credsBckgrnd;
+    private Image instBckgrnd;
+    private Image histBckgrnd;
+//    private String leftOption;
+//    private String okOption = "Ready!";
     private String[] menuOptions;
     private Graphics g;
     private int padding = 5;
@@ -28,23 +26,24 @@ public class Menu {
     private Image sRacer = null;
     private Image mRacer = null;
     private Image sMRacer = null;
-    private Image carSelectBackground = null;
+    private Image carSlctBckgrnd = null;
     private Image sRacerInfo, mRacerInfo, sMRacerInfo;
-    private Vector highScorePoints, highScoreNames;
+    private Vector hiScorePts, hiScoreNms;
+
     /**
      * Constructor, crea un nuevo menú con las imágenes necesarias, los valores de high score y las opciones del menú principal
      * @param leftOption String que indica que se selecciono la opción izquierda.
      * @param rightOption String que indica que se selecciono la opción derecha.
      * @param menuOptions Arreglo que muestra las opciones del menú.
-     * @param highScorePoints Vector que maneja los mejores puntajes.
-     * @param highScoreNames Vector que maneja los nombres de los mejores puntajes.
+     * @param hiScorePts Vector que maneja los mejores puntajes.
+     * @param hiScoreNms Vector que maneja los nombres de los mejores puntajes.
      */
-    public Menu(String leftOption, String rightOption, String[] menuOptions, Vector highScorePoints, Vector highScoreNames) {
+    public Menu(String[] menuOptions, Vector highScorePoints, Vector highScoreNames) {
 
-        this.leftOption = leftOption;
+//        this.leftOption = leftOption;
         this.menuOptions = menuOptions;
-        this.highScorePoints = highScorePoints;
-        this.highScoreNames = highScoreNames;
+        this.hiScorePts = highScorePoints;
+        this.hiScoreNms = highScoreNames;
 
         try {
             sRacer = Image.createImage("/SRacerMenu.jpg");
@@ -57,32 +56,16 @@ public class Menu {
             sMRacerInfo = Image.createImage("/SMRacerInfo.png");
 
             mainMenu = Image.createImage("/main menu.jpg");
-            carSelectBackground = Image.createImage("/car select menu.jpg");
-            creditsBackground = Image.createImage("/credits.jpg");
-            instructionsBackground = Image.createImage("/InstructionsMenuBackground.jpg");
+            carSlctBckgrnd = Image.createImage("/car select menu.jpg");
+            credsBckgrnd = Image.createImage("/credits.jpg");
+            instBckgrnd = Image.createImage("/InstMenu.jpg");
+            histBckgrnd = Image.createImage("/HistMenu.jpg");
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-    /**
-     * Se encarga de dibujar el menú .
-     * @param canvas el canvas en donde se realizaran las actividades.
-     * @param graphics donde se dibujara el menú inactivo
-     */
-    public void drawInactiveMenu(GameCanvas canvas, Graphics graphics) {
 
-        // create inactive menu font
-        this.g = graphics;
-        Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
-
-        // clear inactive menu background
-        g.setColor(0xffff33);
-
-        // draw left and right menu options
-        g.setFont(font);
-        canvas.flushGraphics();
-    }
     /**
      * Dibuja el menú principal, su posición y la de los elementos.
      * @param canvas indicara donde se dibuajara el menú.
@@ -161,6 +144,7 @@ public class Menu {
             canvas.flushGraphics();
         }
     }
+
     /**
      * Dibuja los elementos de los menus, dependiendo de cual menú
      * esté seleccionado
@@ -176,33 +160,26 @@ public class Menu {
 
         g.setFont(font);
         g.setColor(0xff6600); // orange
+        if (i == 2) {
 
-        if (i == 0) {
-        } else if (i == 1) {
-            g.drawImage(instructionsBackground, 0, 0, g.TOP | g.LEFT);
-            g.drawString("Options", 0, 0, g.TOP | g.LEFT);
-            g.drawString("Here are where the", 0, fontHeight + 5, g.TOP | g.LEFT);
-            g.drawString("options go.", 0, 2 * (fontHeight + 5), g.TOP | g.LEFT);
-        } else if (i == 2) {
-
-            g.drawImage(instructionsBackground, 0, 0, g.TOP | g.LEFT);
+            g.drawImage(instBckgrnd, 0, 0, g.TOP | g.LEFT);
 
         } else if (i == 3) {
-            g.drawImage(creditsBackground, 0, 0, g.TOP | g.LEFT);
+            g.drawImage(credsBckgrnd, 0, 0, g.TOP | g.LEFT);
             g.drawString("Autores", 0, 0, g.TOP | g.LEFT);
             g.drawString("Manuel Gonzalez Solano 1165461", 0, fontHeight + 5, g.TOP | g.LEFT);
             g.drawString("Salvador Aguilar Galindo 967057", 0, 2 * (fontHeight + 5), g.TOP | g.LEFT);
             g.drawString("Carrera: ISC09", 0, 3 * (fontHeight + 5), g.TOP | g.LEFT);
         } else if (i == 4) {
             int highScoreWordHeight = fontHeight + 5;
-            g.drawImage(creditsBackground, 0, 0, g.TOP | g.LEFT);
+            g.drawImage(credsBckgrnd, 0, 0, g.TOP | g.LEFT);
             g.drawString("High Scores", 0, 0, g.TOP | g.LEFT);
 
-            highScorePoints.setSize(5);
-            highScoreNames.setSize(5);
-            
-            for (int e = 0; e < highScorePoints.size(); e++) {
-                g.drawString(highScoreNames.elementAt(e) + " " + highScorePoints.elementAt(e), 0, highScoreWordHeight, g.TOP | g.LEFT);
+            hiScorePts.setSize(5);
+            hiScoreNms.setSize(5);
+
+            for (int e = 0; e < hiScorePts.size(); e++) {
+                g.drawString(hiScoreNms.elementAt(e) + " " + hiScorePts.elementAt(e), 0, highScoreWordHeight, g.TOP | g.LEFT);
                 highScoreWordHeight += (fontHeight + 5);
             }
             highScoreWordHeight = fontHeight + 5;
@@ -225,6 +202,7 @@ public class Menu {
     public void updateActualizedSelectedIndex(int updatedIndex) {
         this.selectedIndex = updatedIndex;
     }
+
     /**
      *
      * @return el índice de las opciones del menú principal
@@ -257,7 +235,7 @@ public class Menu {
         int width = canvas.getWidth();
         int height = canvas.getHeight();
 
-        g.drawImage(carSelectBackground, 0, 0, g.TOP | g.LEFT);
+        g.drawImage(carSlctBckgrnd, 0, 0, g.TOP | g.LEFT);
         canvas.flushGraphics();
 
         g.setColor(0xff6600);
@@ -275,9 +253,6 @@ public class Menu {
         g.setFont(font);
         g.setColor(0xff6600); // black
 
-        g.drawString(leftOption, padding, height - padding, g.LEFT | g.BOTTOM);
-        g.drawString(okOption, ((width / 2) + 25), height - padding, g.RIGHT | g.BOTTOM);
-
         canvas.flushGraphics();
     }
 
@@ -292,18 +267,15 @@ public class Menu {
         this.g = g;
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
         int fontHeight = font.getHeight();
-
         int width = canvas.getWidth();
         int height = canvas.getHeight();
 
-
-        g.drawImage(creditsBackground, 0, 0, g.TOP | g.LEFT);
-
+        g.drawImage(credsBckgrnd, 0, 0, g.TOP | g.LEFT);
         g.setColor(0x000000);   //black
         g.fillRect(0, 330, width, fontHeight + 10);
 
         g.setFont(font);
-        g.setColor(0xff6600); // orange
+        g.setColor(0xffffff); // orange
 
         g.drawString("Sound Active?", 5, padding, g.TOP | g.LEFT);
         g.drawString("A: Yes    B: No", 5, height - padding, g.LEFT | g.BOTTOM);
@@ -317,6 +289,14 @@ public class Menu {
         canvas.flushGraphics();
     }
 
+    public void drawHelpMenu(GameCanvas canvas, Graphics g, int i){
+        if(i==1){
+            g.drawImage(histBckgrnd, 0, 0, g.TOP|g.LEFT);
+        }else if(i==2){
+            g.drawImage(instBckgrnd, 0, 0, g.TOP|g.LEFT);
+        }
+        canvas.flushGraphics();
+    }
     /**
      * al seleccionar el auto deseado e iniciar el juego, se encarga de dibujar
      * el letrero de "Let's Go!" en pantalla
@@ -344,7 +324,7 @@ public class Menu {
         Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
         g.setFont(font);
         g.drawImage(mainMenu, 0, 0, g.TOP | g.LEFT);
-        g.setColor(0xff6600);
+        g.setColor(0xffffff);
         g.drawString("Shut Down?", 100, 100, g.TOP | g.LEFT);
         g.drawString("C: YES", 120, 130, g.TOP | g.LEFT);
         g.drawString("D: NO", 120, 160, g.TOP | g.LEFT);
