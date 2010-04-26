@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 /**
@@ -61,10 +55,10 @@ public class Levels {
 
     }
     /*
-     * Se encarga de dibujar todos los fondos
+     * Se encarga de draw todos los fondos
      * del nivel.
      */
-    public void dibujar(Graphics g) {
+    public void draw(Graphics g) {
         sky.dibujar(g);
         clouds.dibujar(g);
         midground.dibujar(g);
@@ -73,7 +67,7 @@ public class Levels {
     /*
      * Se encarga de que los fondos se muevan.
      */
-    public void actualizar() {
+    public void update() {
         sky.moveBackgroundImage();
         clouds.moveBackgroundImage();
         midground.moveBackgroundImage();

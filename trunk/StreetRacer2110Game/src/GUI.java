@@ -1,8 +1,4 @@
 
-
-
-
-
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.game.*;
@@ -21,20 +17,19 @@ public class GUI extends GameCanvas {
     private int width = 0;
     private int height = 0;
     private Menu menu;
-    private String leftOption;
-    private String rightOption;
     private String[] menuOptions;
     private int currentlySelectedIndex = 0;
     private boolean menuIsActive = true;
     private boolean inactiveMenuIsActive = false;
     private boolean carMenuIsActive = false;
     private boolean optionsMenuIsActive = false;
+    private boolean yesNoMenuIsActive = false;
+    private boolean helpMenuIsActive = false;
     private boolean keyIsPressed = true;
     private String[] carMenuOptions;
     private int carSelectedIndex = 0;
     private MusicPlayer musicPlayer;
     private boolean musicIsActive;
-    private boolean yesNoMenuIsActive = false;
 
     /**
      *Constructor, crea una nueva interfaz para la navegación del menú principal
@@ -58,14 +53,10 @@ public class GUI extends GameCanvas {
         musicPlayer = new MusicPlayer(0);
         musicIsActive = true;
 
-
-        leftOption = "Back";
-        rightOption = "Exit";
-
-        menuOptions = new String[]{"Start Game", "Options", "Instructions", "Credits", "High Score", "Exit"};
+        menuOptions = new String[]{"Start Game", "Sound", "Help", "Credits", "Ranking", "Quit"};
         carMenuOptions = new String[]{"S Racer", "M Racer", "SM Racer"};
 
-        menu = new Menu(leftOption, rightOption, menuOptions, highScorePoints, highScoreNames);
+        menu = new Menu(menuOptions, highScorePoints, highScoreNames);
     }
 
     /**
@@ -97,23 +88,18 @@ public class GUI extends GameCanvas {
 
             keyCode = getGameAction(keyCode);
             if (keyCode == UP) {
-
                 currentlySelectedIndex--;
-
                 if (currentlySelectedIndex < 0) {
-
                     currentlySelectedIndex = menuOptions.length - 1;
                 }
 
                 //clearScreen();
                 menu.drawActiveMenu(this, g, currentlySelectedIndex); // repaint active menu
-
             } else if (keyCode == DOWN) {
 
                 currentlySelectedIndex++;
 
                 if (currentlySelectedIndex >= menuOptions.length) {
-
                     currentlySelectedIndex = 0;
                 }
 
@@ -122,35 +108,29 @@ public class GUI extends GameCanvas {
 
                 clearScreen();
                 g.setColor(0xFFFFFF); // black
-                //clearScreen();
 
-                if (currentlySelectedIndex == 2 || currentlySelectedIndex == 3 || currentlySelectedIndex == 4) {
+                if (currentlySelectedIndex == 2) {
+                    menu.drawHelpMenu(this, g, 2);
+                    menuIsActive = false;
+                    helpMenuIsActive = true;
+
+                } else if (currentlySelectedIndex == 3 || currentlySelectedIndex == 4) {
 
                     menu.drawMenuItems(this, g, currentlySelectedIndex);
-                    //menu.drawInactiveMenu(this, g);
                     menuIsActive = false;
-                    carMenuIsActive = false;
                     inactiveMenuIsActive = true;
-                    optionsMenuIsActive = false;
                 } else if (currentlySelectedIndex == 1) {
                     menu.drawOptionsMenu(this, g, 2);
                     optionsMenuIsActive = true;
                     menuIsActive = false;
-                    carMenuIsActive = false;
-                    inactiveMenuIsActive = false;
                 } else if (currentlySelectedIndex == 0) {
                     menu.drawSelectCarMenu(this, g, carSelectedIndex);
                     menuIsActive = false;
                     carMenuIsActive = true;
-                    inactiveMenuIsActive = false;
-                    optionsMenuIsActive = false;
 
                 } else if (currentlySelectedIndex == 5) {
                     menu.drawYesNoMenu(this, g);
                     menuIsActive = false;
-                    carMenuIsActive = false;
-                    inactiveMenuIsActive = false;
-                    optionsMenuIsActive = false;
                     yesNoMenuIsActive = true;
                 }
             }
@@ -162,11 +142,19 @@ public class GUI extends GameCanvas {
                 clearScreen();
 
                 menu.drawActiveMenu(this, g, currentlySelectedIndex); // activate menu
-
                 menuIsActive = true;
-                carMenuIsActive = false;
                 inactiveMenuIsActive = false;
-                optionsMenuIsActive = false;
+            } else {
+                keyCode = getGameAction(keyCode);
+                if (keyCode == GAME_A) {
+                    musicPlayer.startMusicPlayer();
+                    musicIsActive = true;
+                    menu.drawOptionsMenu(this, g, 1);
+                } else if (keyCode == GAME_B) {
+                    musicPlayer.stopMusicPlayer();
+                    musicIsActive = false;
+                    menu.drawOptionsMenu(this, g, 0);
+                }
             }
 
         } else if (carMenuIsActive) {
@@ -175,11 +163,8 @@ public class GUI extends GameCanvas {
                 clearScreen();
 
                 menu.drawActiveMenu(this, g, currentlySelectedIndex); // activate menu
-
                 menuIsActive = true;
                 carMenuIsActive = false;
-                inactiveMenuIsActive = false;
-                optionsMenuIsActive = false;
             } else {
 
                 keyCode = getGameAction(keyCode);
@@ -211,10 +196,7 @@ public class GUI extends GameCanvas {
                 clearScreen();
 
                 menu.drawActiveMenu(this, g, currentlySelectedIndex); // activate menu
-
                 menuIsActive = true;
-                carMenuIsActive = false;
-                inactiveMenuIsActive = false;
                 optionsMenuIsActive = false;
 
             } else {
@@ -230,6 +212,24 @@ public class GUI extends GameCanvas {
                     menu.drawOptionsMenu(this, g, 0);
                 }
             }
+        } else if (helpMenuIsActive) {
+
+            if (keyCode == LEFT_SOFTKEY_CODE) {
+                clearScreen();
+
+                menu.drawActiveMenu(this, g, currentlySelectedIndex); // activate menu
+                menuIsActive = true;
+                helpMenuIsActive = false;
+
+            } else {
+
+                keyCode = getGameAction(keyCode);
+                if (keyCode == LEFT) {
+                    menu.drawHelpMenu(this, g, 2);
+                } else if (keyCode == RIGHT) {
+                    menu.drawHelpMenu(this, g, 1);
+                }
+            }
 
         } else if (yesNoMenuIsActive) {
 
@@ -240,13 +240,11 @@ public class GUI extends GameCanvas {
 
                 menu.drawActiveMenu(this, g, currentlySelectedIndex);
                 menuIsActive = true;
-                carMenuIsActive = false;
-                inactiveMenuIsActive = false;
-                optionsMenuIsActive = false;
                 yesNoMenuIsActive = false;
             }
         }
     }
+
     /**
      *  Declara la opcion booleana destroyAPP falsa, para depués salir del GUI
      */
@@ -260,6 +258,7 @@ public class GUI extends GameCanvas {
         g.fillRect(0, 0, width, height);
         flushGraphics();
     }
+
     /**
      *
      * @return El menú seleccinado en el momento.
@@ -267,6 +266,7 @@ public class GUI extends GameCanvas {
     public Menu returnMenu() {
         return this.menu;
     }
+
     /**
      *
      * @return El canvas actual.
@@ -274,6 +274,7 @@ public class GUI extends GameCanvas {
     public Graphics returnGraphics() {
         return this.g;
     }
+
     /**
      * Coloca a musicPlayer y menu en null, eliminando a tales objetos.
      */
@@ -285,6 +286,7 @@ public class GUI extends GameCanvas {
         this.menu = null;
 
     }
+
     /**
      * Limpia la pantalla, y depues dibuja el menu activo correspondiente.
      */
@@ -292,6 +294,7 @@ public class GUI extends GameCanvas {
         clearScreen();
         menu.drawActiveMenu(this, g, currentlySelectedIndex);
     }
+
     /**
      * Asigna el valor verdadero o falso de musicIsActive
      * @param musicIsActive variable booleana que indica si esta o no activa la música

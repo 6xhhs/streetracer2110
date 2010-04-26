@@ -296,7 +296,7 @@ public class Juego extends GameCanvas {
 
         runThroughObstaclesVector();
 
-        gameLevel.actualizar();
+        gameLevel.update();
         vehicle.updateAmmo();
 
         checkForFinalObstacle();
@@ -308,7 +308,7 @@ public class Juego extends GameCanvas {
 
     /**
      * dibuja a los objetos del juego, desde los enemigos hasta las imágenes del nivel.
-     * También se encarga de dibujar el menú de pausa si se encuentra activado.
+     * También se encarga de draw el menú de pausa si se encuentra activado.
      */
     void draw() {
         // Borrar primeramente toda la pantalla
@@ -316,7 +316,7 @@ public class Juego extends GameCanvas {
         g.fillRect(0, 0, ANCHO, ALTO);
 
         // Despues draw todos los objetos de la aplicacion
-        gameLevel.dibujar(g);
+        gameLevel.draw(g);
 
         drawObstacles();
 
@@ -397,7 +397,7 @@ public class Juego extends GameCanvas {
     }
 
     /**
-     * Recorre el vector de los obstáculos para actualizar a los mismos.
+     * Recorre el vector de los obstáculos para update a los mismos.
      */
     public void runThroughObstaclesVector() {
         obstVecSize = this.obstacles.size() - 1;
