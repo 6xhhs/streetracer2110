@@ -138,7 +138,7 @@ public class Vehicle {
         totalDamageCount = 0;
         bullets = new Vector();
         for (int i = 0; i < 3; i++) {
-            bullets.addElement(new Pelota(0, 0, 1));
+            bullets.addElement(new Bullets(0, 0, 1));
         }
         bulletsVectorSize = 3;
 
@@ -238,9 +238,9 @@ public class Vehicle {
      */
     public void addBullet() {
         for (int i = 0; i < bulletsVectorSize; i++) {
-            if (((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
+            if (((Bullets) bullets.elementAt(i)).getCanFireBullet()) {
                 setBulletCoords(i);
-                ((Pelota) bullets.elementAt(i)).setCanFireBullet(false);
+                ((Bullets) bullets.elementAt(i)).setCanFireBullet(false);
                 break;
             }
         }
@@ -252,8 +252,8 @@ public class Vehicle {
      */
     public void drawAmmo(Graphics g) {
         for (int i = 0; i < bulletsVectorSize; i++) {
-            if (!((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
-                ((Pelota) bullets.elementAt(i)).dibujar(g);
+            if (!((Bullets) bullets.elementAt(i)).getCanFireBullet()) {
+                ((Bullets) bullets.elementAt(i)).dibujar(g);
             }
         }
     }
@@ -265,12 +265,12 @@ public class Vehicle {
      */
     public void updateAmmo() {
         for (int i = 0; i < bulletsVectorSize; i++) {
-            if (!((Pelota) bullets.elementAt(i)).getCanFireBullet()) {
-                if (((Pelota) bullets.elementAt(i)).getX() >= (screenWidth + 5)) {
-                    ((Pelota) bullets.elementAt(i)).resetCoords();
-                    ((Pelota) bullets.elementAt(i)).setCanFireBullet(true);
+            if (!((Bullets) bullets.elementAt(i)).getCanFireBullet()) {
+                if (((Bullets) bullets.elementAt(i)).getX() >= (screenWidth + 5)) {
+                    ((Bullets) bullets.elementAt(i)).resetCoords();
+                    ((Bullets) bullets.elementAt(i)).setCanFireBullet(true);
                 } else {
-                    ((Pelota) bullets.elementAt(i)).actualizar();
+                    ((Bullets) bullets.elementAt(i)).actualizar();
                 }
             }
         }
@@ -336,8 +336,8 @@ public class Vehicle {
      */
     private void resetBullets() {
         for (int i = 0; i < bulletsVectorSize; i++) {
-            ((Pelota) bullets.elementAt(i)).resetCoords();
-            ((Pelota) bullets.elementAt(i)).setCanFireBullet(true);
+            ((Bullets) bullets.elementAt(i)).resetCoords();
+            ((Bullets) bullets.elementAt(i)).setCanFireBullet(true);
         }
     }
 
@@ -431,14 +431,14 @@ public class Vehicle {
             for (int i = 0; i < bulletsVectorSize; i++) {
 
                 for (int j = enemiesVectorSize; j >= 0; j--) {
-                    if (((Pelota) bullets.elementAt(i)).getX() > ((Enemies) enemies.elementAt(j)).getEnemyX()
-                            && ((Pelota) bullets.elementAt(i)).getX() < ((Enemies) enemies.elementAt(j)).getEnemyX() + ((Enemies) enemies.elementAt(j)).getEnemyWidth()
-                            && ((Pelota) bullets.elementAt(i)).getY() > ((Enemies) enemies.elementAt(j)).getEnemyY()
-                            && ((Pelota) bullets.elementAt(i)).getY() < ((Enemies) enemies.elementAt(j)).getEnemyY() + ((Enemies) enemies.elementAt(j)).getEnemyHeight()
-                            && ((Pelota) bullets.elementAt(i)).getX() < screenWidth) {
+                    if (((Bullets) bullets.elementAt(i)).getX() > ((Enemies) enemies.elementAt(j)).getEnemyX()
+                            && ((Bullets) bullets.elementAt(i)).getX() < ((Enemies) enemies.elementAt(j)).getEnemyX() + ((Enemies) enemies.elementAt(j)).getEnemyWidth()
+                            && ((Bullets) bullets.elementAt(i)).getY() > ((Enemies) enemies.elementAt(j)).getEnemyY()
+                            && ((Bullets) bullets.elementAt(i)).getY() < ((Enemies) enemies.elementAt(j)).getEnemyY() + ((Enemies) enemies.elementAt(j)).getEnemyHeight()
+                            && ((Bullets) bullets.elementAt(i)).getX() < screenWidth) {
 
-                        ((Pelota) bullets.elementAt(i)).resetCoords();
-                        ((Pelota) bullets.elementAt(i)).setCanFireBullet(true);
+                        ((Bullets) bullets.elementAt(i)).resetCoords();
+                        ((Bullets) bullets.elementAt(i)).setCanFireBullet(true);
                         ((Enemies) enemies.elementAt(j)).hasCollided(true);
                         totalPointsAccumulated += 30;
                     }
@@ -537,6 +537,6 @@ public class Vehicle {
     private void setBulletCoords(int i) {
         setBulletX();
         setBulletY();
-        ((Pelota) bullets.elementAt(i)).setCoords(this.bulletX, this.bulletY);
+        ((Bullets) bullets.elementAt(i)).setCoords(this.bulletX, this.bulletY);
     }
 }

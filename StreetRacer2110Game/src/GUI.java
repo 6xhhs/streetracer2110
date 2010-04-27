@@ -53,7 +53,7 @@ public class GUI extends GameCanvas {
         musicPlayer = new MusicPlayer(0);
         musicIsActive = true;
 
-        menuOptions = new String[]{"Start Game", "Sound", "Help", "Credits", "Ranking", "Quit"};
+        menuOptions = new String[]{"The Streets", "Sound", "Help", "Credits", "Ranking", "Go Home"};
         carMenuOptions = new String[]{"S Racer", "M Racer", "SM Racer"};
 
         menu = new Menu(menuOptions, highScorePoints, highScoreNames);
