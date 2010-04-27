@@ -1,8 +1,4 @@
 
-
-
-
-
 import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
@@ -31,7 +27,6 @@ public class Juego extends GameCanvas {
     private Graphics g;             //el contexto grafico para hacer los trazos
     private int currentKeyCode;
     private boolean isPaused;
-    private Image pausedOpaque;
     private StreetRacer2110 midlet;
     private boolean keyIsPressed = true;
     private int psdMenuIndex;
@@ -75,28 +70,27 @@ public class Juego extends GameCanvas {
 
         super(true);
 
+        this.setFullScreenMode(true);
         this.midlet = midlet;
         this.display = Display.getDisplay(midlet);
+        g = this.getGraphics();
 
-        this.currentLevel = currentLevel;
+        this.pauseMenu = new PauseMenu(this, g);
+        isPaused = false;
+        psdMenuIndex = 0;
 
         this.removeEnemy = false;
-        this.setFullScreenMode(true);
-
-        this.carSelectedIndex = carSelectedIndex;
         this.ANCHO = getWidth();
         this.ALTO = getHeight();
-
-        g = this.getGraphics();
 
         musicPlayer = new MusicPlayer(currentLevel);
         this.musicIsActive = musicIsActive;
 
+        this.carSelectedIndex = carSelectedIndex;
         vehicle = new Vehicle(this.ANCHO, this.ALTO, carSelectedIndex);
 
+        this.currentLevel = currentLevel;
         this.gameLevel = new Levels(currentLevel, ANCHO, ALTO);
-
-        pauseMenu = new PauseMenu(this, g);
 
         ramp = new Ramp(currentLevel, ANCHO, ALTO);
         rampIsActive = false;
@@ -105,31 +99,9 @@ public class Juego extends GameCanvas {
 
         highScore = 0;
 
-        try {
-            pausedOpaque = Image.createImage("/paused.png");
-        } catch (IOException ex) {
-            System.out.println("Error no puedo cargar la imagen paused.png");
-        }
-
-        isPaused = false;
-        psdMenuIndex = 0;
-
-        obstCoordsIndex = 0;
-        enemCoordsIndex = 0;
-        randXEnemCoords = new int[MAX_RAND_COORDS];
-        randYEnemCoords = new int[MAX_RAND_COORDS];
-        randXObstCoords = new int[MAX_RAND_COORDS];
-        randYObstCoords = new int[MAX_RAND_COORDS];
-        for (int i = 0; i < MAX_RAND_COORDS; i++) {
-            randXEnemCoords[i] = (ANCHO + randCoord.nextInt(110));
-            randYEnemCoords[i] = (ALTO - randCoord.nextInt(100) - 65);
-            randXObstCoords[i] = ANCHO + randCoord.nextInt(120);
-            randYObstCoords[i] = (ALTO - randCoord.nextInt(100) - 10);
-        }
-
+        createRandCoords();
         enemies = new Vector();
         obstacles = new Vector();
-        //enemVecSize = 0;
         obstVecSize = 0;
         createObstacles();
         createEnemies(this.currentLevel);
@@ -216,8 +188,6 @@ public class Juego extends GameCanvas {
             }
         }
         if ((currentKeyCode & FIRE_PRESSED) != 0) {
-//            vehicle.setBulletX();
-//            vehicle.setBulletY();
             vehicle.addBullet();
         }
     }
@@ -310,12 +280,7 @@ public class Juego extends GameCanvas {
      * dibuja a los objetos del juego, desde los enemigos hasta las imágenes del nivel.
      * También se encarga de draw el menú de pausa si se encuentra activado.
      */
-    void draw() {
-        // Borrar primeramente toda la pantalla
-        g.setColor(0x000066);  // R(00) G(FF) B (00)
-        g.fillRect(0, 0, ANCHO, ALTO);
-
-        // Despues draw todos los objetos de la aplicacion
+    public void draw() {
         gameLevel.draw(g);
 
         drawObstacles();
@@ -329,7 +294,6 @@ public class Juego extends GameCanvas {
 
         if (isPaused) {
 
-            g.drawImage(pausedOpaque, 0, 0, g.TOP | g.LEFT);
             if (ysNoIsActive) {
                 if (retToMenuIsActive) {
                     psdMenuIndex = 1;
@@ -582,7 +546,6 @@ public class Juego extends GameCanvas {
             this.musicPlayer.terminate();
             this.musicPlayer = new MusicPlayer(currentLevel);
         }
-        //start();
     }
 
     /**
@@ -666,6 +629,21 @@ public class Juego extends GameCanvas {
         obstCoordsIndex++;
         if (obstCoordsIndex >= MAX_RAND_COORDS) {
             obstCoordsIndex = 0;
+        }
+    }
+
+    private void createRandCoords() {
+        obstCoordsIndex = 0;
+        enemCoordsIndex = 0;
+        randXEnemCoords = new int[MAX_RAND_COORDS];
+        randYEnemCoords = new int[MAX_RAND_COORDS];
+        randXObstCoords = new int[MAX_RAND_COORDS];
+        randYObstCoords = new int[MAX_RAND_COORDS];
+        for (int i = 0; i < MAX_RAND_COORDS; i++) {
+            randXEnemCoords[i] = (ANCHO + randCoord.nextInt(110));
+            randYEnemCoords[i] = (ALTO - randCoord.nextInt(100) - 65);
+            randXObstCoords[i] = ANCHO + randCoord.nextInt(120);
+            randYObstCoords[i] = (ALTO - randCoord.nextInt(100) - 10);
         }
     }
 }

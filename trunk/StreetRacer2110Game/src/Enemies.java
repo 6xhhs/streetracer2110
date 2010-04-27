@@ -108,7 +108,7 @@ public class Enemies {
         if (addBulletCount >= CREATE_BULLET_DELAY_TIME) {
             setBulletX();
             setBulletY();
-            bullets.addElement(new Pelota(this.bulletX, this.bulletY, BULLET_TYPE_INDEX));
+            bullets.addElement(new Bullets(this.bulletX, this.bulletY, BULLET_TYPE_INDEX));
             addBulletCount = 0;
         }
 
@@ -122,7 +122,7 @@ public class Enemies {
         //optimized here
         bulletsVectorSize = this.bullets.size() - 1;
         for (int i = bulletsVectorSize; i >= 0; i--) {
-            ((Pelota) bullets.elementAt(i)).dibujar(g);
+            ((Bullets) bullets.elementAt(i)).dibujar(g);
         }
     }
 
@@ -133,10 +133,10 @@ public class Enemies {
      */
     public void updateAmmo() {
         for (int i = bullets.size() - 1; i >= 0; i--) {
-            if (((Pelota) bullets.elementAt(i)).getX() < 0 || ((Pelota) bullets.elementAt(i)).returnHasCollided()) {
+            if (((Bullets) bullets.elementAt(i)).getX() < 0 || ((Bullets) bullets.elementAt(i)).returnHasCollided()) {
                 bullets.removeElementAt(i);
             } else {
-                ((Pelota) bullets.elementAt(i)).actualizar();
+                ((Bullets) bullets.elementAt(i)).actualizar();
             }
         }
     }
@@ -230,13 +230,13 @@ public class Enemies {
         if (bullets != null && vehicle != null) {
             for (int i = bullets.size() - 1; i >= 0; i--) {
 
-                if (((Pelota) bullets.elementAt(i)).getX() < vehicle.getVehicleX() + vehicle.getVehicleWidth()
-                        && ((Pelota) bullets.elementAt(i)).getX() > vehicle.getVehicleX()
-                        && ((Pelota) bullets.elementAt(i)).getY() > vehicle.getVehicleY()
-                        && ((Pelota) bullets.elementAt(i)).getY() < vehicle.getVehicleHeight() + vehicle.getVehicleY()
-                        && ((Pelota) bullets.elementAt(i)).getX() > 0) {
+                if (((Bullets) bullets.elementAt(i)).getX() < vehicle.getVehicleX() + vehicle.getVehicleWidth()
+                        && ((Bullets) bullets.elementAt(i)).getX() > vehicle.getVehicleX()
+                        && ((Bullets) bullets.elementAt(i)).getY() > vehicle.getVehicleY()
+                        && ((Bullets) bullets.elementAt(i)).getY() < vehicle.getVehicleHeight() + vehicle.getVehicleY()
+                        && ((Bullets) bullets.elementAt(i)).getX() > 0) {
 
-                    ((Pelota) bullets.elementAt(i)).hasCollided(true);
+                    ((Bullets) bullets.elementAt(i)).hasCollided(true);
                     vehicle.hasCollided(true, false);
                 }
             }

@@ -12,7 +12,7 @@ public class Ramp {
     private Image rampImage;
     private int rampX;
     private int rampY;
-    private static final int INC_X = -15;
+    private static final int INC_X = 15;
     private int rampHeight;
     private int rampWidth;
 
@@ -59,7 +59,7 @@ public class Ramp {
 
     public void actualizar() {
         if(this.rampX >= -this.rampWidth)
-            this.rampX -= 15;
+            this.rampX -= INC_X;
     }
 
     public int getRampX() {

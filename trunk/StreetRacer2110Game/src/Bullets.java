@@ -15,7 +15,7 @@ import javax.microedition.lcdui.Image;
  * @author Manuel Gonzalez Solano, Salvador Aguilar Galindo
  * @version 1.0, Abril, 2010
  */
-public class Pelota {
+public class Bullets {
 
     private static final int VEHICLE_BULLET_X_CHANGE = 15;
     private static final int ENEMY_BULLET_X_CHANGE = 9;
@@ -34,7 +34,7 @@ public class Pelota {
      * @param y alto de la pelota
      * @param vehicleOrEnemy indicador de tipo de personaje quien usara la pelota
      */
-    public Pelota(int x, int y, int vehicleOrEnemy) {
+    public Bullets(int x, int y, int vehicleOrEnemy) {
         this.vehicleOrEnemy = vehicleOrEnemy;
         this.x = x;
         this.y = y;
