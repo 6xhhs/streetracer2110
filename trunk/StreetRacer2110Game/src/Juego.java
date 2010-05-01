@@ -57,6 +57,9 @@ public class Juego extends GameCanvas {
     private boolean removeEnemy;
     private int enemVecSize;
     private int obstVecSize;
+    private Health health;
+    private static final int HEALTH_DELAY = 30;
+    private int healthDelayCount;
 
     /**
      *Constructor, crea una nueva instancia del juego, segun el nivel actual,
@@ -105,6 +108,10 @@ public class Juego extends GameCanvas {
         obstVecSize = 0;
         createObstacles();
         createEnemies(this.currentLevel);
+
+        health = new Health(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex]);
+        updateObstCoords();
+        healthDelayCount = 0;
 
         animador = new Animador(this);      //animador debe ser el ultimo que se crea
         animador.iniciar();
@@ -266,6 +273,20 @@ public class Juego extends GameCanvas {
 
         runThroughObstaclesVector();
 
+        if (healthDelayCount == HEALTH_DELAY) {
+            healthDelayCount = 0;
+            health.setHealthIsActive(true);
+
+        } else {
+            if (!health.returnHealthIsActive()) {
+                healthDelayCount++;
+            } else {
+                checkHealthVehicleCollisions();
+                resetHealth();
+            }
+        }
+
+
         gameLevel.update();
         vehicle.updateAmmo();
 
@@ -284,6 +305,9 @@ public class Juego extends GameCanvas {
         gameLevel.draw(g);
 
         drawObstacles();
+
+        if(health.returnHealthIsActive())
+            health.draw(g);
 
         if (rampIsActive) {
             ramp.dibujar(g);
@@ -646,4 +670,28 @@ public class Juego extends GameCanvas {
             randYObstCoords[i] = (ALTO - randCoord.nextInt(100) - 10);
         }
     }
+
+    private void resetHealth() {
+        if (health.getXPos() < -health.getWidth()) {
+            health.resetHealthObj(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex]);
+            updateObstCoords();
+        } else {
+            health.update();
+        }
+    }
+
+    private void checkHealthVehicleCollisions() {
+        if (health.getXPos() <= vehicle.getVehicleX() + vehicle.getVehicleWidth()
+                && health.getXPos() >= vehicle.getVehicleX()
+                && health.getYPos() < vehicle.getVehicleY() + vehicle.getVehicleHeight()
+                && health.getYPos() + health.getHeight() + 10 > vehicle.getVehicleY() + vehicle.getVehicleHeight()) {
+
+            vehicle.increaseHealth();
+            health.resetHealthObj(randXObstCoords[obstCoordsIndex], randYObstCoords[obstCoordsIndex]);
+            updateObstCoords();
+            display.vibrate(200);
+        }
+        //display.vibrate(200);
+    }
+
 }

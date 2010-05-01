@@ -47,6 +47,7 @@ public class Animador implements Runnable {
                 }
             }
         }
+        thread = null;
     }
 
     /**
@@ -65,6 +66,6 @@ public class Animador implements Runnable {
      */
     public void terminar() {
         corriendo = false;
-        thread.interrupt();
+        //thread.interrupt();
     }
 }
