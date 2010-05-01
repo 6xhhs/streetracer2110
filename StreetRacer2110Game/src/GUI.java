@@ -302,4 +302,7 @@ public class GUI extends GameCanvas {
     public void setMusicIsActive(boolean musicIsActive) {
         this.musicIsActive = musicIsActive;
     }
+
+//    protected void showNotify() {
+//    }
 }

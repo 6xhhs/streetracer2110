@@ -205,7 +205,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         if (isAHighScore) {
             loadEnterHighScoreNameScreen();
         } else {
-            changeGameToScreen();
+            loadYouWonNoHiScore();
         }
     }
 
@@ -239,5 +239,12 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
 
         changeGameToScreen();
         OKButtonIsPressed = false;
+        splashScreen=null;
+    }
+
+    private void loadYouWonNoHiScore() {
+        loadNewSplashScreen(6);
+        changeGameToScreen();
+        splashScreen=null;
     }
 }

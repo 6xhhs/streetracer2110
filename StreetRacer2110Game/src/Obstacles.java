@@ -50,12 +50,12 @@ public class Obstacles {
             obstacleHeight = 23;
         } else if (obstacleSelect == 3) {
             try {
-                obstacleImage = Image.createImage("/pothole.png");
+                obstacleImage = Image.createImage("/rock.png");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            obstacleWidth = 50;
-            obstacleHeight = 13;
+            obstacleWidth = 33;
+            obstacleHeight = 22;
         }
     }
 

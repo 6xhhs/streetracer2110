@@ -539,4 +539,20 @@ public class Vehicle {
         setBulletY();
         ((Bullets) bullets.elementAt(i)).setCoords(this.bulletX, this.bulletY);
     }
+
+    public void increaseHealth(){
+        this.damageCount = 0;
+        if(this.totalDamageCount > 0){
+            this.totalDamageCount--;
+            if(totalDamageCount==0){
+                lifeImage = (Image) lifeBarImages.elementAt(0);
+            }else if (totalDamageCount == 1) {
+                lifeImage = (Image) lifeBarImages.elementAt(1);
+            } else if (totalDamageCount == 2) {
+                lifeImage = (Image) lifeBarImages.elementAt(2);
+            } else if (totalDamageCount == 3) {
+                lifeImage = (Image) lifeBarImages.elementAt(3);
+            }
+        }
+    }
 }
