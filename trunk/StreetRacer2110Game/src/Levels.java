@@ -1,6 +1,7 @@
 
 import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
+
 /**
  * Se encarga de los niveles que tiene el juego.
  * @author Salvador Aguilar Galindo, Manuel González Solano
@@ -13,41 +14,46 @@ public class Levels {
     private Background clouds;
     private Background sky;
     private int level;
-/**
- * Constructor, crea un nuevo nivel segun el índice del nivel actual.
- * @param level Nivel seleccionado
- * @param width El ancho del nivel
- * @param height El largo del nivel
- */
+
+    /**
+     * Constructor, crea un nuevo nivel segun el índice del nivel actual.
+     * @param level Nivel seleccionado
+     * @param width El ancho del nivel
+     * @param height El largo del nivel
+     */
     public Levels(int level, int width, int height) {
 
         this.level = level;
 
         if (this.level == 1) {
             try {
-                foreground = new Background("/highway2.jpg",false,9);
-                midground = new Background("/foregroundBuildings2.png",false,3);
-                sky = new Background("/SkyLevel1.jpg",true,1);
-                clouds = new Background("/clouds2.png",false,1);
+                foreground = new Background("/new street.jpg", false, 9);
+                midground = new Background("/new buildings.png", false, 3);
+                sky = new Background("/SkyLevel1.jpg", true, 1);
+                clouds = new Background("/clouds2.png", false, 1);
+//                foreground = new Background("/highway2.jpg",false,9);
+//                midground = new Background("/foregroundBuildings2.png",false,3);
+//                sky = new Background("/SkyLevel1.jpg",true,1);
+//                clouds = new Background("/clouds2.png",false,1);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
         } else if (level == 2) {
             try {
-                foreground = new Background("/foreground level 2.jpg",false,9);
-                midground = new Background("/midground level 2.png",false,3);
-                sky = new Background("/sky level 2.jpg",true,1);
-                clouds = new Background("/clouds2.png",false,1);
+                foreground = new Background("/foreground level 2.jpg", false, 9);
+                midground = new Background("/midground level 2.png", false, 3);
+                sky = new Background("/sky level 2.jpg", true, 1);
+                clouds = new Background("/clouds2.png", false, 1);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         } else if (level == 3) {
             try {
-                foreground = new Background("/foreground level 3.jpg",false,9);
-                midground = new Background("/midground level 3.png",false,3);
-                sky = new Background("/sky level 3.jpg",true,1);
-                clouds = new Background("/clouds2.png",false,1);
+                foreground = new Background("/foreground level 3.jpg", false, 9);
+                midground = new Background("/midground level 3.png", false, 3);
+                sky = new Background("/sky level 3.jpg", true, 1);
+                clouds = new Background("/clouds2.png", false, 1);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -58,6 +64,7 @@ public class Levels {
      * Se encarga de draw todos los fondos
      * del nivel.
      */
+
     public void draw(Graphics g) {
         sky.dibujar(g);
         clouds.dibujar(g);
@@ -67,6 +74,7 @@ public class Levels {
     /*
      * Se encarga de que los fondos se muevan.
      */
+
     public void update() {
         sky.moveBackgroundImage();
         clouds.moveBackgroundImage();
@@ -83,11 +91,12 @@ public class Levels {
         sky.resetValues();
         clouds.resetValues();
     }
-/**
- *
- * @return el valor en x de la posición del fondo sky
- */
-    public int returnSkyBackgroundXValue(){
+
+    /**
+     *
+     * @return el valor en x de la posición del fondo sky
+     */
+    public int returnSkyBackgroundXValue() {
         return sky.returnXValue();
     }
 }
