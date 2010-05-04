@@ -462,7 +462,7 @@ public class Vehicle {
      * @param indica si el jugador a perdido o no
      */
     public void setGameOver(boolean flag) {
-        this.gameOverIsActive = false;
+        this.gameOverIsActive = flag;
     }
 
     /**
