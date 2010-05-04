@@ -11,7 +11,7 @@ public class Levels {
 
     private Background foreground;
     private Background midground;
-    private Background clouds;
+    //private Background clouds;
     private Background sky;
     private int level;
 
@@ -30,30 +30,23 @@ public class Levels {
                 foreground = new Background("/new street.jpg", false, 9);
                 midground = new Background("/new buildings.png", false, 3);
                 sky = new Background("/SkyLevel1.jpg", true, 1);
-                clouds = new Background("/clouds2.png", false, 1);
-//                foreground = new Background("/highway2.jpg",false,9);
-//                midground = new Background("/foregroundBuildings2.png",false,3);
-//                sky = new Background("/SkyLevel1.jpg",true,1);
-//                clouds = new Background("/clouds2.png",false,1);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
         } else if (level == 2) {
             try {
-                foreground = new Background("/foreground level 2.jpg", false, 9);
-                midground = new Background("/midground level 2.png", false, 3);
+                foreground = new Background("/new level 2 road.jpg", false, 9);
+                midground = new Background("/new level 2 midground.png", false, 3);
                 sky = new Background("/sky level 2.jpg", true, 1);
-                clouds = new Background("/clouds2.png", false, 1);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         } else if (level == 3) {
             try {
-                foreground = new Background("/foreground level 3.jpg", false, 9);
-                midground = new Background("/midground level 3.png", false, 3);
+                foreground = new Background("/new street.jpg", false, 9);
+                midground = new Background("/new level 3 buildings.png", false, 3);
                 sky = new Background("/sky level 3.jpg", true, 1);
-                clouds = new Background("/clouds2.png", false, 1);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -67,7 +60,6 @@ public class Levels {
 
     public void draw(Graphics g) {
         sky.dibujar(g);
-        clouds.dibujar(g);
         midground.dibujar(g);
         foreground.dibujarMovingStreet(g);
     }
@@ -77,7 +69,6 @@ public class Levels {
 
     public void update() {
         sky.moveBackgroundImage();
-        clouds.moveBackgroundImage();
         midground.moveBackgroundImage();
         foreground.moveBackgroundImage();
     }
@@ -89,7 +80,6 @@ public class Levels {
         foreground.resetValues();
         midground.resetValues();
         sky.resetValues();
-        clouds.resetValues();
     }
 
     /**

@@ -34,26 +34,20 @@ public class Obstacles {
         if (obstacleSelect == 1) {
             try {
                 obstacleImage = Image.createImage("/pothole.png");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            } catch (IOException ex) {}
             obstacleWidth = 50;
             obstacleHeight = 13;
         } else if (obstacleSelect == 2) {
             try {
                 obstacleImage = Image.createImage("/cactus.png");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            } catch (IOException ex) {}
 
             obstacleWidth = 21;
             obstacleHeight = 23;
         } else if (obstacleSelect == 3) {
             try {
                 obstacleImage = Image.createImage("/rock.png");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            } catch (IOException ex) {}
             obstacleWidth = 33;
             obstacleHeight = 22;
         }

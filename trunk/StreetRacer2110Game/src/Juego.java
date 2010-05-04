@@ -1,10 +1,8 @@
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.GameCanvas;
 
 /**
@@ -17,8 +15,8 @@ import javax.microedition.lcdui.game.GameCanvas;
  */
 public class Juego extends GameCanvas {
 
-    public static final int LEVEL_END = -1100;
-    public static final int START_RAMP = -950;
+    private static final int LEVEL_END = -1100;
+    private static final int START_RAMP = -850;
     private Levels gameLevel;
     private Vehicle vehicle;
     private final int ANCHO;        //ancho de la pantalla del cell
@@ -49,7 +47,7 @@ public class Juego extends GameCanvas {
     private Display display;
     private int carSelectedIndex;
     private final int currentLevel;
-    public int highScore;
+    private int highScore;
     private Ramp ramp;
     private boolean rampIsActive;
     private boolean vehicleIsAtRamp;
@@ -58,7 +56,7 @@ public class Juego extends GameCanvas {
     private int enemVecSize;
     private int obstVecSize;
     private Health health;
-    private static final int HEALTH_DELAY = 30;
+    private static final int HEALTH_DELAY = 90;
     private int healthDelayCount;
 
     /**
@@ -272,11 +270,22 @@ public class Juego extends GameCanvas {
         vehicle.checkBulletsEnemCollision(enemies);
 
         runThroughObstaclesVector();
+        updateHealth();
 
+        gameLevel.update();
+        vehicle.updateAmmo();
+
+        checkForFinalObstacle();
+        updateRampVehicleMovements();
+
+        checkGameOver();
+        checkLevelCompleted();
+    }
+
+    private void updateHealth() {
         if (healthDelayCount == HEALTH_DELAY) {
             healthDelayCount = 0;
             health.setHealthIsActive(true);
-
         } else {
             if (!health.returnHealthIsActive()) {
                 healthDelayCount++;
@@ -285,16 +294,6 @@ public class Juego extends GameCanvas {
                 resetHealth();
             }
         }
-
-
-        gameLevel.update();
-        vehicle.updateAmmo();
-
-        checkForFinalObstacle();
-        actualizarRampVehicleMovements();
-
-        checkGameOver();
-        checkLevelCompleted();
     }
 
     /**
@@ -620,12 +619,12 @@ public class Juego extends GameCanvas {
     /**
      * controla la imagen del vehículo segun su posición con respecto a la rampa.
      */
-    private void actualizarRampVehicleMovements() {
+    private void updateRampVehicleMovements() {
         if (rampIsActive) {
             ramp.actualizar();
             checkRampVehicleCollisions();
             if (this.vehicleIsAtRamp) {
-                vehicle.update(7);
+                vehicle.update(12);
             }
             if (!vehicle.getIsAtRamp()) {
                 this.vehicleIsAtRamp = false;
@@ -664,9 +663,9 @@ public class Juego extends GameCanvas {
         randXObstCoords = new int[MAX_RAND_COORDS];
         randYObstCoords = new int[MAX_RAND_COORDS];
         for (int i = 0; i < MAX_RAND_COORDS; i++) {
-            randXEnemCoords[i] = (ANCHO + randCoord.nextInt(110));
+            randXEnemCoords[i] = (ANCHO + randCoord.nextInt(110)+40);
             randYEnemCoords[i] = (ALTO - randCoord.nextInt(100) - 65);
-            randXObstCoords[i] = ANCHO + randCoord.nextInt(120);
+            randXObstCoords[i] = ANCHO + randCoord.nextInt(120)+40;
             randYObstCoords[i] = (ALTO - randCoord.nextInt(100) - 10);
         }
     }
@@ -691,7 +690,6 @@ public class Juego extends GameCanvas {
             updateObstCoords();
             display.vibrate(200);
         }
-        //display.vibrate(200);
     }
 
 }

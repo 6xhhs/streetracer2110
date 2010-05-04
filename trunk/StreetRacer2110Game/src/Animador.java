@@ -1,8 +1,3 @@
-
-
-
-
-
 /**
  * Solicita un GameCanvas que ejecute los metodos actualizar y dibujar constantemente
  * @author Salvador Aguilar Galindo, Manuel González Solano
@@ -10,7 +5,7 @@
  */
 public class Animador implements Runnable {
 
-    private Juego juego;    //gui deberia ser una interface
+    private Juego juego;
     private boolean corriendo;  //when false, animador will cease to run
     private Thread thread;
     private final int FPS = 34;
@@ -22,7 +17,6 @@ public class Animador implements Runnable {
      */
     public Animador(Juego juego) {
         this.juego = juego;  //crea un gui cuando se crea un objeto de animador
-
     }
 
     /**
@@ -40,11 +34,8 @@ public class Animador implements Runnable {
                 juego.draw();
 
                 try {
-
                     Thread.sleep(RETARDO);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
+                } catch (InterruptedException ex) {}
             }
         }
         thread = null;
@@ -54,10 +45,8 @@ public class Animador implements Runnable {
      * Crea un thread nuevo, para que comienze a correr el juego
      */
     public void iniciar() {
-
         thread = new Thread(this);  //objeto independiente se crea con el metodo run()
         thread.start();     //llama al metodo run()
-
     }
 
     /**
@@ -66,6 +55,5 @@ public class Animador implements Runnable {
      */
     public void terminar() {
         corriendo = false;
-        //thread.interrupt();
     }
 }
