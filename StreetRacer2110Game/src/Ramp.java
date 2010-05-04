@@ -26,11 +26,10 @@ public class Ramp {
         rampImage = null;
         if (currentLevel == 1) {
             try {
-                rampImage = Image.createImage("/ramp.png");
+                rampImage = Image.createImage("/ramp level 1.png");
                 rampHeight = 163;
-                rampWidth = 195;
+                rampWidth = 257;
             } catch (IOException ex) {
-                ex.printStackTrace();
             }
         } else if (currentLevel == 2) {
             try {
@@ -38,7 +37,6 @@ public class Ramp {
                 rampHeight = 163;
                 rampWidth = 195;
             } catch (IOException ex) {
-                ex.printStackTrace();
             }
         } else if (currentLevel == 3) {
             try {
@@ -49,7 +47,7 @@ public class Ramp {
                 ex.printStackTrace();
             }
         }
-        rampX = screenWidth*2;
+        rampX = (screenWidth*5);
         rampY = screenHeight - rampHeight;
     }
 
@@ -79,7 +77,7 @@ public class Ramp {
     }
 
     public void resetRampCoordinates() {
-        this.rampX = ANCHO;
+        this.rampX = (ANCHO*5);
         this.rampY = ALTO-rampHeight;
     }
 }

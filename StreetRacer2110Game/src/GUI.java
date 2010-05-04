@@ -30,6 +30,7 @@ public class GUI extends GameCanvas {
     private int carSelectedIndex = 0;
     private MusicPlayer musicPlayer;
     private boolean musicIsActive;
+    private boolean carMenuKeysAreActive;
 
     /**
      *Constructor, crea una nueva interfaz para la navegación del menú principal
@@ -55,6 +56,7 @@ public class GUI extends GameCanvas {
 
         menuOptions = new String[]{"The Streets", "Sound", "Help", "Credits", "Ranking", "Go Home"};
         carMenuOptions = new String[]{"S Racer", "M Racer", "SM Racer"};
+        carMenuKeysAreActive = true;
 
         menu = new Menu(menuOptions, highScorePoints, highScoreNames);
     }
@@ -159,35 +161,38 @@ public class GUI extends GameCanvas {
 
         } else if (carMenuIsActive) {
 
-            if (keyCode == LEFT_SOFTKEY_CODE) {
-                clearScreen();
+            if (carMenuKeysAreActive) {
+                if (keyCode == LEFT_SOFTKEY_CODE) {
+                    clearScreen();
 
-                menu.drawActiveMenu(this, g, currentlySelectedIndex); // activate menu
-                menuIsActive = true;
-                carMenuIsActive = false;
-            } else {
+                    menu.drawActiveMenu(this, g, currentlySelectedIndex); // activate menu
+                    menuIsActive = true;
+                    carMenuIsActive = false;
+                } else {
 
-                keyCode = getGameAction(keyCode);
+                    keyCode = getGameAction(keyCode);
 
-                if (keyCode == LEFT) {
-                    carSelectedIndex = 1;
-                    menu.drawSelectCarMenu(this, g, carSelectedIndex);
+                    if (keyCode == LEFT) {
+                        carSelectedIndex = 1;
+                        menu.drawSelectCarMenu(this, g, carSelectedIndex);
 
-                } else if (keyCode == RIGHT) {
-                    carSelectedIndex = 2;
-                    menu.drawSelectCarMenu(this, g, carSelectedIndex);
+                    } else if (keyCode == RIGHT) {
+                        carSelectedIndex = 2;
+                        menu.drawSelectCarMenu(this, g, carSelectedIndex);
 
-                } else if (keyCode == DOWN) {
-                    carSelectedIndex = 0;
-                    menu.drawSelectCarMenu(this, g, carSelectedIndex);
+                    } else if (keyCode == DOWN) {
+                        carSelectedIndex = 0;
+                        menu.drawSelectCarMenu(this, g, carSelectedIndex);
 
-                } else if (keyCode == FIRE) {
-                    if (keyIsPressed) {
-                        musicPlayer.stopMusicPlayer();
-                        menu.drawLetsGoOnScreen(this, g);
-                        midlet.changeScreenToGame(carSelectedIndex, musicIsActive);
+                    } else if (keyCode == FIRE) {
+                        carMenuKeysAreActive = false;
+                        if (keyIsPressed) {
+                            musicPlayer.stopMusicPlayer();
+                            menu.drawLetsGoOnScreen(this, g);
+                            midlet.changeScreenToGame(carSelectedIndex, musicIsActive);
+                        }
+                        keyIsPressed = false;
                     }
-                    keyIsPressed = false;
                 }
             }
         } else if (optionsMenuIsActive) {
@@ -284,7 +289,6 @@ public class GUI extends GameCanvas {
         }
         this.musicPlayer.terminate();
         this.menu = null;
-
     }
 
     /**
@@ -303,6 +307,12 @@ public class GUI extends GameCanvas {
         this.musicIsActive = musicIsActive;
     }
 
-//    protected void showNotify() {
-//    }
+    protected void showNotify() {
+    }
+
+    protected void hideNotify() {
+        //super.hideNotify();
+    }
 }
+
+

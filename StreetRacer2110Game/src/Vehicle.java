@@ -1,22 +1,18 @@
 
-
-
-
-
 import java.io.IOException;
 import java.util.Vector;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
- /*
+/*
  * Se encarga de manejar al auto que aparecerá en la pantalla
-  * durante el juego.
+ * durante el juego.
  * @author Salvador Aguilar Galindo, Manuel González Solano
  * @version 1.0, Abril 2010
  */
+
 public class Vehicle {
 
-    //private static final int MAX_BULLETS = 3;
     private static final int ROAD_TOP_Y_LIMIT = 260;
     private int x;
     private int y;
@@ -38,7 +34,6 @@ public class Vehicle {
     private Font font;
     private boolean gameOverIsActive;
     private Vector lifeBarImages;
-    //private static final int BULLET_TYPE_INDEX = 1;
     private boolean vehicleIsAtRamp;
     private int carJumpingRampCount;
     private boolean vehicleIsRising;
@@ -47,6 +42,7 @@ public class Vehicle {
     private boolean drawRisingVehicleIsActive;
     private Vector vehicleImages;
     private int bulletsVectorSize;
+
     /**
      * Constructor, indica que auto se seleccionó, después, le asigna sus valores,
      * dependiendo del tamaño, así como la velocidad que tendrán
@@ -144,6 +140,7 @@ public class Vehicle {
 
         font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
     }
+
     /**
      * Dibujara al auto dependiendo del estado en el que se presente,
      * su vida y puntos que lleva el jugador.
@@ -193,6 +190,7 @@ public class Vehicle {
             x += changeInX;
         }
     }
+
     /**
      * controla el movimiento hacia arriba del auto, tomando en cuenta
      * los límites de la carretera.
@@ -204,10 +202,11 @@ public class Vehicle {
             y -= changeInY;
         }
     }
-/**
- * controla el movimiento hacia abajo del auto, tomando en cuenta
+
+    /**
+     * controla el movimiento hacia abajo del auto, tomando en cuenta
      * los límites de la pantalla.
- */
+     */
     public void moveDown() {
         if (y >= screenHeight - CAR_HEIGHT) {
             y = screenHeight - CAR_HEIGHT;
@@ -215,6 +214,7 @@ public class Vehicle {
             y += changeInY;
         }
     }
+
     /**
      * actualiza el estado del vehículo, dependiendo de su posición en el juego
      * con respecto a la rampa final.
@@ -227,8 +227,8 @@ public class Vehicle {
             drawRisingVehicleIsActive = true;
             makeVehicleRise(carJumpingRampCount);
         } else {
-            drawRisingVehicleIsActive = false;
-            drawNormalVehicleIsActive = true;
+//            drawRisingVehicleIsActive = false;
+//            drawNormalVehicleIsActive = true;
             makeVehicleFall();
         }
     }
@@ -395,10 +395,11 @@ public class Vehicle {
     public int getVehicleX() {
         return this.x;
     }
-/**
- *
- * @return el ancho del vehículo.
- */
+
+    /**
+     *
+     * @return el ancho del vehículo.
+     */
     public int getVehicleWidth() {
         return this.CAR_WIDTH;
     }
@@ -518,6 +519,8 @@ public class Vehicle {
             this.y += 7;
             this.carJumpingRampCount--;
         } else {
+            drawRisingVehicleIsActive = false;
+            drawNormalVehicleIsActive = true;
             vehicleIsAtRamp = false;
         }
     }
@@ -540,13 +543,13 @@ public class Vehicle {
         ((Bullets) bullets.elementAt(i)).setCoords(this.bulletX, this.bulletY);
     }
 
-    public void increaseHealth(){
+    public void increaseHealth() {
         this.damageCount = 0;
-        if(this.totalDamageCount > 0){
+        if (this.totalDamageCount > 0) {
             this.totalDamageCount--;
-            if(totalDamageCount==0){
+            if (totalDamageCount == 0) {
                 lifeImage = (Image) lifeBarImages.elementAt(0);
-            }else if (totalDamageCount == 1) {
+            } else if (totalDamageCount == 1) {
                 lifeImage = (Image) lifeBarImages.elementAt(1);
             } else if (totalDamageCount == 2) {
                 lifeImage = (Image) lifeBarImages.elementAt(2);
