@@ -29,7 +29,7 @@ public class Levels {
             try {
                 foreground = new Background("/new street.jpg", false, 9);
                 midground = new Background("/new buildings.png", false, 3);
-                sky = new Background("/SkyLevel1.jpg", true, 1);
+                sky = new Background("/sky level 1.jpg", true, 1);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

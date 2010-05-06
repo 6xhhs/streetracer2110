@@ -4,15 +4,16 @@ import java.util.Vector;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+
 /*
  * Se encarga de manejar al auto que aparecerá en la pantalla
  * durante el juego.
  * @author Salvador Aguilar Galindo, Manuel González Solano
  * @version 1.0, Abril 2010
  */
-
 public class Vehicle {
 
+    private static final int RED = 0xff0000;
     private static final int ROAD_TOP_Y_LIMIT = 260;
     private int x;
     private int y;
@@ -162,7 +163,7 @@ public class Vehicle {
             g.drawImage(lifeImage, 0, 0, g.TOP | g.LEFT);
         }
         g.setFont(font);
-        g.setColor(0xff6600);
+        g.setColor(RED);
 
         g.drawString("Score: " + totalPointsAccumulated, 191, 8, g.TOP | g.LEFT);
     }
@@ -282,7 +283,7 @@ public class Vehicle {
      */
     public void setBulletX() {
         if (carSelectedIndex == 0) {
-            this.bulletX = this.x + 85;
+            this.bulletX = this.x + 84;
         } else if (carSelectedIndex == 1) {
             this.bulletX = this.x + 79;
         } else {
@@ -295,11 +296,7 @@ public class Vehicle {
      * ubicación de la pistola del auto actual.
      */
     public void setBulletY() {
-        if (carSelectedIndex == 0) {
-            this.bulletY = this.y;
-        } else {
-            this.bulletY = this.y + 3;
-        }
+        this.bulletY = this.y + 3;
     }
 
     /**
@@ -432,7 +429,7 @@ public class Vehicle {
             for (int i = 0; i < bulletsVectorSize; i++) {
 
                 for (int j = enemiesVectorSize; j >= 0; j--) {
-                    if (((Bullets) bullets.elementAt(i)).getX() > ((Enemies) enemies.elementAt(j)).getEnemyX()
+                    if (((Bullets) bullets.elementAt(i)).getX() + ((Bullets) bullets.elementAt(i)).getHeight() > ((Enemies) enemies.elementAt(j)).getEnemyX()
                             && ((Bullets) bullets.elementAt(i)).getX() < ((Enemies) enemies.elementAt(j)).getEnemyX() + ((Enemies) enemies.elementAt(j)).getEnemyWidth()
                             && ((Bullets) bullets.elementAt(i)).getY() > ((Enemies) enemies.elementAt(j)).getEnemyY()
                             && ((Bullets) bullets.elementAt(i)).getY() < ((Enemies) enemies.elementAt(j)).getEnemyY() + ((Enemies) enemies.elementAt(j)).getEnemyHeight()

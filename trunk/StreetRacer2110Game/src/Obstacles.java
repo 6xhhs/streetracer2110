@@ -1,8 +1,4 @@
 
-
-
-
-
 import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -18,6 +14,7 @@ public class Obstacles {
     private boolean obstacleHasCollided;
     private int obstacleX;
     private int obstacleY;
+    
 /**
  * Constructor, crea un obstáculo en la posición dada segun los valores de x,y dados y el índice
  * de selección de obstáculo.
@@ -48,8 +45,8 @@ public class Obstacles {
             try {
                 obstacleImage = Image.createImage("/rock.png");
             } catch (IOException ex) {}
-            obstacleWidth = 33;
-            obstacleHeight = 22;
+            obstacleWidth = 25;
+            obstacleHeight = 17;
         }
     }
 

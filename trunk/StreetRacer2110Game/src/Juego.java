@@ -16,7 +16,7 @@ import javax.microedition.lcdui.game.GameCanvas;
 public class Juego extends GameCanvas {
 
     private static final int LEVEL_END = -1100;
-    private static final int START_RAMP = -850;
+    private static final int START_RAMP = -900;
     private Levels gameLevel;
     private Vehicle vehicle;
     private final int ANCHO;        //ancho de la pantalla del cell
@@ -639,7 +639,7 @@ public class Juego extends GameCanvas {
             ramp.actualizar();
             checkRampVehicleCollisions();
             if (this.vehicleIsAtRamp) {
-                vehicle.update(12);
+                vehicle.update(9);
             }
             if (!vehicle.getIsAtRamp()) {
                 this.vehicleIsAtRamp = false;
