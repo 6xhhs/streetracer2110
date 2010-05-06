@@ -25,7 +25,7 @@ public class Bullets {
     private int vehicleOrEnemy;
     private boolean hasCollided = false;
     private boolean canFireBullet;
-    //private boolean canActualize;
+    private int height;
 
     /**
      * Constructor, crea una pelota con una imagen desde un archivo, y dimensiones dadas
@@ -35,6 +35,7 @@ public class Bullets {
      * @param vehicleOrEnemy indicador de tipo de personaje quien usara la pelota
      */
     public Bullets(int x, int y, int vehicleOrEnemy) {
+        this.height = 10;
         this.vehicleOrEnemy = vehicleOrEnemy;
         this.x = x;
         this.y = y;
@@ -101,16 +102,12 @@ public class Bullets {
         this.y = bullY;
     }
 
-//    public void setCanActualize(boolean canActualize) {
-//        this.canActualize = canActualize;
-//    }
-//
-//    public boolean getCanActualize() {
-//        return this.canActualize;
-//    }
-
     public void resetCoords(){
         this.x=0;
         this.y=0;
+    }
+
+    public int getHeight(){
+        return this.height;
     }
 }
