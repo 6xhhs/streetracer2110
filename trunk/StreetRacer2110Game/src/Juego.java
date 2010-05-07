@@ -258,28 +258,26 @@ public class Juego extends GameCanvas {
             return;
         }
 
+        updateMusicPlayer();
+        ctrlKeysPressed();
+        runThroughEnemiesVector();
+        vehicle.checkBulletsEnemCollision(enemies);
+        runThroughObstaclesVector();
+        updateHealth();
+        gameLevel.update();
+        vehicle.updateAmmo();
+        checkForFinalObstacle();
+        updateRampVehicleMovements();
+        checkGameOver();
+        checkLevelCompleted();
+    }
+
+    private void updateMusicPlayer() {
         if (musicIsActive) {
             if (musicPlayer != null && !musicPlayer.isPlaying()) {
                 musicPlayer.startMusicPlayer();
             }
         }
-        ctrlKeysPressed();
-
-        runThroughEnemiesVector();
-
-        vehicle.checkBulletsEnemCollision(enemies);
-
-        runThroughObstaclesVector();
-        updateHealth();
-
-        gameLevel.update();
-        vehicle.updateAmmo();
-
-        checkForFinalObstacle();
-        updateRampVehicleMovements();
-
-        checkGameOver();
-        checkLevelCompleted();
     }
 
     private void updateHealth() {

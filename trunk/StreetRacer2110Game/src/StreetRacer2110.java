@@ -1,6 +1,4 @@
 
-
-
 import java.util.Vector;
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
@@ -142,6 +140,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         display.setCurrent(gui);
         totalPoints = 0;
         gui.start();
+        //this.OKButtonIsPressed = false;
     }
 
     /**
@@ -203,6 +202,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         }
 
         if (isAHighScore) {
+            OKButtonIsPressed=false;
             loadEnterHighScoreNameScreen();
         } else {
             loadYouWonNoHiScore();
@@ -225,26 +225,27 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
      */
     public void commandAction(Command cmnd, Displayable dsplbl) {
 
-        if (cmnd == OKButton) {
-            if (!OKButtonIsPressed) {
+        if (!OKButtonIsPressed) {
+            if (cmnd == OKButton) {
                 String highScoreName = enterHighScoreName.getString();
                 highScoreNames.insertElementAt(highScoreName, highScorePosition);
                 highScoreNames.setSize(5);
 
                 fileManager.writeToFile(highScorePoints, highScoreNames);
                 fileManager.readFile(highScorePoints, highScoreNames);
+                OKButtonIsPressed = true;
+                //forma.removeCommand(OKButton);
             }
-            OKButtonIsPressed = true;
+            changeGameToScreen();
+            splashScreen = null;
         }
 
-        changeGameToScreen();
-        OKButtonIsPressed = false;
-        splashScreen=null;
+
     }
 
     private void loadYouWonNoHiScore() {
         loadNewSplashScreen(6);
         changeGameToScreen();
-        splashScreen=null;
+        splashScreen = null;
     }
 }

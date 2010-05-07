@@ -26,7 +26,7 @@ public class GUI extends GameCanvas {
     private boolean yesNoMenuIsActive = false;
     private boolean helpMenuIsActive = false;
     private boolean keyIsPressed = true;
-    private String[] carMenuOptions;
+    //private String[] carMenuOptions;
     private int carSelectedIndex = 0;
     private MusicPlayer musicPlayer;
     private boolean musicIsActive;
@@ -55,7 +55,7 @@ public class GUI extends GameCanvas {
         musicIsActive = true;
 
         menuOptions = new String[]{"The Streets", "Sound", "Help", "Credits", "Ranking", "Go Home"};
-        carMenuOptions = new String[]{"S Racer", "M Racer", "SM Racer"};
+        //carMenuOptions = new String[]{"S Racer", "M Racer", "SM Racer"};
         carMenuKeysAreActive = true;
 
         menu = new Menu(menuOptions, highScorePoints, highScoreNames);
@@ -140,23 +140,10 @@ public class GUI extends GameCanvas {
 
             // check if the "Options" or "Exit" buttons were pressed
             if (keyCode == LEFT_SOFTKEY_CODE) { // "Options" pressed
-
                 clearScreen();
-
                 menu.drawActiveMenu(this, g, currentlySelectedIndex); // activate menu
                 menuIsActive = true;
                 inactiveMenuIsActive = false;
-            } else {
-                keyCode = getGameAction(keyCode);
-                if (keyCode == GAME_A) {
-                    musicPlayer.startMusicPlayer();
-                    musicIsActive = true;
-                    menu.drawOptionsMenu(this, g, 1);
-                } else if (keyCode == GAME_B) {
-                    musicPlayer.stopMusicPlayer();
-                    musicIsActive = false;
-                    menu.drawOptionsMenu(this, g, 0);
-                }
             }
 
         } else if (carMenuIsActive) {
