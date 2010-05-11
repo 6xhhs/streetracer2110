@@ -7,19 +7,17 @@ import javax.microedition.lcdui.Image;
 public class Ramp {
 
     private Image rampImage;
-    //private Image rampHole;
     private int currentLevel;
     private int rampX;
     private int rampY;
     private int holeX;
     private int holeY;
-    private static final int INC_X = 15;
+    private final int INC_X;
     private int incY = -5;
     private int rampHeight;
     private int rampWidth;
     private final int WIDTH, HEIGHT;
     private Vector holes;
-
     private int holeImg;
 
     public Ramp(int currentLevel, int screenWidth, int screenHeight) {
@@ -36,57 +34,51 @@ public class Ramp {
                 rampImage = Image.createImage("/level 3 ramp.png");
                 holes.addElement(Image.createImage("/fire hole 1.png"));
                 holes.addElement(Image.createImage("/fire hole 2.png"));
-                //rampHole = Image.createImage("/fire hole.png");
                 rampHeight = 73;
                 rampWidth = 146;
                 holeX = (screenWidth * 5);
                 holeY = screenHeight - 134;
-//                rampImage = Image.createImage("/ramp level 1.png");
-//                rampHeight = 163;
-//                rampWidth = 257;
+                rampX = (screenWidth * 5);
+                rampY = screenHeight - rampHeight;
             } catch (IOException ex) {
             }
         } else if (currentLevel == 2) {
             try {
 
-                rampImage = Image.createImage("/level 3 ramp.png");
+                rampImage = Image.createImage("/ramp level 2.png");
 
                 holes.addElement(Image.createImage("/fire hole 1.png"));
                 holes.addElement(Image.createImage("/fire hole 2.png"));
-                //rampHole = Image.createImage("/fire hole.png");
-                rampHeight = 73;
-                rampWidth = 146;
+                rampHeight = 65;
+                rampWidth = 131;
                 holeX = (screenWidth * 5);
                 holeY = screenHeight - 134;
-//                rampImage = Image.createImage("/ramp.png");
-//                rampHeight = 163;
-//                rampWidth = 195;
+                rampX = (screenWidth * 5);
+                rampY = screenHeight - rampHeight;
             } catch (IOException ex) {
             }
         } else if (currentLevel == 3) {
             try {
-                rampImage = Image.createImage("/level 3 ramp.png");
-                //rampHole = Image.createImage("/fire hole.png");
+                rampImage = Image.createImage("/ramp level 3.png");
 
                 holes.addElement(Image.createImage("/fire hole 1.png"));
                 holes.addElement(Image.createImage("/fire hole 2.png"));
-                rampHeight = 73;
-                rampWidth = 146;
+                rampHeight = 59;
+                rampWidth = 116;
                 holeX = (screenWidth * 5);
                 holeY = screenHeight - 134;
+                rampX = (screenWidth * 5);
+                rampY = screenHeight - rampHeight;
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
-        rampX = (screenWidth * 5);
-        rampY = screenHeight - rampHeight;
+        INC_X = 15 + this.currentLevel;
     }
 
     public void dibujar(Graphics g) {
-//        if (currentLevel == 1) {
-//            g.drawImage(rampHole, holeX, holeY, g.TOP | g.LEFT);
-//        }
-        g.drawImage((Image)holes.elementAt(holeImg), holeX, holeY, g.TOP | g.LEFT);
+
+        g.drawImage((Image) holes.elementAt(holeImg), holeX, holeY, g.TOP | g.LEFT);
         g.drawImage(rampImage, rampX, rampY, g.TOP | g.LEFT);
 
 
@@ -98,22 +90,15 @@ public class Ramp {
             this.rampX -= INC_X;
         }
 
-//        if (currentLevel == 1) {
-//            if (this.holeX >= -265) {
-//                this.holeX -= INC_X;
-//                updateRampY();
-//            }
-//        }
-
         if (this.holeX >= -265) {
             this.holeX -= INC_X;
             updateRampY();
         }
 
-        if(holeImg == 0){
-            holeImg=1;
-        }else{
-            holeImg=0;
+        if (holeImg == 0) {
+            holeImg = 1;
+        } else {
+            holeImg = 0;
         }
 
     }
@@ -137,10 +122,6 @@ public class Ramp {
     public void resetRampCoordinates() {
         this.rampX = (WIDTH * 5);
         this.rampY = HEIGHT - rampHeight;
-//        if (currentLevel == 1) {
-//            holeX = (WIDTH * 5);
-//            holeY = HEIGHT - 155;
-//        }
 
         holeX = (WIDTH * 5);
         holeY = HEIGHT - 134;

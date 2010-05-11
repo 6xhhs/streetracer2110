@@ -553,6 +553,8 @@ public class Vehicle {
             } else if (totalDamageCount == 3) {
                 lifeImage = (Image) lifeBarImages.elementAt(3);
             }
+        }else{
+            addPoints(true);
         }
     }
 }
