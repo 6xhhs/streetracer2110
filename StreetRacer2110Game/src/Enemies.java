@@ -1,8 +1,4 @@
 
-
-
-
-
 import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
@@ -35,13 +31,14 @@ public class Enemies {
     private int addBulletCount = 0;
     private static final int BULLET_TYPE_INDEX = 2;
     private int bulletsVectorSize;
-/**
- * Constructor, crea un nuevo enemigo segun el índice de selección de enemigo,
- * creándolo en la posición dada.
- * @param xCoordinate posición en x que tomará el enemigo
- * @param yCoordinate posición en y que tomará el enemigo
- * @param enemiesSelectedIndex índice de de selección de enemigo
- */
+
+    /**
+     * Constructor, crea un nuevo enemigo segun el índice de selección de enemigo,
+     * creándolo en la posición dada.
+     * @param xCoordinate posición en x que tomará el enemigo
+     * @param yCoordinate posición en y que tomará el enemigo
+     * @param enemiesSelectedIndex índice de de selección de enemigo
+     */
     public Enemies(int xCoordinate, int yCoordinate, int enemiesSelectedIndex) {
 
         bulletsVectorSize = 0;
@@ -50,38 +47,19 @@ public class Enemies {
         this.x = xCoordinate;
         this.y = yCoordinate;
         changeInX = random.nextInt(5) + MIN_SPEED;
+        try {
+            originalEnemiesImage = Image.createImage("/enemy " + enemiesSelectedIndex + ".png");
+            enemiesImage = Image.createImage("/enemy " + enemiesSelectedIndex + ".png");
+            enemiesCollidedImage = Image.createImage("/explosion.png");
+        } catch (IOException ex) {
+        }
         if (this.enemiesSelectedIndex == 0) {
-            try {
-                originalEnemiesImage = Image.createImage("/motorcycle.png");
-                enemiesImage = Image.createImage("/motorcycle.png");
-                enemiesCollidedImage = Image.createImage("/explosion.png");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
             ENEMY_WIDTH = 75;
             ENEMY_HEIGHT = 40;
-        } else if (this.enemiesSelectedIndex == 1) {
-            try {
-                originalEnemiesImage = Image.createImage("/Tk.png");
-                enemiesImage = Image.createImage("/Tk.png");
-                enemiesCollidedImage = Image.createImage("/explosion.png");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+        } else {
             ENEMY_WIDTH = 90;
             ENEMY_HEIGHT = 47;
-        } else {
-            try {
-                originalEnemiesImage = Image.createImage("/motorcycle.png");
-                enemiesImage = Image.createImage("/motorcycle.png");
-                enemiesCollidedImage = Image.createImage("/explosion.png");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            ENEMY_WIDTH = 75;
-            ENEMY_HEIGHT = 40;
         }
-
         bullets = new Vector();
     }
 
@@ -119,7 +97,6 @@ public class Enemies {
      * @param g es el canvas del juego actual
      */
     public void drawAmmo(Graphics g) {
-        //optimized here
         bulletsVectorSize = this.bullets.size() - 1;
         for (int i = bulletsVectorSize; i >= 0; i--) {
             ((Bullets) bullets.elementAt(i)).dibujar(g);
@@ -226,7 +203,6 @@ public class Enemies {
      * @param vehicle el vehículo actual del juego
      */
     public void checkBulletsVehicleCollisions(Vehicle vehicle) {
-        //optimized here
         if (bullets != null && vehicle != null) {
             for (int i = bullets.size() - 1; i >= 0; i--) {
 

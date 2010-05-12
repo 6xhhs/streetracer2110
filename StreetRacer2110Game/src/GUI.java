@@ -26,7 +26,6 @@ public class GUI extends GameCanvas {
     private boolean yesNoMenuIsActive = false;
     private boolean helpMenuIsActive = false;
     private boolean keyIsPressed = true;
-    //private String[] carMenuOptions;
     private int carSelectedIndex = 0;
     private MusicPlayer musicPlayer;
     private boolean musicIsActive;
@@ -55,7 +54,7 @@ public class GUI extends GameCanvas {
         musicIsActive = true;
 
         menuOptions = new String[]{"The Streets", "Sound", "Help", "Credits", "Ranking", "Go Home"};
-        //carMenuOptions = new String[]{"S Racer", "M Racer", "SM Racer"};
+
         carMenuKeysAreActive = true;
 
         menu = new Menu(menuOptions, highScorePoints, highScoreNames);
@@ -298,7 +297,6 @@ public class GUI extends GameCanvas {
     }
 
     protected void hideNotify() {
-        //super.hideNotify();
     }
 }
 

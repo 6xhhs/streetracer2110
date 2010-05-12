@@ -1,4 +1,3 @@
-
 import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Display;
@@ -52,7 +51,7 @@ public class Juego extends GameCanvas {
     private boolean rampIsActive;
     private boolean vehicleIsAtRamp;
     private boolean madeItToRamp;
-    private boolean removeEnemy;
+    private boolean enemWasRemoved;
     private int enemVecSize;
     private int obstVecSize;
     private Health health;
@@ -67,7 +66,7 @@ public class Juego extends GameCanvas {
      * @param musicIsActive booleano que dira si esta o no activa la música.
      * @param currentLevel Asignara el nivel correspondiente.
      */
-    public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel) {
+    public Juego(StreetRacer2110 midlet, int carSelectedIndex, boolean musicIsActive, int currentLevel, int songIndex) {
 
         super(true);
 
@@ -80,11 +79,11 @@ public class Juego extends GameCanvas {
         isPaused = false;
         psdMenuIndex = 0;
 
-        this.removeEnemy = false;
+        this.enemWasRemoved = false;
         this.ANCHO = getWidth();
         this.ALTO = getHeight();
 
-        musicPlayer = new MusicPlayer(currentLevel);
+        musicPlayer = new MusicPlayer(songIndex);
         this.musicIsActive = musicIsActive;
 
         this.carSelectedIndex = carSelectedIndex;
@@ -204,7 +203,9 @@ public class Juego extends GameCanvas {
      * se ha completado o si el jugador a perdido.
      */
     public void update() {
-        pauseUnpause();
+        if (!isPaused) {
+            pauseUnpause();
+        }
         currentKeyCode = getKeyStates();
         if (isPaused) {
             if (musicPlayer.isPlaying()) {
@@ -457,7 +458,7 @@ public class Juego extends GameCanvas {
         if (((Enemies) enemies.elementAt(i)).returnEnemyHasCollided()) {
             if (madeItToRamp) {
                 enemies.removeElementAt(i);
-                removeEnemy = true;
+                enemWasRemoved = true;
                 enemVecSize--;
             } else {
                 ((Enemies) enemies.elementAt(i)).resetEnemy(randXEnemCoords[enemCoordsIndex], randYEnemCoords[enemCoordsIndex]);
@@ -480,9 +481,10 @@ public class Juego extends GameCanvas {
                 && ((Enemies) enemies.elementAt(i)).getEnemyY() + (((Enemies) enemies.elementAt(i)).getEnemyHeight() / 2) < (vehicle.getVehicleY() + vehicle.getVehicleHeight())
                 && ((Enemies) enemies.elementAt(i)).getEnemyY() + (((Enemies) enemies.elementAt(i)).getEnemyHeight() / 2) > vehicle.getVehicleY()) {
 
+            ((Enemies) this.enemies.elementAt(i)).hasCollided(true);
             vehicle.hasCollided(true, true);
             display.vibrate(200);
-            ((Enemies) this.enemies.elementAt(i)).hasCollided(true);
+
         }
     }
 
@@ -523,11 +525,12 @@ public class Juego extends GameCanvas {
             //resets enemies coordinates if they collide
             resetCollidedEnems(i);
 
-            if (!removeEnemy) {
+            if (!enemWasRemoved) {
                 //reset enemy coorinates if enemies go off screen
+                //resetCollidedEnems(i);
                 resetEnemyCoordinates(i);
             } else {
-                removeEnemy = false;
+                enemWasRemoved = false;
             }
         }
     }
@@ -556,7 +559,7 @@ public class Juego extends GameCanvas {
     /**
      * reinicia los objetos del juego actual
      */
-    public void resetJuegoValues() {
+    public void resetJuegoValues(int songIndex) {
 
         this.vehicle.resetValues();
         this.ramp.resetRampCoordinates();
@@ -577,7 +580,7 @@ public class Juego extends GameCanvas {
         if (musicIsActive) {
             this.musicPlayer.stopMusicPlayer();
             this.musicPlayer.terminate();
-            this.musicPlayer = new MusicPlayer(currentLevel);
+            this.musicPlayer = new MusicPlayer(songIndex);
         }
     }
 
@@ -618,12 +621,12 @@ public class Juego extends GameCanvas {
      */
     private void checkRampVehicleCollisions() {
         if (ramp.getRampX() <= vehicle.getVehicleX()
-                && ramp.getRampX() + (ramp.getRampWidth() / 2) > vehicle.getVehicleX() + (vehicle.getVehicleWidth() / 2)){
+                && ramp.getRampX() + (ramp.getRampWidth() / 2) > vehicle.getVehicleX() + (vehicle.getVehicleWidth() / 2)) {
 
-            if(ramp.getRampY() < vehicle.getVehicleY() + (vehicle.getVehicleHeight() / 2)
-                && ramp.getRampY() + ramp.getRampHeight() > vehicle.getVehicleY() + (vehicle.getVehicleHeight() / 2)){
+            if (ramp.getRampY() < vehicle.getVehicleY() + (vehicle.getVehicleHeight() / 2)
+                    && ramp.getRampY() + ramp.getRampHeight() > vehicle.getVehicleY() + (vehicle.getVehicleHeight() / 2)) {
                 this.vehicleIsAtRamp = true;
-            }else{
+            } else {
                 vehicle.setGameOver(true);
             }
         }

@@ -1,4 +1,3 @@
-
 import java.util.Vector;
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
@@ -29,6 +28,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     private Command OKButton;
     private boolean OKButtonIsPressed;
     private int hiScrVecSize;
+    private int songIndex;
 
     /**
      * Constructor, crea los vectores de los mejores puntajes y la pantalla para ingresar
@@ -46,6 +46,7 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         forma.setCommandListener(this);
         totalPoints = 0;
         OKButtonIsPressed = false;
+        songIndex=1;
     }
 
     /**
@@ -68,8 +69,8 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
     private void loadStartOfGame() {
         if (isStartOfGame) {
 
-            loadNewSplashScreen(1);
-            loadNewSplashScreen(2);
+            loadNewSplashScreen(1,2000);
+            loadNewSplashScreen(2,1000);
 
             gui = new GUI(this, highScorePoints, highScoreNames);
             gui.start();
@@ -88,14 +89,13 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
      * selección.
      * @param splashScreenIndex indica qué splash screen se debe de crear.
      */
-    private void loadNewSplashScreen(int splashScreenIndex) {
+    private void loadNewSplashScreen(int splashScreenIndex, int delay) {
         splashScreen = new SplashScreen(splashScreenIndex);
         splashScreen.paint();
         display.setCurrent(splashScreen);
         try {
-            Thread.sleep(2000);
+            Thread.sleep(delay);
         } catch (InterruptedException ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -122,9 +122,17 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         this.musicIsActive = musicIsActive;
         gui.setItemsToNull();
         gui = null;
-        juego = new Juego(this, carSelectedIndex, this.musicIsActive, 1);
+        juego = new Juego(this, carSelectedIndex, this.musicIsActive, 1, songIndex);
+        updateSongIndex();
         display.setCurrent(juego);
         juego.start();
+    }
+
+    private void updateSongIndex() {
+        songIndex++;
+        if (songIndex > 5) {
+            songIndex = 1;
+        }
     }
 
     /**
@@ -148,10 +156,9 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
      */
     public void restartGame() {
 
-        splashScreen = new SplashScreen(3);
-        splashScreen.paint();
-        display.setCurrent(splashScreen);
-        juego.resetJuegoValues();
+        loadNewSplashScreen(3,2000);
+        juego.resetJuegoValues(songIndex);
+        updateSongIndex();
         display.setCurrent(juego);
         juego.start();
         splashScreen = null;
@@ -173,11 +180,10 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
         this.currentLevel = currentLevel;
         juego.nullifyObjects(true, true);
         juego = null;
-        juego = new Juego(this, this.carSelectedIndex, this.musicIsActive, this.currentLevel);
-
+        juego = new Juego(this, this.carSelectedIndex, this.musicIsActive, this.currentLevel,songIndex);
+        updateSongIndex();
         display.setCurrent(juego);
         juego.start();
-
         splashScreen = null;
     }
 
@@ -234,17 +240,14 @@ public class StreetRacer2110 extends MIDlet implements CommandListener {
                 fileManager.writeToFile(highScorePoints, highScoreNames);
                 fileManager.readFile(highScorePoints, highScoreNames);
                 OKButtonIsPressed = true;
-                //forma.removeCommand(OKButton);
             }
             changeGameToScreen();
             splashScreen = null;
         }
-
-
     }
 
     private void loadYouWonNoHiScore() {
-        loadNewSplashScreen(6);
+        loadNewSplashScreen(6,3000);
         changeGameToScreen();
         splashScreen = null;
     }
