@@ -228,8 +228,6 @@ public class Vehicle {
             drawRisingVehicleIsActive = true;
             makeVehicleRise(carJumpingRampCount);
         } else {
-//            drawRisingVehicleIsActive = false;
-//            drawNormalVehicleIsActive = true;
             makeVehicleFall();
         }
     }

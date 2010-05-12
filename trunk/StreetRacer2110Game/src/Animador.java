@@ -32,7 +32,6 @@ public class Animador implements Runnable {
             if (corriendo) {
                 //Actualice la pantalla
                 juego.draw();
-
                 try {
                     Thread.sleep(RETARDO);
                 } catch (InterruptedException ex) {}

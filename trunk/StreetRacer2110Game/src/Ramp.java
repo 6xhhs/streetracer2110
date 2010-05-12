@@ -31,15 +31,11 @@ public class Ramp {
         if (currentLevel == 1) {
             try {
 
-                rampImage = Image.createImage("/level 3 ramp.png");
+                rampImage = Image.createImage("/ramp level 1.png");
                 holes.addElement(Image.createImage("/fire hole 1.png"));
                 holes.addElement(Image.createImage("/fire hole 2.png"));
                 rampHeight = 73;
                 rampWidth = 146;
-                holeX = (screenWidth * 5);
-                holeY = screenHeight - 134;
-                rampX = (screenWidth * 5);
-                rampY = screenHeight - rampHeight;
             } catch (IOException ex) {
             }
         } else if (currentLevel == 2) {
@@ -51,10 +47,6 @@ public class Ramp {
                 holes.addElement(Image.createImage("/fire hole 2.png"));
                 rampHeight = 65;
                 rampWidth = 131;
-                holeX = (screenWidth * 5);
-                holeY = screenHeight - 134;
-                rampX = (screenWidth * 5);
-                rampY = screenHeight - rampHeight;
             } catch (IOException ex) {
             }
         } else if (currentLevel == 3) {
@@ -65,14 +57,15 @@ public class Ramp {
                 holes.addElement(Image.createImage("/fire hole 2.png"));
                 rampHeight = 59;
                 rampWidth = 116;
-                holeX = (screenWidth * 5);
-                holeY = screenHeight - 134;
-                rampX = (screenWidth * 5);
-                rampY = screenHeight - rampHeight;
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
+        holeX = (screenWidth * 5);
+        holeY = screenHeight - 134;
+        rampX = (screenWidth * 5);
+        rampY = screenHeight - rampHeight;
+
         INC_X = 15 + this.currentLevel;
     }
 
